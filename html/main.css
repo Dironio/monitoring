@@ -57,6 +57,7 @@ ul {
     padding: 50px;
     min-width: 100%;
     margin-top: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .header {
@@ -103,78 +104,16 @@ ul {
 
 .main-header {
     display: flex;
+    /* justify-content: space-between; */
+    gap: 150px;
+    justify-content: center;
     align-items: center;
-    justify-content: space-between;
-    gap: 30px;
-}
-
-.main-header__btn {
-    background-color: #7553FF;
-    border: 1px solid transparent;
-    border-radius: 10px;
-    padding: 9px 20px;
-    color: #fff;
-    font-size: 20px;
-    font-weight: 500;
-    cursor: pointer;
-}
-
-.main-grid {
-    display: grid;
-    gap: 20px;
-    margin-top: 30px;
-
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    grid-auto-rows: auto;
-}
-
-.main-grid__item {
-    background-color: #F4F5F9;
-    border-radius: 10px;
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 250px;
-}
-
-.grid-item__btn {
-    margin-top: 20px;
-    background-color: #7553FF;
-    border: 1px solid transparent;
-    border-radius: 10px;
-    padding: 10px 20px;
-    color: #fff;
-    font-size: 16px;
-    font-weight: 500;
-    align-self: flex-start;
-    cursor: pointer;
-}
-
-
-
-
-
-
-.bg-white {
-    background-color: #fff;
-    border-radius: 10px;
-    padding: 40px;
-    margin-top: 30px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.main-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 40px;
+    /* margin-bottom: 40px; */
 }
 
 .main-header__logo {
     font-size: 24px;
     font-weight: bold;
-    color: #333;
 }
 
 .main-header__btn {
@@ -184,7 +123,7 @@ ul {
     border-radius: 10px;
     padding: 10px 20px;
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
@@ -193,11 +132,14 @@ ul {
     background-color: #5a3dcb;
 }
 
+
+
 .main-grid {
     display: grid;
     gap: 20px;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     grid-auto-rows: auto;
+    margin-top: 40px;
 }
 
 .main-grid__item {
@@ -206,14 +148,15 @@ ul {
     padding: 20px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
+    /* align-items: center; */
+    /* text-align: center; */
+    /* margin-top: 30px; */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .main-grid__item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    /* transform: translateY(-5px); */
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
 .grid-item__image {
@@ -223,15 +166,45 @@ ul {
 }
 
 .item-title {
-    font-size: 18px;
+    display: flex;
+    justify-content: flex-start;
+    font-size: 20px;
     font-weight: bold;
     margin-bottom: 10px;
 }
 
 .item-description {
-    font-size: 14px;
-    color: #555;
+    font-size: 16px;
+    margin-bottom: 30px;
+    margin-top: 20px;
 }
+
+
+.grid-item__btn {
+    /* margin-top: 20px; */
+    background-color: #7553FF;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    padding: 10px 20px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    align-self: flex-start;
+    cursor: pointer;
+    margin-top: auto;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* @media (max-width: 768px) {
     .main-header {
@@ -240,3 +213,39 @@ ul {
         gap: 20px;
     }
 } */
+
+
+
+
+.footer-main {
+    margin-top: 100px;
+    margin-bottom: 100px;
+}
+
+.footer-main__title {
+    display: flex;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.footer-main__btn {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.footer-main__btn-start {
+    background-color: #7553FF;
+    border: transparent;
+    color: #fff;
+    padding: 11px 20px;
+    font-size: 20px;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.footer-main__btn-start :hover {
+    background-color: #5a3dcb;
+}
