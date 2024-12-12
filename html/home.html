@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="home.css">
+</head>
+
+<body>
+    <div class="collapsed-sidebar">
+        <div class="sidebar-icon">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                <path fill="#656565" d="M12 2L3 9h3v13h6V14h2v8h6V9h3z"></path>
+            </svg>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <header class="header">
+            <h1>Дашборд</h1>
+        </header>
+        <div class="wrapper">
+            <nav class="top-nav">
+                <ul class="nav-list">
+                    <li class="nav-item selected">Сводка отчетов</li>
+                    <li class="nav-item">Среднее время на сайте</li>
+                    <li class="nav-item">Метрики поведения</li>
+                    <li class="nav-item">История посещений</li>
+                    <li class="nav-item">Аналитика продаж</li>
+                </ul>
+            </nav>
+
+            <section class="content">
+                <div class="chart">
+                    <h2>График посещений</h2>
+                    <div class="chart-placeholder">График</div>
+                </div>
+
+                <div class="table">
+                    <h2>Таблица </h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Параметр</th>
+                                <th>Значение</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Посетители</td>
+                                <td>1200</td>
+                            </tr>
+                            <tr>
+                                <td>Среднее время</td>
+                                <td>5 минут</td>
+                            </tr>
+                            <tr>
+                                <td>Отказы</td>
+                                <td>20%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</body>
+
+</html>
