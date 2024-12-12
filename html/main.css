@@ -45,7 +45,9 @@ ul {
 }
 
 .wrapper {
-    min-width: 1230px;
+    /* min-width: 1230px; */
+
+    min-width: 1130px;
     margin: 0 auto;
     padding: 0 15px;
 }
