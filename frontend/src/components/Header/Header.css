@@ -1,0 +1,39 @@
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    background-color: #fff;
+    border-bottom: 1px solid #D9D9D9;
+}
+
+.header__logo {
+    margin-left: 20px;
+
+}
+
+.header__img {
+    margin-right: 5px;
+    margin-left: 15px;
+}
+
+.header__info-user {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header__btn {
+    background-color: #7553FF;
+    border: 1px solid transparent;
+    border-radius: 22px;
+    padding: 9px 48px;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.header__role {
+    margin-left: 26px;
+}
