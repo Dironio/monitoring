@@ -2,6 +2,9 @@ import userService from "./user.service";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { config } from "dotenv";
+import ApiError from "../middlewares/ApiError";
+import { JwtTokens, TokenDecoded, TokenPayload } from "./@types/tokenPayload";
+import { CreatedUser, CreateUserDto, LoginUserDto, UserRole } from "./@types/user.dto";
 
 config({ path: './.env' });
 
@@ -39,6 +42,7 @@ class AuthService {
             id: newUser.id,
             email: newUser.email,
             username: newUser.username,
+            role: newUser.role as UserRole,
         };
 
         const jwtTokens = this.generateTokens(tokenPayload);
@@ -60,6 +64,7 @@ class AuthService {
         const tokenPayload: TokenPayload = {
             id: user.id,
             username: user.username,
+            role: user.role as UserRole,
         };
 
         const jwtTokens = this.generateTokens(tokenPayload);
@@ -79,6 +84,7 @@ class AuthService {
         const tokenPayload: TokenPayload = {
             id: user.id,
             username: user.username,
+            role: user.role as UserRole,
         };
 
         const jwtTokens = this.generateTokens(tokenPayload);

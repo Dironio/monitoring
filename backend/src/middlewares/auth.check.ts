@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import authService from "../services/auth.service";
 import ApiError from "./ApiError";
+import { TokenPayload } from "../services/@types/tokenPayload";
 
 function authCheck(req: Request, res: Response, next: NextFunction) {
     try {

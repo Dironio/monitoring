@@ -1,4 +1,6 @@
 import { NextFunction, Request, Response } from "express";
+import ControllerErrorHandler from './tools/controllerErrorHandler';
+import userService from '../services/user.service';
 
 
 class UserController {
@@ -43,8 +45,6 @@ class UserController {
     async delete(req: Request, res: Response, next: NextFunction): Promise<Response> {
         const userId = Number(req.params.id);
         const result = await userService.delete(userId);
-
-        // await cartService.delete({user_id: result.id})
 
         if (!result) {
             res.status(404).json({ message: "User not found" });

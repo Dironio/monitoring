@@ -1,36 +1,10 @@
-
+import userDal from '../data/user.dal';
+import { CreateUserDto, UpdateUserDto, User } from './@types/user.dto'
 
 
 class UserService {
-    calculateAge(birthday: Date | string): number {
-        const birthDate = typeof birthday === 'string' ? new Date(birthday.replace('/', '-')) : birthday;
-
-        if (!(birthDate instanceof Date) || isNaN(birthDate.getTime())) {
-            throw new Error('Invalid birth date');
-        }
-
-        const today = new Date();
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const monthDiff = today.getMonth() - birthDate.getMonth();
-
-
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
-        }
-
-        return age;
-    }
-
-
     async create(dto: CreateUserDto): Promise<User> {
-        if (dto.birthday) {
-            dto.age = this.calculateAge(dto.birthday);
-        }
-
-
-        const result = await userDal.create(dto);
-        await cartService.create({ user_id: result.id });
-        return result;
+        return await userDal.create(dto);
     }
 
     async getAll() {
@@ -50,10 +24,6 @@ class UserService {
     }
 
     async update(dto: UpdateUserDto): Promise<User> {
-        if (dto.birthday) {
-            dto.age = this.calculateAge(dto.birthday);
-        }
-
         return await userDal.update(dto);
     }
 
