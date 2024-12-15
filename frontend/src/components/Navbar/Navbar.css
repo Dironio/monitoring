@@ -6,7 +6,7 @@
     gap: 10px;
 }
 
-.dashobord_item-1{
+.dashobord_item-1 {
     display: flex;
     align-items: center;
     align-content: center;
@@ -54,8 +54,13 @@
     text-decoration: none;
     font-size: 16px;
     cursor: pointer;
+    white-space: nowrap;
     transition: background-color 0.3s, color 0.3s;
 }
+
+
+
+
 
 .menu-item.selected {
     background-color: #7553FF;
@@ -78,7 +83,17 @@
 
 
 
+.toggle-btn img {
+    transition: transform 0.3s ease;
+}
 
+.navbar.expanded .toggle-btn img {
+    transform: rotate(0deg);
+}
+
+.navbar.collapsed .toggle-btn img {
+    transform: rotate(180deg);
+}
 
 
 
@@ -127,9 +142,3 @@ body {
     height: 24px;
     fill: #656565;
 }
-
-
-
-
-
-
