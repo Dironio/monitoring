@@ -4,7 +4,8 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import Header from './components/Header/Header';
 import './App.css'
 import PromoPage from './components/Pages/PromoPage/PromoPage';
-import Navbar from './components/Navbar/Navbar';
+import Sidebar from './components/Navbar/Navbar';
+
 
 const App: React.FC = () => {
     const [user, setUser] = useState<User | null>(null);
@@ -18,27 +19,29 @@ const App: React.FC = () => {
 
     return (
         <div className="App">
-            <Navbar
-                isExpanded={isNavbarExpanded}
-                toggleNavbar={toggleNavbar}
-            // user={user}
-            />
-
-            <Header
-            // user={user}
-            />
-
-
-            <Routes>
-                <Route
-                    path="/promo"
-                    element={
-                        <PromoPage
-                        // user={user}
-                        />}
+            <div className={`app-container ${isNavbarExpanded ? "with-sidebar" : "without-sidebar"}`}>
+                <Sidebar
+                    isExpanded={isNavbarExpanded}
+                    toggleNavbar={toggleNavbar}
+                // user={user}
                 />
 
-                {/* <Route
+                <div className="main-content">
+
+                    <Header
+                    // user={user}
+                    />
+
+                    <Routes>
+                        <Route
+                            path="/promo"
+                            element={
+                                <PromoPage
+                                // user={user}
+                                />}
+                        />
+
+                        {/* <Route
                     path="/"
                     element={
                         user ? <Navigate to="/auth" /> :
@@ -48,10 +51,11 @@ const App: React.FC = () => {
                 /> */}
 
 
-            </Routes>
+                    </Routes>
 
-
-        </div>
+                </div>
+            </div>
+        </div >
     );
 };
 
