@@ -43,7 +43,7 @@ const AuthPage: React.FC = () => {
     return (
         <main className="main">
             <div className="wrapper">
-                <div className="bg-white">
+                <div className="bg-white-auth">
                     <h2 className="auth__title">
                         {isSignUp ? "Регистрация аккаунта" : "Вход в аккаунт"}
                     </h2>
@@ -56,6 +56,7 @@ const AuthPage: React.FC = () => {
                                         type="text"
                                         className="inititals__name-input"
                                         name="firstName"
+                                        placeholder="Иван"
                                         value={formData.firstName}
                                         onChange={handleChange}
                                     />
@@ -66,6 +67,7 @@ const AuthPage: React.FC = () => {
                                         type="text"
                                         className="inititals__name-input"
                                         name="lastName"
+                                        placeholder="Иванов"
                                         value={formData.lastName}
                                         onChange={handleChange}
                                     />
@@ -82,6 +84,7 @@ const AuthPage: React.FC = () => {
                                         type="email"
                                         className="inititals__name-input"
                                         name="email"
+                                        placeholder="ivanov@example.com"
                                         value={formData.email}
                                         onChange={handleChange}
                                         required={isSignUp}
@@ -96,6 +99,7 @@ const AuthPage: React.FC = () => {
                                     type="text"
                                     className="inititals__name-input"
                                     name="username"
+                                    placeholder="ivanov"
                                     value={formData.username}
                                     onChange={handleChange}
                                     required
@@ -110,6 +114,7 @@ const AuthPage: React.FC = () => {
                                     type="password"
                                     className="inititals__name-input"
                                     name="password"
+                                    placeholder="*****"
                                     value={formData.password}
                                     onChange={handleChange}
                                     required
@@ -122,6 +127,7 @@ const AuthPage: React.FC = () => {
                                         type="password"
                                         className="inititals__name-input"
                                         name="confirmPassword"
+                                        placeholder="*****"
                                         value={formData.confirmPassword}
                                         onChange={handleChange}
                                         required
@@ -141,12 +147,12 @@ const AuthPage: React.FC = () => {
                         {isSignUp ? "Уже есть аккаунт?" : "Нет аккаунта?"}
                     </p>
                     <div className="auth__login">
-                        <p
+                        <button
                             className="auth__login-p"
                             onClick={() => setIsSignUp((prev) => !prev)}
                         >
                             {isSignUp ? "Войти" : "Регистрация"}
-                        </p>
+                        </button>
                     </div>
                 </div>
             </div>

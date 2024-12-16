@@ -4,6 +4,7 @@
     align-content: center;
     justify-content: space-between;
     gap: 10px;
+    margin-bottom: 24px;
 }
 
 .dashobord_item-1 {
@@ -24,17 +25,32 @@
 .sidebar-title {
     font-size: 20px;
     font-weight: bold;
-    color: #656565;
-    margin-bottom: 24px;
+    color: #000;
+    margin-left: 14px;
+}
+
+.search-box__items {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border-bottom: 1px solid #7553FF;
 }
 
 .search-box input {
     width: 100%;
     padding: 8px;
-    font-size: 14px;
-    border: 1px solid #CCC;
-    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #656565;
+    /* border: 1px solid #CCC; */
+    /* border-radius: 8px; */
     box-sizing: border-box;
+}
+
+.search-box input :focus {
+    outline: none;
+    border: none;
 }
 
 .menu {
@@ -53,6 +69,7 @@
     color: #656565;
     text-decoration: none;
     font-size: 16px;
+    font-weight: 500;
     cursor: pointer;
     white-space: nowrap;
     transition: background-color 0.3s, color 0.3s;
@@ -65,27 +82,66 @@
 .menu-item.selected {
     background-color: #7553FF;
     color: white;
+    fill: white;
+}
+
+.menu-item.selected img {
+    color: white;
 }
 
 .menu-item.selected :hover {
-    background-color: #5a3dcb;
+    /* background-color: #5a3dcb; */
     color: white;
 }
 
 .menu-item .icon {
     margin-right: 10px;
-    fill: currentColor;
+    /* fill: currentColor; */
+}
+
+.menu-item img:hover {
+    color: white;
 }
 
 .menu-item:hover {
-    background-color: #E0E0E0;
+    background-color: #5a3dcb;
+    color: white;
 }
 
+.menu-item-img {
+    width: 24px;
+    height: 24px;
+    /* color: #656565; */
+    /* color: white; */
+    fill: white;
+    margin-right: 8px;
+}
 
+.menu-item-img :hover {
+    color: #fff;
+}
+
+.toggle-btn {
+    border: transparent;
+    background: transparent;
+    height: 16px;
+    width: 10px;
+    cursor: pointer;
+    align-items: center;
+    align-content: center;
+}
+
+.toggle-btn-arrow {
+    /* padding: 10px; */
+    height: 18px;
+    width: 14px;
+}
 
 .toggle-btn img {
     transition: transform 0.3s ease;
+
 }
+
 
 .navbar.expanded .toggle-btn img {
     transform: rotate(0deg);
@@ -93,6 +149,7 @@
 
 .navbar.collapsed .toggle-btn img {
     transform: rotate(180deg);
+    /* padding: 10px; */
 }
 
 
@@ -141,4 +198,8 @@ body {
     width: 24px;
     height: 24px;
     fill: #656565;
+}
+
+.navbar.collapsed {
+    margin-bottom: 36px;
 }

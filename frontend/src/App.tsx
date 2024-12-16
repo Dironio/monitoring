@@ -6,6 +6,8 @@ import './App.css'
 import PromoPage from './components/Pages/PromoPage/PromoPage';
 import Sidebar from './components/Navbar/Navbar';
 import AuthPage from './components/Pages/AuthPage/AuthPage';
+import MainPage from './components/Pages/MainPage/MainPage';
+import AccountPage from './components/Pages/AccountPage/AccountPage';
 
 
 const App: React.FC = () => {
@@ -37,7 +39,7 @@ const App: React.FC = () => {
 
                     <Routes>
                         <Route
-                            path="/promo"
+                            path="/"
                             element={
                                 <PromoPage
                                 />}
@@ -52,8 +54,11 @@ const App: React.FC = () => {
 
 
 
+
                         {/* user ? ( */}
-                        <Route path="/main" element={<h1>Главная</h1>} />
+                        <Route path='/account' element={<AccountPage />} />
+
+                        <Route path="/main" element={<MainPage />} />
                         <Route path="/common-metrics" element={<h1>Общие метрики</h1>} />
                         <Route path="/time-metrics" element={<h1>Временные метрики</h1>} />
                         <Route path="/behavior-metrics" element={<h1>Метрики поведения</h1>} />

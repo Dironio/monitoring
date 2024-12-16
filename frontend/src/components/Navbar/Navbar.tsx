@@ -61,7 +61,7 @@ const Sidebar: React.FC<NavbarProps> = ({ isExpanded, toggleNavbar }) => {
                         </div>
                         <div className={`navbar ${isExpanded ? "expanded" : "collapsed"}`}>
                             <button className="toggle-btn" onClick={toggleNavbar}>
-                                <img src="/assets/arrow.svg" alt="" />
+                                <img src="/assets/arrow.svg" alt="" className="toggle-btn-arrow" />
                             </button>
                         </div>
                     </li>
@@ -73,16 +73,20 @@ const Sidebar: React.FC<NavbarProps> = ({ isExpanded, toggleNavbar }) => {
 
                     <div className="search-box">
                         {/* {isSearchActive ? ( */}
-                        <SearchBar
-                            onSearch={handleSearch}
-                            results={searchResults}
-                        />
-                        {/* ) : (
+                        <div className="search-box__items">
+
+                            <SearchBar
+                                onSearch={handleSearch}
+                                results={searchResults}
+                            />
                             <img
                                 src="/assets/find.svg"
                                 alt=""
                                 onClick={handleSearchIconClick}
                             />
+
+                        </div>
+                        {/* ) : (
                         )} */}
                     </div>
 
@@ -93,7 +97,7 @@ const Sidebar: React.FC<NavbarProps> = ({ isExpanded, toggleNavbar }) => {
                                 key={item.path}
                                 className={`menu-item ${activeItem === item.path ? "selected" : ""}`}
                             >
-                                <img src={item.icon} alt="" />
+                                <img className="menu-item-img" src={item.icon} alt="" />
                                 <p>{item.label}</p>
                             </Link>
                         ))}
@@ -103,7 +107,10 @@ const Sidebar: React.FC<NavbarProps> = ({ isExpanded, toggleNavbar }) => {
                 <div className="collapsed-sidebar">
                     <div className={`navbar ${isExpanded ? "expanded" : "collapsed"}`}>
                         <button className="toggle-btn" onClick={toggleNavbar}>
-                            <img src="/assets/arrow.svg" alt="" />
+                            <img
+                                src="/assets/arrow.svg"
+                                alt=""
+                                className="toggle-btn-arrow" />
                         </button>
                     </div>
 
