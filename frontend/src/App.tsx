@@ -8,6 +8,7 @@ import Sidebar from './components/Navbar/Navbar';
 import AuthPage from './components/Pages/AuthPage/AuthPage';
 import MainPage from './components/Pages/MainPage/MainPage';
 import AccountPage from './components/Pages/AccountPage/AccountPage';
+import ApplicationPage from './components/Pages/ApplicationPage/ApplicationPage';
 
 
 const App: React.FC = () => {
@@ -56,7 +57,22 @@ const App: React.FC = () => {
 
 
                         {/* user ? ( */}
-                        <Route path='/account' element={<AccountPage />} />
+                        <Route
+                            path="/account"
+                            element={
+                                // user ? <Navigate to="/auth" /> :
+                                <AccountPage />
+                            }
+                        />
+                        <Route
+                            path="/application"
+                            element={
+                                // user ? <Navigate to="/auth" /> :
+                                <ApplicationPage />
+                            }
+                        />
+                        
+
 
                         <Route path="/main" element={<MainPage />} />
                         <Route path="/common-metrics" element={<h1>Общие метрики</h1>} />
@@ -65,24 +81,17 @@ const App: React.FC = () => {
                         <Route path="/graphs-navigation" element={<h1>Графы и навигация</h1>} />
                         <Route path="/forecast-models" element={<h1>Модели прогнозов</h1>} />
                         <Route path="/experiments" element={<h1>Эксперименты</h1>} />
-                        {/* ) : (
-                        <Route
-                            path="/promo"
-                            element={
-                                <PromoPage
-                                />}
-                        />
-                        ) */}
+
 
 
                         {/* <Route
-                    path="/"
-                    element={
-                        user ? <Navigate to="/auth" /> :
-                            <HomePage
-                                user={user} />
-                    }
-                /> */}
+                            path="/"
+                            element={
+                                user ? <Navigate to="/auth" /> :
+                                    <HomePage
+                                        user={user} />
+                            }
+                        /> */}
 
 
                     </Routes>
