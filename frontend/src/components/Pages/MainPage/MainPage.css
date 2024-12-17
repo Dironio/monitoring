@@ -29,12 +29,16 @@
     background-color: #F8F8F8;
     border-radius: 20px;
     color: #656565;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: 18px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 1px solid #EBEBEB;
 }
 
 .nav-item.selected, .nav-item:hover {
     background-color: #7553FF;
     color: #FFFFFF;
+    border: 1px solid #7553FF;
 }
 
 .content {

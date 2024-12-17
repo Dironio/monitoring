@@ -123,8 +123,6 @@ const ApplicationPage: React.FC = () => {
                         <form className="application-form" onSubmit={handleSubmit}>
                             {selectedForm === "site" && (
                                 <>
-
-                                {/* ПЕРЕДЕЛАТЬ */}
                                     <div className="form-group">
                                         <label className="form-label" htmlFor="siteUrl">
                                             Адрес сайта
@@ -147,7 +145,7 @@ const ApplicationPage: React.FC = () => {
                                             type="email"
                                             id="email"
                                             name="email"
-                                            className="form-input medium"
+                                            className="form-input"
                                             placeholder="user@example.com"
                                             value={formData.email}
                                             onChange={handleChange}
@@ -166,7 +164,7 @@ const ApplicationPage: React.FC = () => {
                                             type="text"
                                             id="siteUrl"
                                             name="siteUrl"
-                                            className="form-input long"
+                                            className="form-input"
                                             placeholder="https://example.com"
                                             value={formData.siteUrl}
                                             onChange={handleChange}
@@ -180,7 +178,7 @@ const ApplicationPage: React.FC = () => {
                                             type="text"
                                             id="brandName"
                                             name="brandName"
-                                            className="form-input medium"
+                                            className="form-input"
                                             placeholder="Ваш бренд"
                                             value={formData.brandName}
                                             onChange={handleChange}
@@ -194,7 +192,7 @@ const ApplicationPage: React.FC = () => {
                                             type="text"
                                             id="inn"
                                             name="inn"
-                                            className="form-input medium"
+                                            className="form-input"
                                             placeholder="1234567890"
                                             value={formData.inn}
                                             onChange={handleChange}
@@ -208,7 +206,7 @@ const ApplicationPage: React.FC = () => {
                                             type="email"
                                             id="email"
                                             name="email"
-                                            className="form-input medium"
+                                            className="form-input"
                                             placeholder="user@example.com"
                                             value={formData.email}
                                             onChange={handleChange}
@@ -222,7 +220,7 @@ const ApplicationPage: React.FC = () => {
                                     Отмена
                                 </button>
                                 <button type="submit" className="form-btn submit">
-                                    Оставить заявку
+                                    Сохранить
                                 </button>
                             </div>
                         </form>

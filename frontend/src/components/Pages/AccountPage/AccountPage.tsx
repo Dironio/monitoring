@@ -29,7 +29,7 @@ const AccountPage: React.FC = () => {
                                 <p className="item-description">Изменить имя, картинки и т.д.</p>
                             </Link>
 
-                            <Link to="/account/analytics" className="account-grid__item">
+                            <Link to="/account/main" className="account-grid__item">
                                 <h3 className="item-title">Аналитика моего сайта</h3>
                                 <p className="item-description">Для владельцев и администраторов сайтов</p>
                             </Link>

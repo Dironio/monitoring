@@ -1,0 +1,42 @@
+.unknow-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 474px;
+    text-align: center;
+}
+
+.unknow-pg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.unknow-pg__item {
+    margin-bottom: 12px;
+}
+
+.unknow-pg__item:last-child {
+    margin-bottom: 0;
+}
+
+.unknow-pg__item:first-child {
+    color: #7553FF;
+}
+
+.unknow-pg__btn {
+    background-color: #7553FF;
+    color: white;
+    border: none;
+    border-radius: 22px;
+    padding: 12px 24px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.unknow-pg__btn:hover {
+    background-color: #5a3dcb;
+}

@@ -10,6 +10,8 @@ import MainPage from './components/Pages/MainPage/MainPage';
 import AccountPage from './components/Pages/AccountPage/AccountPage';
 import ApplicationPage from './components/Pages/ApplicationPage/ApplicationPage';
 import AccountSetting from './components/Pages/AccountPage/AccountSettings/AccountSetting';
+import UnknowPage from './components/Pages/UnknowPage/UnknowPage';
+import OverviewComponent from './components/Pages/MainPage/Components/OverviewComponent';
 
 
 const App: React.FC = () => {
@@ -39,7 +41,11 @@ const App: React.FC = () => {
                     // user={user}
                     />
 
+
                     <Routes>
+
+                        <Route path="*" element={<UnknowPage />} />
+
                         <Route
                             path="/"
                             element={
@@ -79,7 +85,15 @@ const App: React.FC = () => {
 
 
 
-                        <Route path="/main" element={<MainPage />} />
+                        <Route path="/main" element={<MainPage />} >
+
+                            <Route path="overview" element={<OverviewComponent />} />
+                            {/* <Route path="average-time" element={<AverageTimeReport />} />
+                            <Route path="behavior-metrics" element={<BehaviorMetricsReport />} />
+                            <Route path="visit-history" element={<VisitHistoryReport />} />
+                            <Route path="sales-analytics" element={<SalesAnalyticsReport />} /> */}
+                        </Route>
+
                         <Route path="/common-metrics" element={<h1>Общие метрики</h1>} />
                         <Route path="/time-metrics" element={<h1>Временные метрики</h1>} />
                         <Route path="/behavior-metrics" element={<h1>Метрики поведения</h1>} />
