@@ -1,0 +1,58 @@
+.account-title{
+    font-weight: 600;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 150px;
+    margin-top: 20px;
+}
+
+
+.account-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    /* margin-top: 40px; */
+    /* background-color: #f0f0f0; Цвет фона */
+    padding: 20px;
+    border-radius: 8px;
+}
+
+
+.account-grid__item {
+    background-color: #F8F8F8;
+    /* border: 1px solid #ccc; */
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    color: #656565;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 250px;
+    width: 470px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    transition: all .3s ease;
+    cursor: pointer;
+}
+
+.account-grid__item:hover {
+    background-color: #7553FF;
+    color: white;
+    transition: all .3s ease;
+}
+
+
+
+.item-description {
+    /* flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; */
+    overflow-wrap: break-word;
+}
+
+.account-grid__btn {
+    margin-top: auto;
+    padding: 10px;
+}

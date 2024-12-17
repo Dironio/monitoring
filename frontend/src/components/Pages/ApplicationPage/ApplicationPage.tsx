@@ -1,121 +1,237 @@
-import React from "react"
+import React, { useState } from "react"
 import { Link } from "react-router-dom";
+import './ApplicationPage.css';
 
 const ApplicationPage: React.FC = () => {
-    return (
+    const [selectedForm, setSelectedForm] = useState<"site" | "brand" | null>(null);
+    const [formData, setFormData] = useState({
+        siteUrl: "https://example.com",
+        email: "user@example.com",
+        brandName: "",
+        inn: "",
+    });
 
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const resetForm = () => {
+        setFormData({
+            siteUrl: "https://example.com",
+            email: "user@example.com",
+            brandName: "",
+            inn: "",
+        });
+        setSelectedForm(null);
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log("Отправлено:", formData);
+        alert("Заявка отправлена!");
+        resetForm();
+    };
+
+    return (
         <main>
             <div className="wrapper">
                 <div className="bg-white">
-                    <div className="main-header">
-                        <p className="main-header__logo">Оставьте заявку</p>
-                    </div>
+                    {/* Заголовок */}
+                    {/* <div className="main-header">
+                        <button
+                            className="toggle-btn"
+                            onClick={resetForm}
+                            type="button"
+                        >
+                            <img
+                                src="/assets/arrow.svg"
+                                alt="Назад"
+                                className="toggle-btn-arrow"
+                            />
+                        </button>
+                        <p className="main-header__logo">Заявка</p>
+                    </div> */}
 
-                    <div className="main-header">
-                        <p className="main-header__logo">Хотите отслеживать свой сайт? Укажите как с вами связаться и адрес вашего сайта</p>
-
-
-
-                    </div>
-
-                    <form action="">
-                        <div className="item-initials">
-                            <div className="initials__name">
-                                <p className="inititals__first-name">адрес сайта</p>
-                                <input
-                                    type="text"
-                                    className="inititals__name-input"
-                                    name="firstName"
-                                    placeholder="Иван"
-                                // value={formData.firstName}
-                                // onChange={handleChange}
+                    {selectedForm && (
+                        <div className="main-header">
+                            <button
+                                className="toggle-btn"
+                                onClick={resetForm}
+                                type="button"
+                            >
+                                <img
+                                    src="/assets/arrow.svg"
+                                    alt="Назад"
+                                    className="toggle-btn-arrow"
                                 />
-                            </div>
+                            </button>
+                            <p className="main-header__logo">Заявка на {
+                                selectedForm ? ("регистрацию аккаунта владельца веб-сайта")
+                                    :
+                                    ("регистрацию аккаунта аналлитика")}</p>
                         </div>
-                        <div className="item-initials">
-                            <div className="initials__name">
-                                <p className="inititals__first-name">email для обращения</p>
-                                <input
-                                    type="text"
-                                    className="inititals__name-input"
-                                    name="lastName"
-                                    placeholder="Иванов"
-                                // value={formData.lastName}
-                                // onChange={handleChange}
+                    )}
+
+
+
+                    {!selectedForm ? (
+                        <div className="form-selection">
+
+                            <div className="main-header">
+                                {/* <Link to="/account"
+                                className="settings-btn"
+                                type="button"
+                            >
+                                <img
+                                    src="/assets/arrow.svg"
+                                    alt="Назад"
+                                    className="toggle-btn-arrow"
                                 />
-                                <button>Оставить</button>
+                            </Link>
+
+                            <p className="form-selection-title">Выберите форму заявки</p> */}
+
+                                <Link to="/account"
+                                    className="settings-btn"
+                                    type="button"
+                                >
+                                    <img
+                                        src="/assets/arrow.svg"
+                                        alt="Назад"
+                                        className="toggle-btn-arrow"
+                                    />
+                                </Link>
+                                <p className="form-selection-title">Настройки аккаунта</p>
                             </div>
+                            <ul className="form-selection-list">
+                                <li
+                                    className="form-selection-item"
+                                    onClick={() => setSelectedForm("site")}
+                                >
+                                    Отслеживание сайта
+                                </li>
+                                <li
+                                    className="form-selection-item"
+                                    onClick={() => setSelectedForm("brand")}
+                                >
+                                    Отслеживание товаров
+                                </li>
+                            </ul>
                         </div>
-                    </form>
+                    ) : (
+                        <form className="application-form" onSubmit={handleSubmit}>
+                            {selectedForm === "site" && (
+                                <>
 
-                    <div className="main-header">
-                        <p className="main-header__logo">Ваш сайт уже добавлен и вы хотите отслеживать свои товары? Оставьте заявку ниже</p>
+                                {/* ПЕРЕДЕЛАТЬ */}
+                                    <div className="form-group">
+                                        <label className="form-label" htmlFor="siteUrl">
+                                            Адрес сайта
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="siteUrl"
+                                            name="siteUrl"
+                                            className="form-input"
+                                            placeholder="https://example.com"
+                                            value={formData.siteUrl}
+                                            onChange={handleChange}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label" htmlFor="email">
+                                            Email для обращения
+                                        </label>
+                                        <input
+                                            type="email"
+                                            id="email"
+                                            name="email"
+                                            className="form-input medium"
+                                            placeholder="user@example.com"
+                                            value={formData.email}
+                                            onChange={handleChange}
+                                        />
+                                    </div>
+                                </>
+                            )}
 
+                            {selectedForm === "brand" && (
+                                <>
+                                    <div className="form-group">
+                                        <label className="form-label" htmlFor="siteUrl">
+                                            Адрес сайта
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="siteUrl"
+                                            name="siteUrl"
+                                            className="form-input long"
+                                            placeholder="https://example.com"
+                                            value={formData.siteUrl}
+                                            onChange={handleChange}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label" htmlFor="brandName">
+                                            Ваш бренд
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="brandName"
+                                            name="brandName"
+                                            className="form-input medium"
+                                            placeholder="Ваш бренд"
+                                            value={formData.brandName}
+                                            onChange={handleChange}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label" htmlFor="inn">
+                                            ИНН
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="inn"
+                                            name="inn"
+                                            className="form-input medium"
+                                            placeholder="1234567890"
+                                            value={formData.inn}
+                                            onChange={handleChange}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label" htmlFor="email">
+                                            Email для обращения
+                                        </label>
+                                        <input
+                                            type="email"
+                                            id="email"
+                                            name="email"
+                                            className="form-input medium"
+                                            placeholder="user@example.com"
+                                            value={formData.email}
+                                            onChange={handleChange}
+                                        />
+                                    </div>
+                                </>
+                            )}
 
-
-                    </div>
-
-                    <form action="">
-                        <div className="item-initials">
-                            <div className="initials__name">
-                                <p className="inititals__first-name">адрес сайта</p>
-                                <input
-                                    type="text"
-                                    className="inititals__name-input"
-                                    name="firstName"
-                                    placeholder="Иван"
-                                // value={formData.firstName}
-                                // onChange={handleChange}
-                                />
+                            <div className="form-actions">
+                                <button type="button" className="form-btn cancel" onClick={resetForm}>
+                                    Отмена
+                                </button>
+                                <button type="submit" className="form-btn submit">
+                                    Оставить заявку
+                                </button>
                             </div>
-                        </div>
-                        <div className="item-initials">
-                            <div className="initials__name">
-                                <p className="inititals__first-name">Ваш бренд</p>
-                                <input
-                                    type="text"
-                                    className="inititals__name-input"
-                                    name="lastName"
-                                    placeholder="Иванов"
-                                // value={formData.lastName}
-                                // onChange={handleChange}
-                                />
-
-                            </div>
-                            <div className="initials__name">
-                                <p className="inititals__first-name">ИНН</p>
-                                <input
-                                    type="text"
-                                    className="inititals__name-input"
-                                    name="lastName"
-                                    placeholder="Иванов"
-                                // value={formData.lastName}
-                                // onChange={handleChange}
-                                />
-
-                            </div>
-                        </div>
-
-                        <div className="item-initials">
-                            <div className="initials__name">
-                                <p className="inititals__first-name">email для обращения</p>
-                                <input
-                                    type="text"
-                                    className="inititals__name-input"
-                                    name="firstName"
-                                    placeholder="Иван"
-                                // value={formData.firstName}
-                                // onChange={handleChange}
-                                />
-                                <button>Оставить</button>
-                            </div>
-                        </div>
-
-                    </form>
+                        </form>
+                    )}
                 </div>
             </div>
         </main>
-    )
+    );
+
 }
 
 export default ApplicationPage;

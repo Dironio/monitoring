@@ -9,6 +9,7 @@ import AuthPage from './components/Pages/AuthPage/AuthPage';
 import MainPage from './components/Pages/MainPage/MainPage';
 import AccountPage from './components/Pages/AccountPage/AccountPage';
 import ApplicationPage from './components/Pages/ApplicationPage/ApplicationPage';
+import AccountSetting from './components/Pages/AccountPage/AccountSettings/AccountSetting';
 
 
 const App: React.FC = () => {
@@ -57,6 +58,7 @@ const App: React.FC = () => {
 
 
                         {/* user ? ( */}
+
                         <Route
                             path="/account"
                             element={
@@ -71,7 +73,10 @@ const App: React.FC = () => {
                                 <ApplicationPage />
                             }
                         />
-                        
+
+
+                        <Route path="/account/settings" element={<AccountSetting />} />
+
 
 
                         <Route path="/main" element={<MainPage />} />

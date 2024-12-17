@@ -7,14 +7,14 @@ const AccountPage: React.FC = () => {
             <main>
                 <div className="wrapper">
                     <div className="bg-white">
-                        <div className="main-header">
-                            <p className="main-header__logo">Добро пожаловать
+                        <div className="account-header">
+                            <p className="account-header__logo">Добро пожаловать
                                 {/* {<span>,user.first_name</span> || ''}  */}
                             </p>
                         </div>
 
-                        <div className="main-header">
-                            <p className="main-header__logo">Хотите отслеживать свой сайт?</p>
+                        <div className="account-title">
+                            <p className="account-header__logo">Хотите отслеживать свой сайт?</p>
                             <Link to="/application">
                                 <button className="main-header__btn">Оставить заявку</button>
                             </Link>
@@ -23,25 +23,30 @@ const AccountPage: React.FC = () => {
 
 
 
-                        <div className="main-grid">
-                            <div className="main-grid__item">
+                        <div className="account-grid">
+                            <Link to="/account/settings" className="account-grid__item">
                                 <h3 className="item-title">Настройки пользователя</h3>
-                                <p className="item-description">Изменить имя, картинки и тд</p>
-                            </div>
-                            <div className="main-grid__item">
+                                <p className="item-description">Изменить имя, картинки и т.д.</p>
+                            </Link>
+
+                            <Link to="/account/analytics" className="account-grid__item">
                                 <h3 className="item-title">Аналитика моего сайта</h3>
                                 <p className="item-description">Для владельцев и администраторов сайтов</p>
-                            </div>
-                            <div className="main-grid__item">
+                            </Link>
+
+                            <Link to="/account/sales-analytics" className="account-grid__item">
                                 <h3 className="item-title">Аналитика продаж</h3>
-                                <p className="item-description">Для продавцов, работающих на поддерживаемом сайте. Аналитика посещения товаров и тд</p>
-                                <button className="grid-item__btn">Подробнее</button>
-                            </div>
-                            <div className="main-grid__item">
-                                <h3 className="item-title">Аналитика продаж</h3>
-                                <p className="item-description">Для продавцов, работающих на поддерживаемом сайте. Аналитика посещения товаров и тд</p>
-                                <button className="grid-item__btn">Подробнее</button>
-                            </div>
+                                <p className="item-description">
+                                    Для продавцов, работающих на поддерживаемом сайте. Аналитика посещения товаров и т.д.
+                                </p>
+                            </Link>
+
+                            <Link to="/account/sales" className="account-grid__item">
+                                <h3 className="item-title">Продажи</h3>
+                                <p className="item-description">
+                                    Управление продажами и мониторинг статистики.
+                                </p>
+                            </Link>
                         </div>
 
                     </div>
