@@ -1,43 +1,23 @@
 import React, { useState } from "react";
 import "./AuthPage.css";
 import { useAuthForm } from "../../../hooks/useAuthForm";
+import { useAuth } from "../../../hooks/useAuth";
+import { config } from "dotenv";
 
+// config({ path: "./.env" });
+
+
+// Не знаю, может сделать разделение хуков на регу и логин, может проблема в дотенв, потестить
+//исправить стили ошибок
 const AuthPage: React.FC = () => {
     const [isSignUp, setIsSignUp] = useState(true);
     const { formData, errors, handleChange, validateForm } = useAuthForm(isSignUp);
+    const { handleAuth, loading, authErrors } = useAuth();
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (!validateForm()) {
-            console.error("Форма содержит ошибки!");
-            return;
-        }
-
-        const url = isSignUp ? "/api/register" : "/api/login";
-        const data = isSignUp
-            ? {
-                firstName: formData.firstName,
-                lastName: formData.lastName,
-                email: formData.email,
-                username: formData.username,
-                password: formData.password,
-            }
-            : {
-                username: formData.username,
-                password: formData.password,
-            };
-
-        fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-        })
-            .then((res) => {
-                if (!res.ok) throw new Error("Ошибка запроса");
-                return res.json();
-            })
-            .then((response) => console.log("Успех:", response))
-            .catch((error) => console.error("Ошибка:", error));
+        if (!validateForm()) return;
+        handleAuth(isSignUp, formData);
     };
 
     return (

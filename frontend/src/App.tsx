@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { config } from 'dotenv';
 import { User } from './models/user.model';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Header from './components/Header/Header';
@@ -13,6 +14,7 @@ import AccountSetting from './components/Pages/AccountPage/AccountSettings/Accou
 import UnknowPage from './components/Pages/UnknowPage/UnknowPage';
 import OverviewComponent from './components/Pages/MainPage/Components/OverviewComponent';
 
+// config({ path: './.env' });
 
 const App: React.FC = () => {
     const [user, setUser] = useState<User | null>(null);
@@ -72,6 +74,8 @@ const App: React.FC = () => {
                                 <AccountPage />
                             }
                         />
+                        <Route path="/account/settings" element={<AccountSetting />} />
+
                         <Route
                             path="/application"
                             element={
@@ -81,7 +85,6 @@ const App: React.FC = () => {
                         />
 
 
-                        <Route path="/account/settings" element={<AccountSetting />} />
 
 
 
