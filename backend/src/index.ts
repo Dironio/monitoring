@@ -20,6 +20,7 @@ app.use('/api', rootRouter);
 
 function start() {
     try {
+        console.log(`${process.env.API_FRONT}`)
         app.listen(PORT, () => {
             console.log(`Server is running on ${PORT} port`)
         })

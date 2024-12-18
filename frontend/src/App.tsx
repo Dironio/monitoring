@@ -28,14 +28,26 @@ const App: React.FC = () => {
 
     return (
         <div className="App">
-            <div className={`app-container ${isNavbarExpanded ? "with-sidebar" : "without-sidebar"}`}>
+            {/* <div className={`app-container ${isNavbarExpanded ? "with-sidebar" : "without-sidebar"}`}> */}
+            
+            
+            {/* переделать */}
+
+            
+            <div className={`app-container ${user ? "with-sidebar" : "without-sidebar"}`}>
                 {/* {user ? () : null} */}
-                <Sidebar
+                {/* <Sidebar 
+                    // isExpanded={isNavbarExpanded}
+                    // toggleNavbar={toggleNavbar}
+                // user={user}
+                /> */}
+
+
+                {user && <Sidebar
                     isExpanded={isNavbarExpanded}
                     toggleNavbar={toggleNavbar}
                 // user={user}
-                />
-
+                />}
 
                 <div className="main-content">
 

@@ -1,7 +1,6 @@
-
-import { config } from "dotenv";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 interface LoginResponse {
     user: {
@@ -10,7 +9,6 @@ interface LoginResponse {
     };
     accessToken: string;
 }
-
 
 export const useAuth = () => {
     const [loading, setLoading] = useState(false);
@@ -45,26 +43,20 @@ export const useAuth = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post<LoginResponse>(
-                `${process.env.REACT_APP_API_URL}/auth/signup`,
-                data, {
+            const response = await axios.post<LoginResponse>(url, data, {
                 headers: { "Content-Type": "application/json" },
                 withCredentials: true,
             });
 
             console.log("Ответ от сервера:", response.data);
-            const result = response.data;
+            const { accessToken } = response.data;
 
-            console.log("Успешный ответ:", result);
-
-            if (!isSignUp) {
-                localStorage.setItem("accessToken", result.accessToken);
-                navigate("/");
-                navigate(0);
-            } else {
-                navigate("/");
+            if (accessToken) {
+                localStorage.setItem("accessToken", accessToken);
+                console.log("Токен сохранен в localStorage");
             }
 
+            navigate("/");
             setAuthErrors({});
         } catch (err: any) {
             console.error(err.response?.data?.message || "Ошибка сети");
