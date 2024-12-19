@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { User } from "../models/user.model";
+import axios from "axios";
 
 
 export const useFetchUser = () => {
@@ -11,6 +12,7 @@ export const useFetchUser = () => {
             try {
                 setLoading(true);
                 const token = localStorage.getItem("accessToken");
+                
                 if (!token) {
                     console.error("Токен отсутствует");
                     return;

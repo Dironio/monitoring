@@ -15,11 +15,14 @@ import OverviewComponent from './components/Pages/MainPage/Components/OverviewCo
 import UnknownPage from './components/Pages/UnknowPage/UnknowPage';
 import { useFetchUser } from './hooks/useCurrentUser';
 
-// config({ path: './.env' });
-
 const App: React.FC = () => {
-    const [isNavbarExpanded, setIsNavbarExpanded] = useState(true);
+    const [isNavbarExpanded, setIsNavbarExpanded] = useState<boolean>(() => {
+        const savedState = localStorage.getItem("navbarExpanded");
+        return savedState ? JSON.parse(savedState) : true;
+    });
     const { user, loading } = useFetchUser();
+
+    console.log(user)
 
     if (loading) {
         return <div>Загрузка...</div>;
@@ -27,7 +30,11 @@ const App: React.FC = () => {
 
 
     const toggleNavbar = () => {
-        setIsNavbarExpanded(!isNavbarExpanded);
+        setIsNavbarExpanded((prev) => {
+            const newState = !prev;
+            localStorage.setItem("navbarExpanded", JSON.stringify(newState));
+            return newState;
+        });
     };
 
 
@@ -121,7 +128,14 @@ const App: React.FC = () => {
 
 
 
-            <div className={`app-container ${user ? (isNavbarExpanded ? "with-sidebar" : "with-sidebar collapsed") : "without-sidebar"}`}>
+            <div
+                className={`app-container ${user
+                        ? isNavbarExpanded
+                            ? "with-sidebar"
+                            : "with-sidebar collapsed"
+                        : "without-sidebar"
+                    }`}
+            >
                 {user && (
                     <Sidebar
                         isExpanded={isNavbarExpanded}
@@ -184,21 +198,6 @@ const App: React.FC = () => {
                     </Routes>
                 </div>
             </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         </div >
     );
 };

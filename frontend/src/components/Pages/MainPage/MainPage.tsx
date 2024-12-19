@@ -15,7 +15,7 @@ const MainPage: React.FC = () => {
                 <div className="wrapper-page">
                     <nav className="top-nav">
                         <ul className="nav-list">
-                            <li className="nav-item">
+                            <li className="">
                                 <NavLink
                                     to="overview"
                                     className={({ isActive }) => isActive ? 'nav-item selected' : 'nav-item'}
@@ -23,7 +23,7 @@ const MainPage: React.FC = () => {
                                     Сводка отчетов
                                 </NavLink>
                             </li>
-                            <li className="nav-item">
+                            <li className="">
                                 <NavLink
                                     to="average-time"
                                     className={({ isActive }) => isActive ? 'nav-item selected' : 'nav-item'}
@@ -31,7 +31,7 @@ const MainPage: React.FC = () => {
                                     Среднее время на сайте
                                 </NavLink>
                             </li>
-                            <li className="nav-item">
+                            <li className="">
                                 <NavLink
                                     to="behavior-metrics"
                                     className={({ isActive }) => isActive ? 'nav-item selected' : 'nav-item'}
@@ -39,7 +39,7 @@ const MainPage: React.FC = () => {
                                     Метрики поведения
                                 </NavLink>
                             </li>
-                            <li className="nav-item">
+                            <li className="">
                                 <NavLink
                                     to="visit-history"
                                     className={({ isActive }) => isActive ? 'nav-item selected' : 'nav-item'}
@@ -47,7 +47,7 @@ const MainPage: React.FC = () => {
                                     История посещений
                                 </NavLink>
                             </li>
-                            <li className="nav-item">
+                            <li className="">
                                 <NavLink
                                     to="sales-analytics"
                                     className={({ isActive }) => isActive ? 'nav-item selected' : 'nav-item'}

@@ -49,6 +49,10 @@ const Sidebar: React.FC<NavbarProps> = ({ isExpanded, toggleNavbar }) => {
         }
     };
 
+    useEffect(() => {
+        const basePath = location.pathname.split('/')[1];
+        setActiveItem(`/${basePath}`);
+    }, [location.pathname]);
 
     return (
         <>
@@ -65,14 +69,7 @@ const Sidebar: React.FC<NavbarProps> = ({ isExpanded, toggleNavbar }) => {
                             </button>
                         </div>
                     </li>
-
-                    {/* <div className="search-box">
-                        <input type="text" placeholder="Поиск..." />
-                        <img src="/assets/find.svg" alt="" />
-                    </div> */}
-
                     <div className="search-box">
-                        {/* {isSearchActive ? ( */}
                         <div className="search-box__items">
 
                             <SearchBar
@@ -86,10 +83,7 @@ const Sidebar: React.FC<NavbarProps> = ({ isExpanded, toggleNavbar }) => {
                             />
 
                         </div>
-                        {/* ) : (
-                        )} */}
                     </div>
-
                     <ul className="menu">
                         {menuItems.map(item => (
                             <Link
