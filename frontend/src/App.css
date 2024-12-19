@@ -70,7 +70,8 @@ body {
 }
 
 
-.bg-white, .bg-white-auth {
+.bg-white,
+.bg-white-auth {
     background-color: #fff;
     border-radius: 10px;
     padding: 50px;
@@ -119,5 +120,6 @@ body {
 }
 
 .without-sidebar .main-content {
-    margin-left: 60px;
+    /* margin-left: 60px; */
+    margin-left: 0;
 }

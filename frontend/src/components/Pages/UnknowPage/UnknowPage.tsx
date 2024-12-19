@@ -1,7 +1,7 @@
 import './UnknowPage.css';
 import { Link } from 'react-router-dom';
 
-const UnknowPage: React.FC = () => {
+const UnknownPage: React.FC = () => {
     return (
         <div className="wrapper">
             <div className="bg-white">
@@ -21,4 +21,4 @@ const UnknowPage: React.FC = () => {
     )
 }
 
-export default UnknowPage;
+export default UnknownPage;

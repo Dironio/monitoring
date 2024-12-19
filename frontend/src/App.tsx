@@ -11,15 +11,20 @@ import MainPage from './components/Pages/MainPage/MainPage';
 import AccountPage from './components/Pages/AccountPage/AccountPage';
 import ApplicationPage from './components/Pages/ApplicationPage/ApplicationPage';
 import AccountSetting from './components/Pages/AccountPage/AccountSettings/AccountSetting';
-import UnknowPage from './components/Pages/UnknowPage/UnknowPage';
 import OverviewComponent from './components/Pages/MainPage/Components/OverviewComponent';
+import UnknownPage from './components/Pages/UnknowPage/UnknowPage';
+import { useFetchUser } from './hooks/useCurrentUser';
 
 // config({ path: './.env' });
 
 const App: React.FC = () => {
-    const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(true);
     const [isNavbarExpanded, setIsNavbarExpanded] = useState(true);
+    const { user, loading } = useFetchUser();
+
+    if (loading) {
+        return <div>Загрузка...</div>;
+    }
+
 
     const toggleNavbar = () => {
         setIsNavbarExpanded(!isNavbarExpanded);
@@ -29,20 +34,8 @@ const App: React.FC = () => {
     return (
         <div className="App">
             {/* <div className={`app-container ${isNavbarExpanded ? "with-sidebar" : "without-sidebar"}`}> */}
-            
-            
-            {/* переделать */}
 
-            
-            <div className={`app-container ${user ? "with-sidebar" : "without-sidebar"}`}>
-                {/* {user ? () : null} */}
-                {/* <Sidebar 
-                    // isExpanded={isNavbarExpanded}
-                    // toggleNavbar={toggleNavbar}
-                // user={user}
-                /> */}
-
-
+            {/* <div className={`app-container ${user ? "with-sidebar" : "without-sidebar"}`}>
                 {user && <Sidebar
                     isExpanded={isNavbarExpanded}
                     toggleNavbar={toggleNavbar}
@@ -77,7 +70,7 @@ const App: React.FC = () => {
 
 
 
-                        {/* user ? ( */}
+                        {/* user ? ( 
 
                         <Route
                             path="/account"
@@ -106,7 +99,7 @@ const App: React.FC = () => {
                             {/* <Route path="average-time" element={<AverageTimeReport />} />
                             <Route path="behavior-metrics" element={<BehaviorMetricsReport />} />
                             <Route path="visit-history" element={<VisitHistoryReport />} />
-                            <Route path="sales-analytics" element={<SalesAnalyticsReport />} /> */}
+                            <Route path="sales-analytics" element={<SalesAnalyticsReport />} /> 
                         </Route>
 
                         <Route path="/common-metrics" element={<h1>Общие метрики</h1>} />
@@ -118,20 +111,94 @@ const App: React.FC = () => {
 
 
 
-                        {/* <Route
-                            path="/"
-                            element={
-                                user ? <Navigate to="/auth" /> :
-                                    <HomePage
-                                        user={user} />
-                            }
-                        /> */}
-
-
                     </Routes>
 
                 </div>
+            </div> */}
+
+
+
+
+
+
+            <div className={`app-container ${user ? (isNavbarExpanded ? "with-sidebar" : "with-sidebar collapsed") : "without-sidebar"}`}>
+                {user && (
+                    <Sidebar
+                        isExpanded={isNavbarExpanded}
+                        toggleNavbar={toggleNavbar}
+                    />
+                )}
+                <div className="main-content">
+                    <Header
+                    // user={user} 
+                    />
+                    <Routes>
+                        <Route path="*" element={<UnknownPage />} />
+                        <Route path="/" element={<PromoPage />} />
+                        <Route path="/auth" element={<AuthPage />} />
+
+                        <Route
+                            path="/account"
+                            element={
+                                user ? <AccountPage /> : <Navigate to="/auth" />
+                            }
+                        >
+                            <Route path="settings" element={<AccountSetting />} />
+                        </Route>
+                        <Route
+                            path="/application"
+                            element={
+                                user ? <ApplicationPage /> : <Navigate to="/auth" />
+                            }
+                        />
+                        <Route
+                            path="/main"
+                            element={user ? <MainPage /> : <Navigate to="/auth" />}
+                        >
+                            <Route path="overview" element={<OverviewComponent />} />
+                        </Route>
+                        <Route
+                            path="/common-metrics"
+                            element={user ? <h1>Общие метрики</h1> : <Navigate to="/auth" />}
+                        />
+                        <Route
+                            path="/time-metrics"
+                            element={user ? <h1>Временные метрики</h1> : <Navigate to="/auth" />}
+                        />
+                        <Route
+                            path="/behavior-metrics"
+                            element={user ? <h1>Метрики поведения</h1> : <Navigate to="/auth" />}
+                        />
+                        <Route
+                            path="/graphs-navigation"
+                            element={user ? <h1>Графы и навигация</h1> : <Navigate to="/auth" />}
+                        />
+                        <Route
+                            path="/forecast-models"
+                            element={user ? <h1>Модели прогнозов</h1> : <Navigate to="/auth" />}
+                        />
+                        <Route
+                            path="/experiments"
+                            element={user ? <h1>Эксперименты</h1> : <Navigate to="/auth" />}
+                        />
+                    </Routes>
+                </div>
             </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         </div >
     );
 };
