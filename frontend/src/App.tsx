@@ -144,7 +144,7 @@ const App: React.FC = () => {
                 )}
                 <div className="main-content">
                     <Header
-                    // user={user} 
+                    user={user} 
                     />
                     <Routes>
                         <Route path="*" element={<UnknownPage />} />
