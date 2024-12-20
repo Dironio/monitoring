@@ -57,6 +57,7 @@ export const useAuth = () => {
             }
 
             navigate("/");
+            navigate(0);
             setAuthErrors({});
         } catch (err: any) {
             console.error(err.response?.data?.message || "Ошибка сети");

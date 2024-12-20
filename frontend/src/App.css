@@ -82,6 +82,9 @@ body {
 
 
 
+.content-wrapper{
+    margin-top: 70px;
+}
 
 
 .main-content {
@@ -126,4 +129,12 @@ body {
 
 .with-sidebar.collapsed .main-content {
     margin-left: 60px;
+}
+
+.with-sidebar.collapsed .header {
+    left: 60px;
+}
+
+.without-sidebar .header {
+    left: 0;
 }

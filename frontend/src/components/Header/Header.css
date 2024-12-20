@@ -1,4 +1,9 @@
 .header {
+    position: fixed;
+    top: 0;
+    left: 250px;
+    right: 0;
+    z-index: 998;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -9,12 +14,21 @@
 
 .header__logo {
     margin-left: 20px;
-
 }
 
 .header__img {
     margin-right: 5px;
     margin-left: 15px;
+    cursor: pointer;
+    box-shadow: transparent;
+    border-radius: 50%;
+    transition: all 0.1s ease;
+}
+
+.header__img:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    transition: all 0.1s ease;
 }
 
 .header__info-user {

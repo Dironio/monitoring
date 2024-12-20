@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { config } from 'dotenv';
-import { User } from './models/user.model';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Header from './components/Header/Header';
 import './App.css'
@@ -14,7 +12,9 @@ import AccountSetting from './components/Pages/AccountPage/AccountSettings/Accou
 import OverviewComponent from './components/Pages/MainPage/Components/OverviewComponent';
 import UnknownPage from './components/Pages/UnknowPage/UnknowPage';
 import { useFetchUser } from './hooks/useCurrentUser';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 
+//сделать компонент 404
 const App: React.FC = () => {
     const [isNavbarExpanded, setIsNavbarExpanded] = useState<boolean>(() => {
         const savedState = localStorage.getItem("navbarExpanded");
@@ -24,7 +24,7 @@ const App: React.FC = () => {
 
     console.log(user)
 
-    if (loading) {
+    if (loading) {//прорисовать страницу
         return <div>Загрузка...</div>;
     }
 
@@ -40,66 +40,8 @@ const App: React.FC = () => {
 
     return (
         <div className="App">
-            {/* <div className={`app-container ${isNavbarExpanded ? "with-sidebar" : "without-sidebar"}`}> */}
-
-            {/* <div className={`app-container ${user ? "with-sidebar" : "without-sidebar"}`}>
-                {user && <Sidebar
-                    isExpanded={isNavbarExpanded}
-                    toggleNavbar={toggleNavbar}
-                // user={user}
-                />}
-
-                <div className="main-content">
-
-                    <Header
-                    // user={user}
-                    />
-
-
+            {/* 
                     <Routes>
-
-                        <Route path="*" element={<UnknowPage />} />
-
-                        <Route
-                            path="/"
-                            element={
-                                <PromoPage
-                                />}
-                        />
-
-                        <Route
-                            path="/auth"
-                            element={
-                                <AuthPage
-                                />}
-                        />
-
-
-
-
-                        {/* user ? ( 
-
-                        <Route
-                            path="/account"
-                            element={
-                                // user ? <Navigate to="/auth" /> :
-                                <AccountPage />
-                            }
-                        />
-                        <Route path="/account/settings" element={<AccountSetting />} />
-
-                        <Route
-                            path="/application"
-                            element={
-                                // user ? <Navigate to="/auth" /> :
-                                <ApplicationPage />
-                            }
-                        />
-
-
-
-
-
                         <Route path="/main" element={<MainPage />} >
 
                             <Route path="overview" element={<OverviewComponent />} />
@@ -115,25 +57,16 @@ const App: React.FC = () => {
                         <Route path="/graphs-navigation" element={<h1>Графы и навигация</h1>} />
                         <Route path="/forecast-models" element={<h1>Модели прогнозов</h1>} />
                         <Route path="/experiments" element={<h1>Эксперименты</h1>} />
-
-
-
                     </Routes>
-
                 </div>
             </div> */}
 
-
-
-
-
-
             <div
                 className={`app-container ${user
-                        ? isNavbarExpanded
-                            ? "with-sidebar"
-                            : "with-sidebar collapsed"
-                        : "without-sidebar"
+                    ? isNavbarExpanded
+                        ? "with-sidebar"
+                        : "with-sidebar collapsed"
+                    : "without-sidebar"
                     }`}
             >
                 {user && (
@@ -144,58 +77,103 @@ const App: React.FC = () => {
                 )}
                 <div className="main-content">
                     <Header
-                    user={user} 
+                        user={user}
                     />
-                    <Routes>
-                        <Route path="*" element={<UnknownPage />} />
-                        <Route path="/" element={<PromoPage />} />
-                        <Route path="/auth" element={<AuthPage />} />
+                    <div className="content-wrapper">
+                        <Routes>
+                            <Route path="*" element={<UnknownPage />} />
+                            <Route path="/" element={<PromoPage />} />
+                            <Route path="/auth" element={
+                                user ? <Navigate to="/account" /> : <AuthPage />
+                            } />
 
-                        <Route
-                            path="/account"
-                            element={
-                                user ? <AccountPage /> : <Navigate to="/auth" />
-                            }
-                        >
-                            <Route path="settings" element={<AccountSetting />} />
-                        </Route>
-                        <Route
-                            path="/application"
-                            element={
-                                user ? <ApplicationPage /> : <Navigate to="/auth" />
-                            }
-                        />
-                        <Route
-                            path="/main"
-                            element={user ? <MainPage /> : <Navigate to="/auth" />}
-                        >
-                            <Route path="overview" element={<OverviewComponent />} />
-                        </Route>
-                        <Route
-                            path="/common-metrics"
-                            element={user ? <h1>Общие метрики</h1> : <Navigate to="/auth" />}
-                        />
-                        <Route
-                            path="/time-metrics"
-                            element={user ? <h1>Временные метрики</h1> : <Navigate to="/auth" />}
-                        />
-                        <Route
-                            path="/behavior-metrics"
-                            element={user ? <h1>Метрики поведения</h1> : <Navigate to="/auth" />}
-                        />
-                        <Route
-                            path="/graphs-navigation"
-                            element={user ? <h1>Графы и навигация</h1> : <Navigate to="/auth" />}
-                        />
-                        <Route
-                            path="/forecast-models"
-                            element={user ? <h1>Модели прогнозов</h1> : <Navigate to="/auth" />}
-                        />
-                        <Route
-                            path="/experiments"
-                            element={user ? <h1>Эксперименты</h1> : <Navigate to="/auth" />}
-                        />
-                    </Routes>
+
+                            {/* НАДО ПОФИКСИТЬ, чет не работают */}
+                            <Route
+                                path="/account"
+                                element={
+                                    <ProtectedRoute user={user} loading={loading}>
+                                        <AccountPage />
+                                    </ProtectedRoute>
+                                }
+                            >
+                                <Route path="settings" element={
+                                    <ProtectedRoute user={user} loading={loading}>
+                                        <AccountSetting />
+                                    </ProtectedRoute>
+                                } />
+                            </Route>
+
+                            <Route
+                                path="/application"
+                                element={
+                                    <ProtectedRoute user={user} loading={loading}>
+                                        <ApplicationPage />
+                                    </ProtectedRoute>
+                                }
+                            />
+
+                            <Route
+                                path="/main"
+                                element={
+                                    <ProtectedRoute user={user} loading={loading}>
+                                        <MainPage />
+                                    </ProtectedRoute>
+                                }
+                            >
+                                <Route path="overview" element={<OverviewComponent />} />
+                            </Route>
+
+                            <Route
+                                path="/common-metrics"
+                                element={
+                                    <ProtectedRoute user={user} loading={loading}>
+                                        <h1>Общие метрики</h1>
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/time-metrics"
+                                element={
+                                    <ProtectedRoute user={user} loading={loading}>
+                                        <h1>Временные метрики</h1>
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/behavior-metrics"
+                                element={
+                                    <ProtectedRoute user={user} loading={loading}>
+                                        <h1>Метрики поведения</h1>
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/graphs-navigation"
+                                element={
+                                    <ProtectedRoute user={user} loading={loading}>
+                                        <h1>Графы и навигация</h1>
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/forecast-models"
+                                element={
+                                    <ProtectedRoute user={user} loading={loading}>
+                                        <h1>Модели прогнозов</h1>
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/experiments"
+                                element={
+                                    <ProtectedRoute user={user} loading={loading}>
+                                        <h1>Эксперименты</h1>
+                                    </ProtectedRoute>
+                                }
+                            />
+                        </Routes>
+                    </div>
                 </div>
             </div>
         </div >
