@@ -3,12 +3,14 @@ import ApiError from '../middlewares/ApiError'
 import userRouter from './user.router';
 import authRouter from './auth.router';
 import eventRouter from './event.router';
+import appRouter from './app.router';
 
 const rootRouter: Router = Router();
 
 rootRouter.use('/users', userRouter);
 rootRouter.use('/auth', authRouter);
 rootRouter.use('/events', eventRouter);
+rootRouter.use('/applications', appRouter); 
 
 
 
