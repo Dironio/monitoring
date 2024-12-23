@@ -1,12 +1,14 @@
 import { NextFunction, Request, Response, Router } from "express";
 import ApiError from '../middlewares/ApiError'
 import userRouter from './user.router';
-import authRouter from './auth.router'
+import authRouter from './auth.router';
+import eventRouter from './event.router';
 
 const rootRouter: Router = Router();
 
 rootRouter.use('/users', userRouter);
 rootRouter.use('/auth', authRouter);
+rootRouter.use('/events', eventRouter);
 
 
 
