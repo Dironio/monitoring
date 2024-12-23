@@ -5,7 +5,7 @@ import axios from "axios";
 
 export const useFetchUser = () => {
     const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchUser = async () => {
