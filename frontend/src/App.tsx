@@ -23,6 +23,7 @@ const App: React.FC = () => {
     const { user, loading } = useFetchUser();
 
     console.log(user)
+    console.log(loading)
 
     if (loading) {//прорисовать страницу
         return <div>Загрузка...</div>;
