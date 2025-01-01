@@ -13,6 +13,7 @@ import OverviewComponent from './components/Pages/MainPage/Components/OverviewCo
 import UnknownPage from './components/Pages/UnknowPage/UnknowPage';
 import { useFetchUser } from './hooks/useCurrentUser';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import { useAnalytics } from './hooks/useAnalytics';
 
 //сделать компонент 404
 const App: React.FC = () => {
@@ -39,7 +40,9 @@ const App: React.FC = () => {
     };
 
 
+    useAnalytics()
     return (
+
         <div className="App">
             {/* 
                     <Routes>
