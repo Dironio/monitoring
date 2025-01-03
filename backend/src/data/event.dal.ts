@@ -5,11 +5,21 @@ import { CreateEventDao, UpdateEventDao } from './@types/event.dao'
 
 class EventDal {
     async create(dao: CreateEventDao): Promise<RawEvent> {
+        const currentTimestamp = new Date().toISOString();
+
         const result = await pool.query(`
-            INSERT INTO raw_events (user_id, product_id, analyst_id, owner_id, event_type, event_data, page_url, timestamp, seller_id, web_id)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-            RETURNING *
-        `, [dao.user_id, dao.product_id, dao.analyst_id, dao.owner_id, dao.event_type, dao.event_data, dao.page_url, dao.timestamp, dao.seller_id, dao.web_id]);
+          INSERT INTO raw_events (
+            user_id, product_id, analyst_id, owner_id, event_id, event_data,
+            page_url, timestamp, seller_id, web_id, session_id, referrer, geolocation,
+            created_at, updated_at
+          )
+          VALUES (\$1, \$2, \$3, \$4, \$5, \$6, \$7, \$8, \$9, \$10, \$11, \$12, \$13, \$14, $15)
+          RETURNING *
+        `, [
+            dao.user_id, dao.product_id, dao.analyst_id, dao.owner_id, dao.event_id,
+            dao.event_data, dao.page_url, dao.timestamp, dao.seller_id, dao.web_id,
+            dao.session_id, dao.referrer, dao.geolocation, currentTimestamp, currentTimestamp
+        ]);
 
         return result.rows[0];
     }
@@ -24,12 +34,34 @@ class EventDal {
     }
 
     async update(dao: UpdateEventDao): Promise<RawEvent> {
+        const updatedAt = new Date().toISOString();
+
         const result = await pool.query(`
-            UPDATE raw_events
-            SET event_data = $1
-            WHERE id = $2
-            RETURNING *
-        `, [dao.event_data, dao.id]);
+          UPDATE raw_events
+          SET
+            user_id = $2,
+            product_id = $3,
+            analyst_id = $4,
+            owner_id = $5,
+            event_id = $6,
+            event_data = $7,
+            page_url = $8,
+            timestamp = $9,
+            seller_id = $10,
+            web_id = $11,
+            session_id = $12,
+            referrer = $13,
+            geolocation = $14,
+            updated_at = $15
+          WHERE id = $1
+          RETURNING *
+        `, [
+            dao.id,
+            dao.user_id, dao.product_id, dao.analyst_id, dao.owner_id, dao.event_id,
+            dao.event_data, dao.page_url, dao.timestamp, dao.seller_id, dao.web_id,
+            dao.session_id, dao.referrer, dao.geolocation, updatedAt
+        ]);
+
         return result.rows[0];
     }
 

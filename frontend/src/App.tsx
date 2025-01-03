@@ -23,8 +23,9 @@ const App: React.FC = () => {
     });
     const { user, loading } = useFetchUser();
 
+    useAnalytics()
+
     console.log(user)
-    console.log(loading)
 
     if (loading) {//прорисовать страницу
         return <div>Загрузка...</div>;
@@ -40,7 +41,7 @@ const App: React.FC = () => {
     };
 
 
-    useAnalytics()
+
     return (
 
         <div className="App">

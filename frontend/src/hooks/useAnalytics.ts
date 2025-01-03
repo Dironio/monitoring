@@ -1,4 +1,7 @@
 import { useEffect } from 'react';
+import { User } from '../models/user.model';
+import axios from 'axios';
+import { useFetchUser } from './useCurrentUser';
 
 const EVENT_TYPES = {
     page_view: 1,
@@ -30,6 +33,8 @@ const EVENT_TYPES = {
 const generateSessionId = (): string => {
     const sessionId = Math.random().toString(36).substring(2);
     localStorage.setItem('session_id', sessionId);
+    localStorage.setItem('session_start', Date.now().toString());
+    localStorage.setItem('session_duration', '0');
     return sessionId;
 };
 
@@ -41,9 +46,27 @@ const getSessionId = (): string => {
     return sessionId;
 };
 
+const clearSession = () => {
+    localStorage.removeItem('session_id');
+    localStorage.removeItem('session_start');
+    localStorage.removeItem('session_duration');
+};
+
+const updateSessionDuration = () => {
+    const sessionStart = parseInt(localStorage.getItem('session_start') || '0', 10);
+    const currentDuration = parseInt(localStorage.getItem('session_duration') || '0', 10);
+    const additionalDuration = Math.floor((Date.now() - sessionStart) / 1000);
+    localStorage.setItem('session_duration', (currentDuration + additionalDuration).toString());
+    localStorage.setItem('session_start', Date.now().toString());
+};
+
+const getSessionDuration = (): number => {
+    return parseInt(localStorage.getItem('session_duration') || '0', 10);
+};
+
 const getGeolocation = async (): Promise<{ country?: string; city?: string } | null> => {
     try {
-        const response = await fetch('https://ipapi.co/json/');
+        const response = await fetch('https://ipinfo.io/json');
         if (!response.ok) throw new Error('Не удалось получить геолокацию');
         return await response.json();
     } catch (error) {
@@ -55,36 +78,57 @@ const getGeolocation = async (): Promise<{ country?: string; city?: string } | n
 const sendAnalytics = async (
     eventId: number,
     eventData: Record<string, any>,
-    userId?: number
+    user?: User | null,
+    duration?: number
 ) => {
     const session_id = getSessionId();
+    const totalDuration = duration || getSessionDuration();
     const timestamp = new Date().toISOString();
     const geolocation = await getGeolocation();
 
     try {
-        await fetch(`${process.env.REACT_APP_API_URL}/events`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                event_id: eventId,
-                event_data: eventData,
-                timestamp,
-                session_id,
-                user_id: userId || null,
-                page_url: window.location.href,
-                referrer: document.referrer,
-                geolocation,
-            }),
+        console.log('Отправляемые данные:', {
+            event_id: Number(eventId),
+            event_data: { ...eventData, duration: totalDuration },
+            timestamp,
+            session_id,
+            web_id: 1,
+            user_id: user?.id || null,
+            page_url: window.location.href,
+            referrer: document.referrer,
+            geolocation,
         });
+
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/events`, {
+            event_id: Number(eventId),
+            event_data: { ...eventData, duration: totalDuration },
+            timestamp,
+            session_id,
+            web_id: 1,
+            user_id: user?.id || null,
+            page_url: window.location.href,
+            referrer: document.referrer,
+            geolocation,
+        }, {
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        console.log("Ответ:", response.data);
     } catch (error) {
         console.error('Ошибка отправки аналитики:', error);
     }
 };
 
-export const useAnalytics = (userId?: number) => {
+export const useAnalytics = () => {
+    const { user } = useFetchUser();
+
     useEffect(() => {
-        const session_id = getSessionId();
+        const sessionId = getSessionId();
         const startTime = Date.now();
+
+        const resetSessionTimeout = () => {
+            updateSessionDuration();
+        };
 
         const handleClick = (event: MouseEvent) => {
             const target = event.target as HTMLElement;
@@ -95,36 +139,39 @@ export const useAnalytics = (userId?: number) => {
                 id: target.id || null,
                 classes: target.className || null,
                 text: target.innerText?.slice(0, 100) || null,
-            }, userId);
+            }, user);
+        };
+
+        const handleScroll = () => {
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercentage = (scrollTop / scrollHeight) * 100;
+
+            sendAnalytics(EVENT_TYPES.scroll, {
+                scrollTop,
+                scrollPercentage: Math.min(scrollPercentage, 100),
+            }, user);
         };
 
         const handleBeforeUnload = () => {
-            const duration = Math.floor((Date.now() - startTime) / 1000);
-            sendAnalytics(EVENT_TYPES.page_unload, { duration }, userId);
-        };
-
-        let sessionTimeout: NodeJS.Timeout;
-        const resetSessionTimeout = () => {
-            clearTimeout(sessionTimeout);
-            sessionTimeout = setTimeout(() => {
-                const duration = Math.floor((Date.now() - startTime) / 1000);
-                sendAnalytics(EVENT_TYPES.page_unload, { sessionEnd: true, duration }, userId);
-            }, 15 * 60 * 1000); // подумать, мб уменьшить
+            updateSessionDuration();
+            const duration = getSessionDuration();
+            sendAnalytics(EVENT_TYPES.page_unload, { duration }, user);
+            clearSession();
         };
 
         document.addEventListener('mousemove', resetSessionTimeout);
         document.addEventListener('keydown', resetSessionTimeout);
         document.addEventListener('click', handleClick);
+        document.addEventListener('scroll', handleScroll);
         window.addEventListener('beforeunload', handleBeforeUnload);
 
-        sendAnalytics(EVENT_TYPES.page_view, {}, userId);
-
         return () => {
-            clearTimeout(sessionTimeout);
             document.removeEventListener('mousemove', resetSessionTimeout);
             document.removeEventListener('keydown', resetSessionTimeout);
             document.removeEventListener('click', handleClick);
+            document.removeEventListener('scroll', handleScroll);
             window.removeEventListener('beforeunload', handleBeforeUnload);
         };
-    }, [userId]);
+    }, [user]);
 };
