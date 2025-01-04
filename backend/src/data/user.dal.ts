@@ -96,6 +96,21 @@ class UserDal {
         );
         return result.rows[0];
     }
+
+
+    async getRoleById(role_id: number): Promise<User> {
+        const result = await pool.query(`
+            SELECT * FROM roles WHERE id = $1
+        `, [role_id]);
+
+        if (!result.rows[0]) {
+            throw new Error('Role not found');
+        }
+
+        console.log(result);
+
+        return result.rows[0];
+    }
 }
 
 const userDal = new UserDal();

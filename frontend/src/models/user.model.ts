@@ -9,7 +9,7 @@ export interface User {
     seller_id: number;
     role_id: number;
     role: string;
-    owner_id: number;
+    web_id: number;
     created_at: Date;
     updated_at: Date;
 }

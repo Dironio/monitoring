@@ -6,10 +6,10 @@ import { checkRole } from "../middlewares/check.role";
 const appRouter: Router = Router();
 
 appRouter.post('/', authCheck, appController.create);
-appRouter.get('/', authCheck, checkRole(['Владелец']), appController.getAll);
-appRouter.patch('/', authCheck, checkRole(['Владелец']), appController.update);
-appRouter.delete('/:id', authCheck, checkRole(['Владелец']), appController.delete);
+appRouter.get('/', authCheck, checkRole([4]), appController.getAll);
+appRouter.patch('/', authCheck, checkRole([4]), appController.update);
+appRouter.delete('/:id', authCheck, checkRole([4]), appController.delete);
 
-appRouter.get('/:id', authCheck, checkRole(['Аналитик']), appController.getOne);
+appRouter.get('/:id', authCheck, checkRole([2, 3, 4]), appController.getOne);
 
 export default appRouter;

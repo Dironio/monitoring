@@ -25,8 +25,11 @@ class AuthService {
 
     validateAccessToken(accessToken: string): TokenPayload | null {
         try {
-            return jwt.verify(accessToken, process.env.JWT_ACC_SEC as string) as TokenPayload;
+            const decoded = jwt.verify(accessToken, process.env.JWT_ACC_SEC as string) as TokenPayload;
+            console.log('Decoded token:', decoded);
+            return decoded;
         } catch (err) {
+            console.error('Token validation failed:', err.message);
             return null;
         }
     }
@@ -42,7 +45,10 @@ class AuthService {
             id: newUser.id,
             email: newUser.email,
             username: newUser.username,
-            role: newUser.role as UserRole,
+            // role: newUser.role as UserRole,
+            role_id: 
+            // newUser.role_id ||
+             1,
         };
 
         const jwtTokens = this.generateTokens(tokenPayload);
@@ -61,10 +67,15 @@ class AuthService {
 
         if (!isPasswordValid) throw ApiError.UnauthorizedError('Invalid password');
 
+        const role = await userService.getRoleById(user.role_id);
+
         const tokenPayload: TokenPayload = {
             id: user.id,
             username: user.username,
-            role: user.role as UserRole,
+            // role: role.role as UserRole,
+            role_id: user.role_id,
+            // role: user.role as UserRole,
+            // role_id: user.role_id || 1,
         };
 
         const jwtTokens = this.generateTokens(tokenPayload);
@@ -81,10 +92,13 @@ class AuthService {
         const user = await userService.getOne(userData.id);
         if (!user) throw ApiError.UnauthorizedError("User not found");
 
+        const role = await userService.getRoleById(user.role_id);
+
         const tokenPayload: TokenPayload = {
             id: user.id,
             username: user.username,
-            role: user.role as UserRole,
+            // role: role.role as UserRole,
+            role_id: user.role_id,
         };
 
         const jwtTokens = this.generateTokens(tokenPayload);

@@ -11,14 +11,14 @@ function authCheck(req: Request, res: Response, next: NextFunction) {
             throw ApiError.UnauthorizedError();
         }
 
-
         const userData: TokenPayload | null = authService.validateAccessToken(accessToken);
         if (!userData) {
             throw ApiError.UnauthorizedError();
         }
 
         res.locals.tokenPayload = userData;
-        console.log('Authentication was successful')
+        console.log('Authentication was successful');
+        // console.log('Token Payload:', res.locals.tokenPayload);
         next();
     } catch (err) {
         next(err);

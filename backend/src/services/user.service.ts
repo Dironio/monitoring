@@ -30,6 +30,10 @@ class UserService {
     async delete(userId: number) {
         return await userDal.delete(userId)
     }
+
+    async getRoleById(role_id: number): Promise<User>{
+        return await userDal.getRoleById(role_id);
+    }
 }
 
 const userService = new UserService();

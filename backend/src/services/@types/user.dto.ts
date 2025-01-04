@@ -4,7 +4,7 @@ export interface User {
     id: number;
     analyst_id: number;
     seller_id: number;
-    owner_id: number;
+    web_id: number;
 
     username: string;
     email: string;
@@ -30,7 +30,7 @@ export interface CreateUserDto {
     first_name: string;
     last_name: string;
     role_id?: number;
-    role: string;
+    role?: string;
     created_at?: Date;
     updated_at?: Date;
 }
@@ -39,7 +39,7 @@ export interface GetUserDto {
     id?: number;
     analyst_id?: number;
     seller_id?: number;
-    owner_id?: number;
+    web_id?: number;
     username?: string;
     email?: string;
     password?: string;
@@ -86,4 +86,4 @@ export interface Role {
     role: string;
 }
 
-export type UserRole = 'Пользователь' | 'Администратор' | 'Аналитик' | 'Владелец';
+export type UserRole = 1 | 2 | 3 | 4;

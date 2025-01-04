@@ -63,6 +63,12 @@ const MainPage: React.FC = () => {
                             </li>
                         </ul>
                     </nav>
+                    {/* <div>
+                        <div className="choose-site">
+                            <img src="poloski.svg" alt="" className='choose-site__img'/>
+                            <p className="choose-site__title">{web-site.name}</p> || <p>Не выбрано или Демо-режим</p> || 
+                        </div>
+                    </div> */}
 
                     <section className="content">
                         <Outlet />

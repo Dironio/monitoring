@@ -7,8 +7,8 @@ const eventRouter: Router = Router();
 
 eventRouter.post('/', eventController.create);
 eventRouter.get('/', authCheck, eventController.getAll);
-eventRouter.patch('/', authCheck, checkRole(['Владелец']), eventController.update);
-eventRouter.delete('/:id', authCheck, checkRole(['Владелец']), eventController.delete);
+eventRouter.patch('/', authCheck, checkRole([4]), eventController.update);
+eventRouter.delete('/:id', authCheck, checkRole([4]), eventController.delete);
 
 
 eventRouter.get('/main/daily', authCheck, eventController.getActiveUsersDaily);
@@ -22,6 +22,6 @@ eventRouter.get('/main/average-time', authCheck, eventController.getAvgTime);
 // eventRouter.get('/metrics/event-summary', authCheck, eventController.getEventSummary);
 // eventRouter.get('/metrics/popular-pages', authCheck, eventController.getPopularPages);
 
-eventRouter.get('/:id', authCheck, checkRole(['Аналитик', 'Администратор', 'Владелец']), eventController.getOne);
+eventRouter.get('/:id', authCheck, checkRole([2, 3, 4]), eventController.getOne);
 
 export default eventRouter;
