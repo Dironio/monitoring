@@ -14,6 +14,7 @@ import UnknownPage from './components/Pages/UnknowPage/UnknowPage';
 import { useFetchUser } from './hooks/useCurrentUser';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import { useAnalytics } from './hooks/useAnalytics';
+import AverageTimeComponent from './components/Pages/MainPage/Components/AverageTimeComponent';
 
 //сделать компонент 404
 const App: React.FC = () => {
@@ -126,7 +127,8 @@ const App: React.FC = () => {
                                     </ProtectedRoute>
                                 }
                             >
-                                <Route path="overview" element={<OverviewComponent />} />
+                                <Route path="overview" element={<OverviewComponent user={user} loading={loading} />} />
+                                <Route path="average-time" element={<AverageTimeComponent user={user} loading={loading} />} />
                             </Route>
 
                             <Route

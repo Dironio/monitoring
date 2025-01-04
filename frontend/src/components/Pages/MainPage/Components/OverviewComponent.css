@@ -1,0 +1,52 @@
+.overview-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem;
+    background-color: #f9fafb;
+}
+
+.card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #333333;
+}
+
+.chart-container {
+    height: 250px;
+    width: 100%;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-header {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    background-color: #f3f4f6;
+    color: #4b5563;
+    font-size: 0.875rem;
+    font-weight: 700;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.table-cell {
+    padding: 0.75rem 1rem;
+    color: #111827;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 0.875rem;
+}

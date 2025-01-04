@@ -34,6 +34,62 @@ class EventController {
         return res.status(201).json(result);
     }
 
+
+    ////////////////////////////////////////////////////////////////
+
+    @ControllerErrorHandler()
+    async getActiveUsersDaily(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const result = await eventService.getActiveUsersDaily();
+        return res.status(200).json(result);
+    }
+
+    @ControllerErrorHandler()
+    async getAverageSessionTime(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const result = await eventService.getAverageSessionTime();
+        return res.status(200).json(result);
+    }
+
+    @ControllerErrorHandler()
+    async getTopPages(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const result = await eventService.getTopPages();
+        return res.status(200).json(result);
+    }
+
+    @ControllerErrorHandler()
+    async getAvgTime(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const result = await eventService.getAvgTime();
+        return res.status(200).json(result);
+    }
+
+
+
+
+
+
+
+    @ControllerErrorHandler()
+    async getTrafficData(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const data = await eventService.getTrafficData();
+        return res.status(200).json(data);
+    }
+
+    @ControllerErrorHandler()
+    async getUserSegments(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const data = await eventService.getUserSegments();
+        return res.status(200).json(data);
+    }
+
+    @ControllerErrorHandler()
+    async getEventSummary(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const data = await eventService.getEventSummary();
+        return res.status(200).json(data);
+    }
+
+    @ControllerErrorHandler()
+    async getPopularPages(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const data = await eventService.getPopularPages();
+        return res.status(200).json(data);
+    }
 }
 
 const eventController = new EventController();

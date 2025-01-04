@@ -1,0 +1,114 @@
+ .metrics-table {
+     width: 100%;
+     border-collapse: collapse;
+     background: #ffffff;
+     border-radius: 6px;
+     overflow: hidden;
+     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+ }
+
+ .metrics-table th,
+ .metrics-table td {
+     text-align: left;
+     padding: 12px 15px;
+     border-bottom: 1px solid #eaeaea;
+ }
+
+ .metrics-table th {
+     background-color: #f3f4f7;
+     font-size: 0.9rem;
+     font-weight: 600;
+ }
+
+ .metrics-table tr:last-child td {
+     border-bottom: none;
+ }
+
+
+
+
+
+
+
+
+ .metrics-container h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  /* Графики */
+  .bg-white {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+  }
+  
+  .shadow-md {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .rounded-lg {
+    border-radius: 0.5rem;
+  }
+  
+  .p-6 {
+    padding: 1.5rem;
+  }
+  
+  .h-72 {
+    height: 18rem;
+  }
+  
+  .text-lg {
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+  
+  .text-xl {
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+  
+  .font-bold {
+    font-weight: bold;
+  }
+  
+  /* Таблица */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  table thead tr {
+    background-color: #f3f3f3;
+    font-weight: 600;
+  }
+  
+  table th,
+  table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .mt-4 {
+    margin-top: 1rem;
+  }
+  
+  /* button {
+    background: none;
+    color: #3b82f6;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  
+  button:hover {
+    opacity: 0.8;
+  } */

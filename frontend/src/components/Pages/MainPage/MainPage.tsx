@@ -1,13 +1,19 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import './MainPage.css';
 import { useEffect } from 'react';
 
 const MainPage: React.FC = () => {
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
-        navigate('overview');
-    }, [navigate]);
+        if (location.pathname === '/main') {
+            navigate('overview');
+        }
+    }, [location.pathname, navigate]);
+
+    //     navigate('overview');
+    // }, [navigate]);
 
     return (
         <>

@@ -27,6 +27,8 @@ class EventDal {
     async getAll(): Promise<RawEvent[]> {
         const result = await pool.query(`
             SELECT * FROM raw_events
+            JOIN event_types ON raw_events.event_id = event_types.id
+            JOIN web_sites on raw_events.web_id = web_sites.id
             ORDER BY timestamp DESC
             LIMIT 50
         `);
@@ -81,6 +83,97 @@ class EventDal {
         `, [id]);
         return result.rows[0];
     }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    async getActiveUsersDaily(): Promise<RawEvent[]> {
+        const result = await pool.query(`
+            SELECT 
+                DATE_TRUNC('day', timestamp) AS day, 
+                COUNT(DISTINCT session_id) AS active_users
+            FROM raw_events
+            WHERE session_id IS NOT NULL 
+            GROUP BY day
+            ORDER BY day DESC
+            LIMIT 30
+        `);
+
+        return result.rows;
+    }
+
+    async getAverageSessionTime(): Promise<RawEvent[]> {
+        const result = await pool.query(`
+            SELECT 
+                DATE_TRUNC('day', timestamp_day) AS day,  
+                AVG(session_duration) AS avg_time
+            FROM (
+                SELECT 
+                    session_id,
+                    DATE_TRUNC('day', "timestamp") AS timestamp_day,
+                    SUM(CAST(event_data->>'duration' AS INTEGER)) AS session_duration
+                FROM raw_events
+                WHERE event_data->>'duration' IS NOT NULL AND session_id IS NOT NULL
+                GROUP BY session_id, DATE_TRUNC('day', "timestamp")
+            ) AS session_data
+            GROUP BY timestamp_day
+            ORDER BY timestamp_day DESC
+            LIMIT 30
+          `);
+
+        return result.rows;
+    }
+
+    async getTopPages(): Promise<RawEvent[]> {
+        const result = await pool.query(`
+            SELECT 
+                page_url, 
+                COUNT(*) AS visits
+            FROM raw_events
+            WHERE page_url IS NOT NULL
+            GROUP BY page_url
+            ORDER BY visits DESC
+            LIMIT 10
+        `);
+
+        return result.rows;
+    }
+
+
+    async getAvgTime(): Promise<RawEvent[]> {
+        const result = await pool.query(`
+        SELECT 
+            timestamp_day AS day,
+            AVG(session_duration) AS avg_session_time,
+            MAX(session_duration) AS max_session_time,
+            SUM(session_duration) AS total_site_time,
+            COUNT(DISTINCT session_id) AS total_sessions
+        FROM (
+            SELECT 
+                session_id,
+                DATE_TRUNC('day', "timestamp") AS timestamp_day,
+                SUM(CAST(event_data->>'duration' AS INTEGER)) AS session_duration
+            FROM raw_events
+            WHERE event_data->>'duration' IS NOT NULL AND session_id IS NOT NULL
+            GROUP BY session_id, DATE_TRUNC('day', "timestamp")
+        ) AS session_data
+        GROUP BY timestamp_day
+        ORDER BY timestamp_day DESC
+        LIMIT 30
+    `);
+
+        return result.rows;
+    }
+
+
+
+
+
+
+
+
+
 
     // Метрика: Ключевые события
     async getKeyEvents(): Promise<{ event_type: string, count: number }[]> {
