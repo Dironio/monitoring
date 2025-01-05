@@ -1,21 +1,22 @@
-import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import './MainPage.css';
-import { useEffect } from 'react';
-import SiteSelection from '../../UI/SiteSelection';
+import './BehaviorMetricsPage.css';
 import { User } from '../../../models/user.model';
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
+import SiteSelection from '../../UI/SiteSelection';
 
-interface MainPageProps {
+interface MetricPageProps {
     user: User | null;
     loading: boolean;
 }
 
-const MainPage: React.FC<MainPageProps> = ({ user, loading }) => {
+const MetricPage: React.FC<MetricPageProps> = ({ user, loading }) => {
     const navigate = useNavigate();
     const location = useLocation();
 
     useEffect(() => {
-        if (location.pathname === '/main') {
-            navigate('overview');
+        if (location.pathname === '/metrics') {
+            navigate('event-analysis');
         }
     }, [location.pathname, navigate]);
 
@@ -30,52 +31,46 @@ const MainPage: React.FC<MainPageProps> = ({ user, loading }) => {
                         <ul className="nav-list">
                             <li className="">
                                 <NavLink
-                                    to="overview"
+                                    to="event-analysis"
                                     className={({ isActive }) => isActive ? 'nav-item selected' : 'nav-item'}
                                 >
-                                    Сводка отчетов
+                                    Анализ событий
                                 </NavLink>
                             </li>
                             <li className="">
                                 <NavLink
-                                    to="average-time"
+                                    to="category"
                                     className={({ isActive }) => isActive ? 'nav-item selected' : 'nav-item'}
                                 >
-                                    Среднее время на сайте
+                                    Категории пользователей
                                 </NavLink>
                             </li>
                             <li className="">
                                 <NavLink
-                                    to="behavior-metrics"
+                                    to="route-analysis"
                                     className={({ isActive }) => isActive ? 'nav-item selected' : 'nav-item'}
                                 >
-                                    Метрики поведения
+                                    Анализ маршрутов
                                 </NavLink>
                             </li>
                             <li className="">
                                 <NavLink
-                                    to="visit-history"
+                                    to="geography"
                                     className={({ isActive }) => isActive ? 'nav-item selected' : 'nav-item'}
                                 >
-                                    История посещений
+                                    География пользователей
                                 </NavLink>
                             </li>
-                            <li className="">
+                            {/* <li className="">
                                 <NavLink
                                     to="sales-analytics"
                                     className={({ isActive }) => isActive ? 'nav-item selected' : 'nav-item'}
                                 >
                                     Аналитика продаж
                                 </NavLink>
-                            </li>
+                            </li> */}
                         </ul>
                     </nav>
-                    {/* <div>
-                        <div className="choose-site">
-                            <img src="poloski.svg" alt="" className='choose-site__img'/>
-                            <p className="choose-site__title">{web-site.name}</p> || <p>Не выбрано или Демо-режим</p> || 
-                        </div>
-                    </div> */}
 
                     <SiteSelection user={user} loading={loading} />
 
@@ -89,4 +84,4 @@ const MainPage: React.FC<MainPageProps> = ({ user, loading }) => {
     )
 }
 
-export default MainPage;
+export default MetricPage;

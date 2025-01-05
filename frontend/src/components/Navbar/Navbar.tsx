@@ -16,10 +16,10 @@ const Sidebar: React.FC<NavbarProps> = ({ isExpanded, toggleNavbar }) => {
 
     const menuItems = [
         { path: "/main", label: "Главная", icon: "/assets/main.svg" },
+        { path: "/metrics", label: "Метрики поведения", icon: "/assets/graphs-navigation.svg" },
+        { path: "/interface", label: "Интерфейс", icon: "/assets/behavior-metrics.svg" },
         { path: "/common-metrics", label: "Общие метрики", icon: "/assets/common-metrics.svg" },
         { path: "/time-metrics", label: "Временные метрики", icon: "/assets/time-metrics.svg" },
-        { path: "/behavior-metrics", label: "Метрики поведения", icon: "/assets/behavior-metrics.svg" },
-        { path: "/graphs-navigation", label: "Графы и навигация", icon: "/assets/graphs-navigation.svg" },
         { path: "/forecast-models", label: "Модели прогнозов", icon: "/assets/forecast-models.svg" },
         { path: "/experiments", label: "Эксперименты", icon: "/assets/experiments.svg" },
     ];

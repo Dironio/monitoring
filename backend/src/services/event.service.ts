@@ -25,8 +25,8 @@ class EventService {
 
     ////////////////////////////////////////
 
-    async getActiveUsersDaily(): Promise<RawEvent[]> {
-        return await eventDal.getActiveUsersDaily();
+    async getActiveUsersDaily(web_id: number): Promise<RawEvent[]> {
+        return await eventDal.getActiveUsersDaily(web_id);
     }
 
     async getAverageSessionTime(): Promise<RawEvent[]> {

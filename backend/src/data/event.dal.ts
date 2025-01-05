@@ -88,17 +88,18 @@ class EventDal {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    async getActiveUsersDaily(): Promise<RawEvent[]> {
+    async getActiveUsersDaily(web_id: number): Promise<RawEvent[]> {
         const result = await pool.query(`
             SELECT 
                 DATE_TRUNC('day', timestamp) AS day, 
                 COUNT(DISTINCT session_id) AS active_users
             FROM raw_events
             WHERE session_id IS NOT NULL 
+                AND ($1::INT IS NULL OR web_id = $1)
             GROUP BY day
             ORDER BY day DESC
             LIMIT 30
-        `);
+        `, [web_id]);
 
         return result.rows;
     }
@@ -131,10 +132,12 @@ class EventDal {
                 page_url, 
                 COUNT(*) AS visits
             FROM raw_events
-            WHERE page_url IS NOT NULL
+            WHERE event_data::text NOT LIKE '%scrollTop%'
+                AND event_data::text NOT LIKE '%scrollPercentage%'
+                AND page_url IS NOT NULL
             GROUP BY page_url
             ORDER BY visits DESC
-            LIMIT 10
+            --LIMIT 10
         `);
 
         return result.rows;

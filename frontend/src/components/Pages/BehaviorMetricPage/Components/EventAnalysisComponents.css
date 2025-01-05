@@ -1,0 +1,59 @@
+.event-analysis {
+    padding: 24px;
+    background-color: var(--background);
+    color: var(--foreground);
+}
+
+.event-analysis__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.event-analysis__title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.event-analysis__tabs {
+    width: 100%;
+}
+
+.event-analysis__tab-list {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.event-analysis__tab {
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.event-analysis__tab--active {
+    background-color: var(--primary);
+    color: white;
+}
+
+.event-analysis__card {
+    background: var(--card-background);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 24px;
+}
+
+.event-analysis__card-header {
+    margin-bottom: 16px;
+}
+
+.event-analysis__card-title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.event-analysis__chart-container {
+    height: 400px;
+    width: 100%;
+}

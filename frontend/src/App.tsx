@@ -15,6 +15,8 @@ import { useFetchUser } from './hooks/useCurrentUser';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import { useAnalytics } from './hooks/useAnalytics';
 import AverageTimeComponent from './components/Pages/MainPage/Components/AverageTimeComponent';
+import MetricPage from './components/Pages/BehaviorMetricPage/BehaviorMetricPage';
+import EventAnalysisComponent from './components/Pages/BehaviorMetricPage/Components/EventAnalysisComponents';
 
 //сделать компонент 404
 const App: React.FC = () => {
@@ -123,7 +125,7 @@ const App: React.FC = () => {
                                 path="/main"
                                 element={
                                     <ProtectedRoute user={user} loading={loading}>
-                                        <MainPage />
+                                        <MainPage user={user} loading={loading} />
                                     </ProtectedRoute>
                                 }
                             >
@@ -132,13 +134,44 @@ const App: React.FC = () => {
                             </Route>
 
                             <Route
-                                path="/common-metrics"
+                                path="/metrics"
                                 element={
                                     <ProtectedRoute user={user} loading={loading}>
-                                        <h1>Общие метрики</h1>
+                                        <MetricPage user={user} loading={loading} />
+                                    </ProtectedRoute>
+                                }
+                            >
+                                <Route path="event-analysis" element={<EventAnalysisComponent user={user} loading={loading} />} />
+
+                            </Route>
+
+                            <Route
+                                path="/interface"
+                                element={
+                                    <ProtectedRoute user={user} loading={loading}>
+                                        <h1>Взаимодействие с интерфейсом</h1>
                                     </ProtectedRoute>
                                 }
                             />
+
+
+
+
+
+                            <Route
+                                path="/graphs-navigation"
+                                element={
+                                    <ProtectedRoute user={user} loading={loading}>
+                                        <h1>Графы и навигация</h1>
+                                    </ProtectedRoute>
+                                }
+                            >
+                                {/* <Route path="overview" element={<OverviewComponent user={user} loading={loading} />} />
+                                <Route path="average-time" element={<AverageTimeComponent user={user} loading={loading} />} /> */}
+                            </Route>
+
+
+
                             <Route
                                 path="/time-metrics"
                                 element={
@@ -147,22 +180,8 @@ const App: React.FC = () => {
                                     </ProtectedRoute>
                                 }
                             />
-                            <Route
-                                path="/behavior-metrics"
-                                element={
-                                    <ProtectedRoute user={user} loading={loading}>
-                                        <h1>Метрики поведения</h1>
-                                    </ProtectedRoute>
-                                }
-                            />
-                            <Route
-                                path="/graphs-navigation"
-                                element={
-                                    <ProtectedRoute user={user} loading={loading}>
-                                        <h1>Графы и навигация</h1>
-                                    </ProtectedRoute>
-                                }
-                            />
+
+
                             <Route
                                 path="/forecast-models"
                                 element={

@@ -39,7 +39,8 @@ class EventController {
 
     @ControllerErrorHandler()
     async getActiveUsersDaily(req: Request, res: Response, next: NextFunction): Promise<Response> {
-        const result = await eventService.getActiveUsersDaily();
+        const webId = Number(req.query.web_id);
+        const result = await eventService.getActiveUsersDaily(webId);
         return res.status(200).json(result);
     }
 
