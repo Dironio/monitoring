@@ -66,7 +66,8 @@ const getSessionDuration = (): number => {
 
 const getGeolocation = async (): Promise<{ country?: string; city?: string } | null> => {
     try {
-        const response = await fetch('https://ipinfo.io/json');
+        // const response = await fetch('https://ipinfo.io/json');
+        const response = await fetch('');
         if (!response.ok) throw new Error('Не удалось получить геолокацию');
         return await response.json();
     } catch (error) {

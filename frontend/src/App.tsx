@@ -17,6 +17,8 @@ import { useAnalytics } from './hooks/useAnalytics';
 import AverageTimeComponent from './components/Pages/MainPage/Components/AverageTimeComponent';
 import MetricPage from './components/Pages/BehaviorMetricPage/BehaviorMetricPage';
 import EventAnalysisComponent from './components/Pages/BehaviorMetricPage/Components/EventAnalysisComponents';
+import InterfacePage from './components/Pages/InterfacePage/InterfacePage';
+import HeatmapComponent from './components/Pages/InterfacePage/Components/HeatmapComponent';
 
 //сделать компонент 404
 const App: React.FC = () => {
@@ -149,10 +151,13 @@ const App: React.FC = () => {
                                 path="/interface"
                                 element={
                                     <ProtectedRoute user={user} loading={loading}>
-                                        <h1>Взаимодействие с интерфейсом</h1>
+                                        <InterfacePage user={user} loading={loading} />
                                     </ProtectedRoute>
                                 }
-                            />
+                            >
+                                <Route path="heatmap-page" element={<HeatmapComponent user={user} loading={loading} />} />
+                                {/* <Route path="heatmap-scroll" element={<EventAnalysisComponent user={user} loading={loading} />} /> */}
+                            </Route>
 
 
 

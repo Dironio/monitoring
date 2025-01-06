@@ -1,0 +1,180 @@
+/* .heatmap-page {
+    padding: 20px;
+    background: var(--background-primary);
+}
+
+.heatmap-controls {
+    margin-bottom: 20px;
+}
+
+.heatmap-controls h2 {
+    margin-bottom: 15px;
+    font-size: 24px;
+    color: var(--text-primary);
+}
+
+.page-select-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.page-select-container label {
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.page-select {
+    width: 400px;
+}
+
+.heatmap-visualization {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.heatmap-container {
+    position: relative;
+}
+
+.no-page-selected {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.loading,
+.error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+    color: var(--text-secondary);
+}
+
+.error {
+    color: var(--error);
+}
+
+
+
+
+
+
+
+.heatmap-page {
+    padding: 20px;
+}
+
+.heatmap-controls {
+    margin-bottom: 20px;
+}
+
+.heatmap-selectors {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.page-select {
+    width: 100%;
+    max-width: 500px;
+}
+
+.heatmap-container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.heatmap-placeholder {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #666;
+    font-size: 16px;
+    text-align: center;
+}
+
+
+.page-select .Select__control {
+    border-color: #ddd;
+}
+
+.page-select .Select__control:hover {
+    border-color: #999;
+}
+
+.page-select .Select__control--is-focused {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 1px var(--primary-color);
+}
+
+.page-select .Select__option--is-selected {
+    background-color: var(--primary-color);
+} */
+
+
+
+
+
+
+.heatmap-page {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.heatmap-controls {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: white;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.heatmap-content {
+    flex-grow: 1;
+    overflow: auto;
+}
+
+.page-select-container {
+    margin: 15px 0;
+    width: 100%;
+    max-width: 500px;
+}
+
+.page-select {
+    z-index: 1001;
+}
+
+.loading-indicator {
+    margin-top: 10px;
+    color: #666;
+}
+
+.heatmap-visualization {
+    padding: 20px;
+}
+
+.heatmap-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.no-page-selected {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: #666;
+}
+

@@ -16,35 +16,42 @@ const SiteSelection: React.FC<SiteSelectionProps> = ({ user, loading }) => {
         const savedSite = localStorage.getItem('selectedSite');
         return savedSite ? JSON.parse(savedSite) : null;
     });
-    const [platforms, setPlatforms] = useState<{ value: number; label: string }[]>([]);
-    const [selectedPlatform, setSelectedPlatform] = useState<{ value: number; label: string } | null>(null);
 
     const fetchAvailableSites = async () => {
         if (!user) return;
+
         try {
-            const response = await axios.get<WebSite[]>(`${process.env.REACT_APP_API_URL}/sites`, {
+            const response = await axios.get<WebSite[]>(`${process.env.REACT_APP_API_URL}/sites/web`, {
                 withCredentials: true,
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
                 },
             });
+
             setSites(response.data);
+
+            // Для роли 1 автоматически выбираем демо-сайт (id=1)
+            if (user.role_id === 1) {
+                const demoSite = response.data.find(site => site.id === 1);
+                if (demoSite) {
+                    handleSiteChange({
+                        value: demoSite.id,
+                        label: demoSite.site
+                    });
+                }
+            }
+            // Для других ролей, если нет выбранного сайта, устанавливаем демо-сайт
+            else if (!selectedSite && response.data.length > 0) {
+                const demoSite = response.data.find(site => site.id === 1);
+                if (demoSite) {
+                    handleSiteChange({
+                        value: demoSite.id,
+                        label: demoSite.site
+                    });
+                }
+            }
         } catch (error) {
             console.error("Ошибка загрузки сайтов", error);
-        }
-    };
-
-    const fetchAvailablePlatforms = async () => {
-        try {
-            const response = await axios.get<{ id: number; name: string }[]>(`${process.env.REACT_APP_API_URL}/sites/web`, {
-                withCredentials: true,
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                },
-            });
-            setPlatforms(response.data.map(platform => ({ value: platform.id, label: platform.name })));
-        } catch (error) {
-            console.error("Ошибка загрузки платформ", error);
         }
     };
 
@@ -52,59 +59,64 @@ const SiteSelection: React.FC<SiteSelectionProps> = ({ user, loading }) => {
         setSelectedSite(selectedOption);
         if (selectedOption) {
             localStorage.setItem('selectedSite', JSON.stringify(selectedOption));
-        } else {
-            localStorage.removeItem('selectedSite');
+            // Dispatch событие изменения сайта
+            const event = new CustomEvent('siteSelected', {
+                detail: {
+                    siteId: selectedOption.value,
+                    isDemo: selectedOption.value === 1
+                }
+            });
+            window.dispatchEvent(event);
         }
-        console.log("Выбранный сайт:", selectedOption);
-    };
-
-    const handlePlatformChange = (selectedOption: { value: number; label: string } | null) => {
-        setSelectedPlatform(selectedOption);
-        console.log("Выбранная платформа:", selectedOption);
     };
 
     useEffect(() => {
         fetchAvailableSites();
-        fetchAvailablePlatforms();
-    }, []);
+    }, [user]);
 
-    if (!user) {
-        return <p>Ошибка: пользователь не найден.</p>;
-    }
+    if (loading) return <div>Загрузка...</div>;
+    if (!user) return null;
 
     return (
-        <div>
-            {/* Проверяем роль пользователя */}
-            {user.role_id && user.role_id > 1 && (
-                <div className="choose-site">
-                    <img src="poloski.svg" alt="" className="choose-site__img" />
-                    <p className="choose-site__title">
-                        {selectedSite ? selectedSite.label : "Не выбрано или Демо-режим"}
+        <div className="site-selection">
+            <div className="site-selection__card">
+                <div className="site-selection__header">
+                    <h2 className="site-selection__title">Выбор сайта</h2>
+                    <p className="site-selection__description">
+                        {user.role_id === 1
+                            ? "Доступен только демо-режим"
+                            : "Выберите сайт для анализа"
+                        }
                     </p>
-
-                    {/* Выпадающий список сайтов */}
-                    <Select
-                        options={sites.map((site) => ({
-                            value: site.id,
-                            label: site.site,
-                        }))}
-                        onChange={handleSiteChange}
-                        className="custom-select"
-                    />
                 </div>
-            )}
-            {/* {user.role_id && user.role_id > 2 && (
-                <div className="choose-platform">
-                    <p>Выбор платформы пользователей:</p>
-                    <Select
-                        options={platforms}
-                        onChange={handlePlatformChange}
-                        className="custom-select"
-                    />
+                <div className="site-selection__content">
+                    <div className="site-selection__select-container">
+                        {/* <img
+                            src="poloski.svg"
+                            alt=""
+                            className="site-selection__icon"
+                        /> */}
+                        <div className="site-selection__select">
+                            <p className="site-selection__current">
+                                {selectedSite ? selectedSite.label : "Не выбрано или Демо-режим"}
+                            </p>
+                            <Select
+                                value={selectedSite}
+                                options={sites.map((site) => ({
+                                    value: site.id,
+                                    label: site.site,
+                                }))}
+                                onChange={handleSiteChange}
+                                className={`custom-select ${user.role_id === 1 ? 'site-selection__select--demo' : ''}`}
+                                isDisabled={user.role_id === 1}
+                            />
+                        </div>
+                    </div>
                 </div>
-            )} */}
+            </div>
         </div>
     );
 };
+
 
 export default SiteSelection;

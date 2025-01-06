@@ -16,12 +16,20 @@ eventRouter.get('/main/duration', authCheck, eventController.getAverageSessionTi
 eventRouter.get('/main/top-pages', authCheck, eventController.getTopPages);
 eventRouter.get('/main/average-time', authCheck, eventController.getAvgTime);
 
+eventRouter.get('/analysis', authCheck, eventController.getAnalysisData);
+
+
+eventRouter.get('/pages', authCheck, eventController.getPages);
+eventRouter.get('/click-heatmap', authCheck, eventController.getClickHeatmap);
+eventRouter.get('/scroll-heatmap', authCheck, eventController.getScrollHeatmap);
+eventRouter.get('/page-heatmap', authCheck, eventController.getPageHeatmap);
+
 
 // eventRouter.get('/metrics/traffic', authCheck, eventController.getTrafficData);
 // eventRouter.get('/metrics/user-segments', authCheck, eventController.getUserSegments);
 // eventRouter.get('/metrics/event-summary', authCheck, eventController.getEventSummary);
 // eventRouter.get('/metrics/popular-pages', authCheck, eventController.getPopularPages);
 
-eventRouter.get('/:id', authCheck, checkRole([2, 3, 4]), eventController.getOne);
+// eventRouter.get('/:id', authCheck, checkRole([2, 3, 4]), eventController.getOne);
 
 export default eventRouter;

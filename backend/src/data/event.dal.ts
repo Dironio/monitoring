@@ -1,6 +1,6 @@
 import pool from "../pool";
 import { RawEvent } from "../services/@types/event.dto";
-import { CreateEventDao, UpdateEventDao } from './@types/event.dao'
+import { ClickHeatmapData, CreateEventDao, ScrollHeatmapData, UpdateEventDao } from './@types/event.dao'
 
 
 class EventDal {
@@ -170,7 +170,52 @@ class EventDal {
     }
 
 
+    async getAnalysisData(webId: number): Promise<RawEvent[]> {
+        // const result = await pool.query(`
+        //     SELECT 
+        //             id,
+        //             user_id,
+        //             event_id,
+        //             event_data,
+        //             page_url,
+        //             timestamp,
+        //             web_id,
+        //             session_id,
+        //             geolocation,
+        //     CASE 
+        //         WHEN event_data::jsonb->>'duration' IS NOT NULL 
+        //         THEN (event_data::jsonb->>'duration')::numeric 
+        //         ELSE 0 
+        //     END as event_duration
+        //     FROM raw_events
+        //         WHERE web_id = $1
+        //             AND timestamp >= NOW() - INTERVAL '30 days'
+        //     ORDER BY timestamp DESC
+        // `, [webId]);
 
+
+        const result = await pool.query(`
+            SELECT 
+                id,
+                user_id,
+                event_id,
+                event_data,
+                page_url,
+                timestamp,
+                web_id,
+                session_id,
+                geolocation,
+                created_at,
+                updated_at
+            FROM raw_events
+            WHERE web_id = $1
+                AND timestamp >= NOW() - INTERVAL '30 days'
+                AND event_data::jsonb->>'duration' IS NOT NULL
+            ORDER BY timestamp DESC
+        `, [webId]);
+
+        return result.rows;
+    }
 
 
 
@@ -237,6 +282,79 @@ class EventDal {
             )
         `, [startDate, endDate]);
         return result.rows[0].returning_users;
+    }
+
+
+
+
+    async getUniquePages(webId: number): Promise<string[]> {
+        const result = await pool.query(`
+            SELECT DISTINCT page_url
+            FROM raw_events
+            WHERE web_id = $1
+            AND timestamp >= NOW() - INTERVAL '30 days'
+            ORDER BY page_url
+        `, [webId]);
+
+        return result.rows.map(row => row.page_url);
+    }
+
+    async getClickHeatmapData(webId: number, pageUrl: string): Promise<ClickHeatmapData[]> {
+        const result = await pool.query(`
+            SELECT 
+    event_data::jsonb->'x' as x,
+    event_data::jsonb->'y' as y,
+    COUNT(*) as click_count
+FROM raw_events
+WHERE 
+    web_id = $1
+    AND page_url = $2
+    AND event_id = 2  -- ID для событий клика
+    AND timestamp >= NOW() - INTERVAL '30 days'
+    AND event_data::jsonb ? 'x'
+    AND event_data::jsonb ? 'y'
+GROUP BY event_data::jsonb->'x', event_data::jsonb->'y'
+ORDER BY click_count DESC;
+        `, [webId, pageUrl]);
+
+        return result.rows.map(row => ({
+            eventData: JSON.parse(row.event_data),
+            clickCount: parseInt(row.click_count)
+        }));
+    }
+
+    async getScrollHeatmapData(webId: number, pageUrl: string): Promise<ScrollHeatmapData[]> {
+        const result = await pool.query(`
+            SELECT 
+                event_data::jsonb as event_data,
+                COUNT(*) as scroll_count
+            FROM raw_events
+            WHERE web_id = $1 
+                AND page_url = $2
+                AND event_id = 4  -- ID для событий скролла
+                AND timestamp >= NOW() - INTERVAL '30 days'
+                AND event_data::jsonb ? 'scrollTop'
+                AND event_data::jsonb ? 'scrollPercentage'
+            GROUP BY event_data
+        `, [webId, pageUrl]);
+
+        return result.rows.map(row => ({
+            eventData: JSON.parse(row.event_data),
+            scrollCount: parseInt(row.scroll_count)
+        }));
+    }
+
+    async getPageHeatmapData(webId: number, pageUrl: string): Promise<RawEvent[]> {
+        const result = await pool.query(`
+            SELECT *
+            FROM raw_events
+            WHERE web_id = $1 
+                AND page_url = $2
+                AND timestamp >= NOW() - INTERVAL '30 days'
+            ORDER BY timestamp DESC
+        `, [webId, pageUrl]);
+
+        return result.rows;
     }
 }
 

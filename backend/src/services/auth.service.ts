@@ -10,6 +10,12 @@ config({ path: './.env' });
 
 class AuthService {
     generateTokens(payload: TokenPayload): JwtTokens {
+        // const tokenPayload = {
+        //     id: payload.id,
+        //     username: payload.username,
+        //     role_id: payload.role_id,
+        // };
+
         const refreshToken = jwt.sign(payload, process.env.JWT_REF_SEC as string, { expiresIn: '30d' });
         const accessToken = jwt.sign(payload, process.env.JWT_ACC_SEC as string, { expiresIn: '30d' });
         return { refreshToken, accessToken };
@@ -26,7 +32,7 @@ class AuthService {
     validateAccessToken(accessToken: string): TokenPayload | null {
         try {
             const decoded = jwt.verify(accessToken, process.env.JWT_ACC_SEC as string) as TokenPayload;
-            console.log('Decoded token:', decoded);
+            // console.log('Decoded token:', decoded);
             return decoded;
         } catch (err) {
             console.error('Token validation failed:', err.message);

@@ -91,6 +91,80 @@ class EventController {
         const data = await eventService.getPopularPages();
         return res.status(200).json(data);
     }
+
+
+
+
+    @ControllerErrorHandler()
+    async getAnalysisData(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        if (!webId || isNaN(webId)) {
+            throw new Error(`Invalid webId: ${webId}`);
+        }
+        const data = await eventService.getAnalysisData(webId);
+        return res.status(200).json(data);
+    }
+
+
+
+
+
+
+
+
+
+
+    @ControllerErrorHandler()
+    async getPages(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await eventService.getUniquePages(webId);
+        return res.status(200).json(result);
+    }
+
+    @ControllerErrorHandler()
+    async getClickHeatmap(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const pageUrl = String(req.query.page_url);
+        const result = await eventService.getClickHeatmapData(webId, pageUrl);
+
+        const formattedData = {
+            points: result.map(item => ({
+                x: item.eventData.x,
+                y: item.eventData.y,
+                count: item.clickCount
+            })),
+            maxCount: Math.max(...result.map(item => item.clickCount))
+        };
+
+        return res.status(200).json(formattedData);
+    }
+
+    @ControllerErrorHandler()
+    async getScrollHeatmap(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const pageUrl = String(req.query.page_url);
+        const result = await eventService.getScrollHeatmapData(webId, pageUrl);
+
+        const formattedData = {
+            points: result.map(item => ({
+                scrollTop: item.eventData.scrollTop,
+                scrollPercentage: item.eventData.scrollPercentage,
+                count: item.scrollCount
+            })),
+            maxCount: Math.max(...result.map(item => item.scrollCount))
+        };
+
+        return res.status(200).json(formattedData);
+    }
+
+    @ControllerErrorHandler()
+    async getPageHeatmap(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const pageUrl = String(req.query.page_url);
+        const result = await eventService.getPageHeatmapData(webId, pageUrl);
+        return res.status(200).json(result);
+    }
+
 }
 
 const eventController = new EventController();

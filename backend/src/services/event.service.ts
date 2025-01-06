@@ -1,5 +1,5 @@
 import eventDal from '../data/event.dal';
-import { CreateEventDto, RawEvent, UpdateEventDto } from './@types/event.dto';
+import { ClickHeatmapData, CreateEventDto, RawEvent, ScrollHeatmapData, UpdateEventDto } from './@types/event.dto';
 
 class EventService {
     async create(dto: CreateEventDto): Promise<RawEvent> {
@@ -90,6 +90,49 @@ class EventService {
 
         return Object.keys(pages).map(page => ({ page, visits: pages[page] }));
     }
+
+
+
+
+
+
+    async getAnalysisData(webId: number): Promise<RawEvent[]> {
+        return await eventDal.getAnalysisData(webId);
+    }
+
+
+
+
+
+    async getUniquePages(webId: number): Promise<string[]> {
+        return await eventDal.getUniquePages(webId);
+    }
+
+    async getClickHeatmapData(webId: number, pageUrl: string): Promise<ClickHeatmapData[]> {
+        return await eventDal.getClickHeatmapData(webId, pageUrl);
+    }
+
+    async getScrollHeatmapData(webId: number, pageUrl: string): Promise<ScrollHeatmapData[]> {
+        return await eventDal.getScrollHeatmapData(webId, pageUrl);
+    }
+
+    async getPageHeatmapData(webId: number, pageUrl: string): Promise<RawEvent[]> {
+        return await eventDal.getPageHeatmapData(webId, pageUrl);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 const eventService = new EventService();

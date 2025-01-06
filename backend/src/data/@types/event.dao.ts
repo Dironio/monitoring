@@ -57,3 +57,22 @@ export interface UpdateEventDao {
     geolocation?: string;
     duration?: number;
 }
+
+
+
+
+export interface ClickHeatmapData {
+    eventData: {
+        x: number;
+        y: number;
+    };
+    clickCount: number;
+}
+
+export interface ScrollHeatmapData {
+    eventData: {
+        scrollTop: number;
+        scrollPercentage: number;
+    };
+    scrollCount: number;
+}

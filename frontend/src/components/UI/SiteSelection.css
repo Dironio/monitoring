@@ -1,0 +1,163 @@
+/* Основной блок выбора сайта */
+.site-selection {
+    width: 100%;
+    padding: 20px;
+    background: var(--background-color);
+}
+
+/* Карточка выбора сайта */
+.site-selection__card {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    background: var(--card-background);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Заголовок карточки */
+.site-selection__header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Основной заголовок */
+.site-selection__title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+/* Описание под заголовком */
+.site-selection__description {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+/* Контейнер для контента */
+.site-selection__content {
+    padding: 20px;
+}
+
+/* Контейнер для выбора сайта */
+.site-selection__select-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* Иконка перед селектом */
+.site-selection__icon {
+    width: 24px;
+    height: 24px;
+}
+
+/* Контейнер для селекта */
+.site-selection__select {
+    flex-grow: 1;
+}
+
+/* Модификатор для демо-режима */
+.site-selection__select--demo {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Текст текущего выбора */
+.site-selection__current {
+    font-size: 16px;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+/* Состояние загрузки */
+.site-selection__loading {
+    padding: 20px;
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+/* Сообщение об ошибке */
+.site-selection__error {
+    padding: 16px;
+    color: var(--error-color);
+    background: var(--error-background);
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+/* Анализ событий */
+.event-analysis {
+    margin-top: 32px;
+}
+
+.event-analysis__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.event-analysis__title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.event-analysis__button {
+    padding: 8px 16px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.event-analysis__button:hover {
+    background: var(--primary-color-hover);
+}
+
+.event-analysis__button:disabled {
+    background: var(--disabled-color);
+    cursor: not-allowed;
+}
+
+.event-analysis__charts {
+    display: grid;
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.event-analysis__chart-container {
+    background: var(--card-background);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.event-analysis__chart-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+.event-analysis__alert {
+    padding: 16px;
+    background: var(--info-background);
+    border-radius: 4px;
+    color: var(--text-primary);
+    margin-bottom: 24px;
+}
+
+.event-analysis__alert-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.event-analysis__alert-description {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
