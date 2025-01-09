@@ -68,11 +68,6 @@ export interface HeatmapData {
     eventData: {
         x: number;
         y: number;
-        id: string | null;
-        tag: string;
-        text: string | null;
-        classes: string | null;
-        duration: number;
     };
     clickCount: number;
 }

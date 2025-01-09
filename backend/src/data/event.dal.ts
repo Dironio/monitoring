@@ -318,8 +318,11 @@ ORDER BY click_count DESC;
         `, [webId, pageUrl]);
 
         return result.rows.map(row => ({
-            eventData: JSON.parse(row.event_data),
-            clickCount: parseInt(row.click_count)
+            eventData: {
+                x: Number(row.x),
+                y: Number(row.y)
+            },
+            clickCount: Number(row.click_count)
         }));
     }
 
