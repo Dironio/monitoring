@@ -6,7 +6,7 @@ interface InputFieldProps {
     name: string;
     type?: string;
     placeholder: string;
-    error?: FieldError | string; // Может быть строкой или FieldError
+    error?: FieldError | string;
     register: any;
     onBlur: () => void;
 }
