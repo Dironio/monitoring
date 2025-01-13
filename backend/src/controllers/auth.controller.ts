@@ -44,6 +44,38 @@ class AuthController {
 
         return res.json(user);
     }
+
+    @ControllerErrorHandler()
+    async checkAvailability(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const { username, email } = req.body;
+        const results: { username?: boolean; email?: boolean } = {};
+        const messages: { username?: string; email?: string } = {};
+
+        if (username) {
+            const existingUserByUsername = await userService.getUserByUsername(username);
+            results.username = !existingUserByUsername;
+            messages.username = existingUserByUsername
+                ? "Этот логин уже занят"
+                : "Логин доступен";
+        }
+
+        if (email) {
+            const existingUserByEmail = await userService.getUserByEmail(email);
+            results.email = !existingUserByEmail;
+            messages.email = existingUserByEmail
+                ? "Эта почта уже зарегистрирована"
+                : "Почта доступна";
+        }
+
+        // return res.status(200).json()
+        return res.status(200).json({
+            results,
+            messages,
+        });
+    }
+
+
+
 }
 
 const authController = new AuthController();

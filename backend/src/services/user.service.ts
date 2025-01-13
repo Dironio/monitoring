@@ -23,6 +23,10 @@ class UserService {
         return await userDal.getUserByUsername(username);
     }
 
+    async getUserByEmail(email: string): Promise<User>{
+        return await userDal.getUserByEmail(email);
+    }
+
     async update(dto: UpdateUserDto): Promise<User> {
         return await userDal.update(dto);
     }

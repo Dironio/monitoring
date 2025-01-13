@@ -66,6 +66,16 @@ class UserDal {
         return result.rows[0];
     }
 
+    async getUserByEmail(email: string): Promise<User> {
+        const result = await pool.query(`
+            SELECT * FROM users
+            WHERE email = $1`,
+            [email]
+        );
+
+        return result.rows[0];
+    }
+
 
     async update(dao: UpdateUserDao): Promise<User> {
         const { id, username, email, password, first_name, last_name } = dao;

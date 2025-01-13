@@ -9,4 +9,6 @@ authRouter.post('/login', authController.login);
 authRouter.get('/logout', authCheck, authController.logout);
 authRouter.get('/current', authCheck, authController.current);
 
+authRouter.post('/check', authController.checkAvailability);
+
 export default authRouter
