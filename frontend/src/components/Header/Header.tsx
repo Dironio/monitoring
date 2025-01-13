@@ -12,6 +12,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ user }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const modalRef = useRef<HTMLDivElement>(null);
+    const [headerTitle, setHeaderTitle] = useState("Мониторинг и анализ поведения пользователей");
 
     const toggleModal = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -43,10 +44,31 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
         };
     }, [isModalOpen]);
 
+    useEffect(() => {
+        const handleResize = () => {
+            const width = window.innerWidth;
+
+            if (width < 1230 && width >= 769) {
+                setHeaderTitle("Мониторинг и анализ");
+            } else if (width < 769) {
+                setHeaderTitle("МАПП");
+            } else {
+                setHeaderTitle("Мониторинг и анализ поведения пользователей");
+            }
+        };
+
+        handleResize();
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, []);
+
     return (
         <header className="header">
             <a href="/" className="header__link">
-                <h2 className="header__logo">Мониторинг и анализ</h2>
+                <h2 className="header__logo">{headerTitle}</h2>
             </a>
             {user ? (
                 <div className="header__info-user">

@@ -1,15 +1,22 @@
-import { Link } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import './AccountPage.css'
+import { User } from '../../../models/user.model';
 
-const AccountPage: React.FC = () => {
+interface AccountPageProps {
+    user: User | null;
+    loading: boolean;
+}
+
+const AccountPage: React.FC<AccountPageProps> = ({ user, loading }) => {
     return (
         <>
             <main>
                 <div className="wrapper">
                     <div className="bg-white">
                         <div className="account-header">
-                            <p className="account-header__logo">Добро пожаловать
-                                {/* {<span>,user.first_name</span> || ''}  */}
+                            <p className="account-header__logo">
+                                Добро пожаловать{user?.first_name ? "," : ""}
+                                <span>{user?.first_name || ""}</span>
                             </p>
                         </div>
 
@@ -19,9 +26,6 @@ const AccountPage: React.FC = () => {
                                 <button className="main-header__btn">Оставить заявку</button>
                             </Link>
                         </div>
-
-
-
 
                         <div className="account-grid">
                             <Link to="/account/settings" className="account-grid__item">
@@ -48,7 +52,6 @@ const AccountPage: React.FC = () => {
                                 </p>
                             </Link>
                         </div>
-
                     </div>
                 </div>
             </main>

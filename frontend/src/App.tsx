@@ -50,27 +50,6 @@ const App: React.FC = () => {
     return (
 
         <div className="App">
-            {/* 
-                    <Routes>
-                        <Route path="/main" element={<MainPage />} >
-
-                            <Route path="overview" element={<OverviewComponent />} />
-                            {/* <Route path="average-time" element={<AverageTimeReport />} />
-                            <Route path="behavior-metrics" element={<BehaviorMetricsReport />} />
-                            <Route path="visit-history" element={<VisitHistoryReport />} />
-                            <Route path="sales-analytics" element={<SalesAnalyticsReport />} /> 
-                        </Route>
-
-                        <Route path="/common-metrics" element={<h1>Общие метрики</h1>} />
-                        <Route path="/time-metrics" element={<h1>Временные метрики</h1>} />
-                        <Route path="/behavior-metrics" element={<h1>Метрики поведения</h1>} />
-                        <Route path="/graphs-navigation" element={<h1>Графы и навигация</h1>} />
-                        <Route path="/forecast-models" element={<h1>Модели прогнозов</h1>} />
-                        <Route path="/experiments" element={<h1>Эксперименты</h1>} />
-                    </Routes>
-                </div>
-            </div> */}
-
             <div
                 className={`app-container ${user
                     ? isNavbarExpanded
@@ -98,20 +77,47 @@ const App: React.FC = () => {
                             } />
 
 
-                            {/* НАДО ПОФИКСИТЬ, чет не работают */}
-                            <Route
-                                path="/account"
-                                element={
-                                    <ProtectedRoute user={user} loading={loading}>
-                                        <AccountPage />
-                                    </ProtectedRoute>
-                                }
-                            >
-                                <Route path="settings" element={
-                                    <ProtectedRoute user={user} loading={loading}>
-                                        <AccountSetting />
-                                    </ProtectedRoute>
-                                } />
+                            <Route>
+                                <Route
+                                    path="/account"
+                                    element={
+                                        <ProtectedRoute user={user} loading={loading}>
+                                            <AccountPage user={user} loading={loading} />
+                                        </ProtectedRoute>
+                                    }
+                                />
+                                <Route
+                                    path="/account/settings"
+                                    element={
+                                        <ProtectedRoute user={user} loading={loading}>
+                                            <AccountSetting user={user} loading={loading} />
+                                        </ProtectedRoute>
+                                    }
+                                />
+                                {/* <Route
+                                    path="/account/main"
+                                    element={
+                                        <ProtectedRoute user={user} loading={loading}>
+                                            <AccountMain user={user} loading={loading} />
+                                        </ProtectedRoute>
+                                    }
+                                />
+                                <Route
+                                    path="/account/sales-analytics"
+                                    element={
+                                        <ProtectedRoute user={user} loading={loading}>
+                                            <SalesAnalytics user={user} loading={loading} />
+                                        </ProtectedRoute>
+                                    }
+                                />
+                                <Route
+                                    path="/account/sales"
+                                    element={
+                                        <ProtectedRoute user={user} loading={loading}>
+                                            <Sales user={user} loading={loading} />
+                                        </ProtectedRoute>
+                                    }
+                                /> */}
                             </Route>
 
                             <Route

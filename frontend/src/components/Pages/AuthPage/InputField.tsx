@@ -9,6 +9,7 @@ interface InputFieldProps {
     error?: FieldError | string;
     register: any;
     onBlur: () => void;
+    disabled?: boolean;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -19,6 +20,7 @@ const InputField: React.FC<InputFieldProps> = ({
     error,
     register,
     onBlur,
+    disabled,
 }) => {
     const errorMessage =
         typeof error === "string"
