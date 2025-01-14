@@ -1,5 +1,5 @@
-import React from "react";
-import { FieldError } from "react-hook-form";
+import React from 'react';
+import { FieldError } from 'react-hook-form';
 
 interface InputFieldProps {
     label: string;
@@ -8,8 +8,9 @@ interface InputFieldProps {
     placeholder: string;
     error?: FieldError | string;
     register: any;
-    onBlur: () => void;
+    onBlur?: () => void;
     disabled?: boolean;
+    value?: string;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -20,12 +21,10 @@ const InputField: React.FC<InputFieldProps> = ({
     error,
     register,
     onBlur,
-    disabled,
+    disabled = false,
+    value,
 }) => {
-    const errorMessage =
-        typeof error === "string"
-            ? error
-            : error?.message;
+    const errorMessage = typeof error === "string" ? error : error?.message;
 
     return (
         <div className="input-field">
@@ -37,6 +36,8 @@ const InputField: React.FC<InputFieldProps> = ({
                     placeholder={placeholder}
                     {...register(name)}
                     onBlur={onBlur}
+                    disabled={disabled}
+                    defaultValue={value}
                 />
             </div>
             <div className={`error-message ${errorMessage ? "visible" : ""}`}>
@@ -45,5 +46,6 @@ const InputField: React.FC<InputFieldProps> = ({
         </div>
     );
 };
+
 
 export default InputField;

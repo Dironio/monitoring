@@ -72,7 +72,9 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
             </a>
             {user ? (
                 <div className="header__info-user">
-                    <HeaderRole user={user} />
+                    <div className="header__role-btn">
+                        <HeaderRole user={user} />
+                    </div>
                     <p className="header__role">{user?.role}</p>
                     <img
                         className="header__img"

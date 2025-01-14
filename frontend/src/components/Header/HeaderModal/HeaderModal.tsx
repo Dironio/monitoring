@@ -57,6 +57,9 @@ const HeaderModal: React.FC<HeaderModalProps> = ({ user, closeModal }) => {
                 </Link>
             </div>
 
+            <HeaderRole user={user} />
+
+
             <hr />
 
             <div className="header-modal__logout">

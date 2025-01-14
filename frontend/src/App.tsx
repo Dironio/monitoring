@@ -8,7 +8,6 @@ import AuthPage from './components/Pages/AuthPage/AuthPage';
 import MainPage from './components/Pages/MainPage/MainPage';
 import AccountPage from './components/Pages/AccountPage/AccountPage';
 import ApplicationPage from './components/Pages/ApplicationPage/ApplicationPage';
-import AccountSetting from './components/Pages/AccountPage/AccountSettings/AccountSetting';
 import OverviewComponent from './components/Pages/MainPage/Components/OverviewComponent';
 import UnknownPage from './components/Pages/UnknowPage/UnknowPage';
 import { useFetchUser } from './hooks/useCurrentUser';
@@ -19,6 +18,8 @@ import MetricPage from './components/Pages/BehaviorMetricPage/BehaviorMetricPage
 import EventAnalysisComponent from './components/Pages/BehaviorMetricPage/Components/EventAnalysisComponents';
 import InterfacePage from './components/Pages/InterfacePage/InterfacePage';
 import HeatmapComponent from './components/Pages/InterfacePage/Components/HeatmapComponent';
+import AccountSettings from './components/Pages/AccountPage/AccountSettings/AccountSetting';
+
 
 //сделать компонент 404
 const App: React.FC = () => {
@@ -90,7 +91,7 @@ const App: React.FC = () => {
                                     path="/account/settings"
                                     element={
                                         <ProtectedRoute user={user} loading={loading}>
-                                            <AccountSetting user={user} loading={loading} />
+                                            <AccountSettings user={user} loading={loading} />
                                         </ProtectedRoute>
                                     }
                                 />

@@ -1,6 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import './AccountSetting.css';
-import { useAccountSettingForm } from '../../../../hooks/useAccountSettingForm';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { User } from '../../../../models/user.model';
@@ -8,6 +7,44 @@ import InputField from '../../AuthPage/InputField';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { schemaSettings } from '../../../../models/validationSchemas';
+import { IUpdateUserData, userService } from '../../../../hooks/useUpdate';
+
+// interface AccountSettingProps {
+//     user: User | null;
+//     loading: boolean;
+//     onUpdateUser: (data: UpdateUserData) => Promise<void>;
+// }
+
+// interface FormInputs {
+//     firstName: string;
+//     lastName: string;
+//     email: string;
+//     username: string;
+//     currentPassword: string;
+//     newPassword: string;
+//     confirmNewPassword: string;
+// }
+
+// interface UpdateUserData {
+//     first_name: string;
+//     last_name: string;
+//     email?: string;
+//     username?: string;
+//     current_password?: string;
+//     new_password?: string;
+// }
+
+// interface ISettingsFormInputs {
+//     firstName: string;
+//     lastName: string;
+//     email: string;
+//     username: string;
+//     currentPassword: string;
+//     newPassword: string;
+//     confirmNewPassword: string;
+//     originalEmail: string;
+//     originalUsername: string;
+// }
 
 interface AccountSettingProps {
     user: User | null;
@@ -19,11 +56,14 @@ interface ISettingsFormInputs {
     lastName: string;
     email: string;
     username: string;
-    password?: string;
-    confirmPassword?: string;
+    currentPassword: string;
+    newPassword: string;
+    confirmNewPassword: string;
+    originalEmail: string;
+    originalUsername: string;
 }
 
-const AccountSetting: React.FC<AccountSettingProps> = ({ user, loading }) => {
+const AccountSettings: React.FC<AccountSettingProps> = ({ user, loading }) => {
     const navigate = useNavigate();
     const [isEditable, setIsEditable] = useState(false);
     const [showPasswordFields, setShowPasswordFields] = useState(false);
@@ -37,7 +77,7 @@ const AccountSetting: React.FC<AccountSettingProps> = ({ user, loading }) => {
         reset,
         watch,
     } = useForm<ISettingsFormInputs>({
-        resolver: yupResolver(schemaSettings),
+        resolver: yupResolver(schemaSettings) as any,
         mode: "onBlur",
         defaultValues: {
             firstName: user?.first_name || "",
@@ -53,6 +93,7 @@ const AccountSetting: React.FC<AccountSettingProps> = ({ user, loading }) => {
     });
 
     const formValues = watch();
+
     const hasChanges = useMemo(() => {
         return (
             formValues.firstName !== user?.first_name ||
@@ -63,29 +104,26 @@ const AccountSetting: React.FC<AccountSettingProps> = ({ user, loading }) => {
         );
     }, [formValues, user]);
 
-    const onSubmit: SubmitHandler<ISettingsFormInputs> = async (data) => {
-        if (isEditable && hasChanges) {
-            try {
-                setSubmitError(null);
-                const updateData: IUpdateUserData = {
-                    first_name: data.firstName,
-                    last_name: data.lastName,
-                    email: data.email !== user.email ? data.email : undefined,
-                    username: data.username !== user.username ? data.username : undefined,
-                    current_password: data.currentPassword,
-                    new_password: data.newPassword || undefined,
-                };
-
-                await userService.updateUser(updateData);
-                setIsEditable(false);
-                setShowPasswordFields(false);
-                navigate('/account');
-            } catch (error) {
-                setSubmitError(error instanceof Error ? error.message : 'Произошла ошибка при обновлении данных');
+    const onSubmit = async (data: ISettingsFormInputs) => {
+        try {
+            setSubmitError(null);
+            const updateData = {
+                first_name: data.firstName,
+                last_name: data.lastName,
+                email: data.email !== user?.email ? data.email : undefined,
+                username: data.username !== user?.username ? data.username : undefined,
+                current_password: data.currentPassword,
+                new_password: data.newPassword || undefined,
+            };
+            await userService.updateUser(updateData);
+            setIsEditable(false);
+            navigate('/account');
+        } catch (error) {
+            if (error instanceof Error) {
+                setSubmitError(error.message);
+            } else {
+                setSubmitError('Произошла ошибка при обновлении данных');
             }
-        } else {
-            setIsEditable(true);
-            setShowPasswordFields(true);
         }
     };
 
@@ -95,7 +133,6 @@ const AccountSetting: React.FC<AccountSettingProps> = ({ user, loading }) => {
         setSubmitError(null);
         reset();
     };
-
     return (
         <main>
             <div className="wrapper">
@@ -130,20 +167,22 @@ const AccountSetting: React.FC<AccountSettingProps> = ({ user, loading }) => {
                             <InputField
                                 label="Имя"
                                 name="firstName"
-                                placeholder="Введите имя"
+                                placeholder={user?.first_name || "Введите имя"}
                                 error={errors.firstName}
                                 register={register}
                                 onBlur={() => trigger("firstName")}
                                 disabled={!isEditable}
+                                value={user?.first_name}
                             />
                             <InputField
                                 label="Фамилия"
                                 name="lastName"
-                                placeholder="Введите фамилию"
+                                placeholder={user?.last_name || "Введите фамилию"}
                                 error={errors.lastName}
                                 register={register}
                                 onBlur={() => trigger("lastName")}
                                 disabled={!isEditable}
+                                value={user?.last_name}
                             />
                         </div>
 
@@ -152,24 +191,26 @@ const AccountSetting: React.FC<AccountSettingProps> = ({ user, loading }) => {
                                 label="Эл. почта"
                                 name="email"
                                 type="email"
-                                placeholder="Введите email"
+                                placeholder={user?.email || "Введите email"}
                                 error={errors.email}
                                 register={register}
                                 onBlur={() => trigger("email")}
                                 disabled={!isEditable}
+                                value={user?.email}
                             />
                             <InputField
                                 label="Логин"
                                 name="username"
-                                placeholder="Введите логин"
+                                placeholder={user?.username || "Введите логин"}
                                 error={errors.username}
                                 register={register}
                                 onBlur={() => trigger("username")}
                                 disabled={!isEditable}
+                                value={user?.username}
                             />
                         </div>
 
-                        {showPasswordFields && (
+                        {isEditable && (
                             <>
                                 <div className="item-initials">
                                     <InputField
@@ -212,8 +253,15 @@ const AccountSetting: React.FC<AccountSettingProps> = ({ user, loading }) => {
 
                         <div className="auth__signup">
                             <button
-                                type="submit"
+                                type="button"
                                 className="auth__signup-btn"
+                                onClick={() => {
+                                    if (!isEditable) {
+                                        setIsEditable(true);
+                                    } else {
+                                        handleSubmit(onSubmit)();
+                                    }
+                                }}
                                 disabled={isEditable && !hasChanges}
                             >
                                 {isEditable ? "Сохранить" : "Редактировать"}
@@ -226,4 +274,4 @@ const AccountSetting: React.FC<AccountSettingProps> = ({ user, loading }) => {
     );
 };
 
-export default AccountSetting;
+export default AccountSettings;

@@ -92,7 +92,7 @@
 }
 
 @media (max-width: 650px) {
-    .header__btn {
+    .header__role-btn {
         display: none;
     }
 }
