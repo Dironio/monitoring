@@ -105,24 +105,39 @@ const AccountSettings: React.FC<AccountSettingProps> = ({ user, loading }) => {
     }, [formValues, user]);
 
     const onSubmit = async (data: ISettingsFormInputs) => {
-        try {
-            setSubmitError(null);
-            const updateData = {
-                first_name: data.firstName,
-                last_name: data.lastName,
-                email: data.email !== user?.email ? data.email : undefined,
-                username: data.username !== user?.username ? data.username : undefined,
-                current_password: data.currentPassword,
-                new_password: data.newPassword || undefined,
-            };
-            await userService.updateUser(updateData);
-            setIsEditable(false);
-            navigate('/account');
-        } catch (error) {
-            if (error instanceof Error) {
-                setSubmitError(error.message);
-            } else {
-                setSubmitError('Произошла ошибка при обновлении данных');
+        if (!isEditable) {
+            setIsEditable(true);
+            return;
+        }
+
+        if (isEditable && hasChanges && user) {
+            try {
+                setSubmitError(null);
+                const updateData: IUpdateUserData = {
+                    id: user.id,
+                    first_name: data.firstName,
+                    last_name: data.lastName,
+                    email: data.email !== user.email ? data.email : undefined,
+                    username: data.username !== user.username ? data.username : undefined,
+                    current_password: data.currentPassword || undefined,
+                    new_password: data.newPassword || undefined,
+                };
+
+                if (data.newPassword && !data.currentPassword) {
+                    setSubmitError('Для изменения пароля необходимо ввести текущий пароль');
+                    return;
+                }
+
+                await userService.updateUser(updateData);
+                setIsEditable(false);
+                navigate('/account');
+                navigate(0);
+            } catch (error) {
+                if (error instanceof Error) {
+                    setSubmitError(error.message);
+                } else {
+                    setSubmitError('Произошла ошибка при обновлении данных');
+                }
             }
         }
     };

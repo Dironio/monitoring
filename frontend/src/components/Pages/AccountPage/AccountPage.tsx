@@ -15,7 +15,7 @@ const AccountPage: React.FC<AccountPageProps> = ({ user, loading }) => {
                     <div className="bg-white">
                         <div className="account-header">
                             <p className="account-header__logo">
-                                Добро пожаловать{user?.first_name ? "," : ""}
+                                Добро пожаловать{user?.first_name ? ", " : ""}
                                 <span>{user?.first_name || ""}</span>
                             </p>
                         </div>
@@ -23,7 +23,7 @@ const AccountPage: React.FC<AccountPageProps> = ({ user, loading }) => {
                         <div className="account-title">
                             <p className="account-header__logo">Хотите отслеживать свой сайт?</p>
                             <Link to="/application">
-                                <button className="main-header__btn">Оставить заявку</button>
+                                <button className="account-header__btn">Оставить заявку</button>
                             </Link>
                         </div>
 

@@ -19,6 +19,9 @@ export interface User {
     // gender: string;
     // birthday: Date;
 
+    current_password?: string;
+    new_password?: string;
+
     created_at: Date;
     updated_at: Date;
 }
