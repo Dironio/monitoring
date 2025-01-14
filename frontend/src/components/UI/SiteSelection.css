@@ -1,93 +1,106 @@
-/* Основной блок выбора сайта */
-.site-selection {
-    width: 100%;
-    padding: 20px;
-    background: var(--background-color);
-}
-
-/* Карточка выбора сайта */
-.site-selection__card {
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-    background: var(--card-background);
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Заголовок карточки */
-.site-selection__header {
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border-color);
-}
-
-/* Основной заголовок */
-.site-selection__title {
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 4px;
-}
-
-/* Описание под заголовком */
-.site-selection__description {
-    font-size: 14px;
-    color: var(--text-secondary);
-}
-
-/* Контейнер для контента */
-.site-selection__content {
-    padding: 20px;
-}
-
-/* Контейнер для выбора сайта */
 .site-selection__select-container {
+    width: 250px;
+}
+
+.site-selection__select {
     display: flex;
     align-items: center;
     gap: 16px;
+    background: white;
+    padding: 1px 25px;
+    border-radius: 10px;
+    width: 100%;
+    transition: all 0.3s ease;
 }
 
-/* Иконка перед селектом */
 .site-selection__icon {
     width: 24px;
     height: 24px;
 }
 
-/* Контейнер для селекта */
-.site-selection__select {
-    flex-grow: 1;
+.site-selection__select--demo,
+.custom-select {
+    cursor: pointer !important;
 }
 
-/* Модификатор для демо-режима */
-.site-selection__select--demo {
-    opacity: 0.7;
-    pointer-events: none;
+.css-b62m3t-container {
+    flex: 1;
 }
 
-/* Текст текущего выбора */
-.site-selection__current {
-    font-size: 16px;
-    color: var(--text-primary);
-    margin-bottom: 8px;
+.css-t3ipsp-control,
+.css-13cymwt-control {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
 }
 
-/* Состояние загрузки */
-.site-selection__loading {
-    padding: 20px;
-    text-align: center;
-    color: var(--text-secondary);
+.css-t3ipsp-control:hover,
+.css-13cymwt-control:hover,
+.css-t3ipsp-control:focus,
+.css-13cymwt-control:focus {
+    border-color: transparent !important;
+    box-shadow: none !important;
 }
 
-/* Сообщение об ошибке */
-.site-selection__error {
-    padding: 16px;
-    color: var(--error-color);
-    background: var(--error-background);
-    border-radius: 4px;
-    margin-top: 8px;
+.css-hlgwow {
+    padding: 0;
+    overflow: hidden;
+    max-width: 200px;
 }
 
-/* Анализ событий */
+.css-1u9des2-indicatorSeparator,
+.css-1xc3v61-indicatorContainer,
+.css-1wy0on6 {
+    display: none !important;
+}
+
+.css-1dimb5e-singleValue {
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 200px;
+}
+
+.css-19bb58m {
+    max-width: 200px;
+    overflow: hidden;
+    cursor: pointer !important;
+}
+
+.css-19bb58m input {
+    color: inherit !important;
+    background: transparent !important;
+    width: 100% !important;
+    max-width: 200px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+    outline: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    min-width: 2px !important;
+    grid-area: 1 / 2 !important;
+    font: inherit !important;
+    caret-color: transparent !important;
+    cursor: pointer !important;
+    box-shadow: none !important;
+}
+
+.css-19bb58m input:focus {
+    outline: 0 !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+.css-26l3qy-menu {
+    border-radius: 24px !important;
+}
+
+
+
+/* 
 .event-analysis {
     margin-top: 32px;
 }
@@ -160,4 +173,4 @@
 .event-analysis__alert-description {
     font-size: 14px;
     color: var(--text-secondary);
-}
+} */

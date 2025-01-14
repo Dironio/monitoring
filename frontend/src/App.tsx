@@ -29,7 +29,7 @@ const App: React.FC = () => {
     });
     const { user, loading } = useFetchUser();
 
-    useAnalytics()
+    // useAnalytics()
 
     console.log(user)
 

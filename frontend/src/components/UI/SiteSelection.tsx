@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios"; // Убедитесь, что axios установлен
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import Select from "react-select";
 import './SiteSelection.css';
-import { WebSite } from "../../models/site.model"; // Ваши модели
-import { User } from "../../models/user.model"; // Модель пользователя
+import { WebSite } from "../../models/site.model";
+import { User } from "../../models/user.model";
 
 interface SiteSelectionProps {
     user: User | null;
@@ -12,6 +12,7 @@ interface SiteSelectionProps {
 
 const SiteSelection: React.FC<SiteSelectionProps> = ({ user, loading }) => {
     const [sites, setSites] = useState<WebSite[]>([]);
+    const selectRef = useRef<any>(null);
     const [selectedSite, setSelectedSite] = useState<{ value: number; label: string } | null>(() => {
         const savedSite = localStorage.getItem('selectedSite');
         return savedSite ? JSON.parse(savedSite) : null;
@@ -30,7 +31,6 @@ const SiteSelection: React.FC<SiteSelectionProps> = ({ user, loading }) => {
 
             setSites(response.data);
 
-            // Для роли 1 автоматически выбираем демо-сайт (id=1)
             if (user.role_id === 1) {
                 const demoSite = response.data.find(site => site.id === 1);
                 if (demoSite) {
@@ -40,7 +40,6 @@ const SiteSelection: React.FC<SiteSelectionProps> = ({ user, loading }) => {
                     });
                 }
             }
-            // Для других ролей, если нет выбранного сайта, устанавливаем демо-сайт
             else if (!selectedSite && response.data.length > 0) {
                 const demoSite = response.data.find(site => site.id === 1);
                 if (demoSite) {
@@ -59,7 +58,6 @@ const SiteSelection: React.FC<SiteSelectionProps> = ({ user, loading }) => {
         setSelectedSite(selectedOption);
         if (selectedOption) {
             localStorage.setItem('selectedSite', JSON.stringify(selectedOption));
-            // Dispatch событие изменения сайта
             const event = new CustomEvent('siteSelected', {
                 detail: {
                     siteId: selectedOption.value,
@@ -74,48 +72,44 @@ const SiteSelection: React.FC<SiteSelectionProps> = ({ user, loading }) => {
         fetchAvailableSites();
     }, [user]);
 
+
+    const handleIconClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (selectRef.current) {
+            selectRef.current.onMenuOpen();
+        }
+    };
+
     if (loading) return <div>Загрузка...</div>;
     if (!user) return null;
 
     return (
-        <div className="site-selection">
-            <div className="site-selection__card">
-                <div className="site-selection__header">
-                    <h2 className="site-selection__title">Выбор сайта</h2>
-                    <p className="site-selection__description">
-                        {user.role_id === 1
-                            ? "Доступен только демо-режим"
-                            : "Выберите сайт для анализа"
-                        }
-                    </p>
-                </div>
-                <div className="site-selection__content">
-                    <div className="site-selection__select-container">
-                        {/* <img
-                            src="poloski.svg"
-                            alt=""
-                            className="site-selection__icon"
-                        /> */}
-                        <div className="site-selection__select">
-                            <p className="site-selection__current">
-                                {selectedSite ? selectedSite.label : "Не выбрано или Демо-режим"}
-                            </p>
-                            <Select
-                                value={selectedSite}
-                                options={sites.map((site) => ({
-                                    value: site.id,
-                                    label: site.site,
-                                }))}
-                                onChange={handleSiteChange}
-                                className={`custom-select ${user.role_id === 1 ? 'site-selection__select--demo' : ''}`}
-                                isDisabled={user.role_id === 1}
-                            />
-                        </div>
-                    </div>
+        <section className="site-selection">
+            <div className="site-selection__select-container">
+                <div className="site-selection__select">
+                    <img
+                        src="/assets/burger.svg"
+                        alt=""
+                        className="site-selection__icon"
+                        onClick={handleIconClick}
+                    />
+                    <Select
+                        value={selectedSite}
+                        options={sites.map((site) => ({
+                            value: site.id,
+                            label: site.site,
+                        }))}
+                        onChange={handleSiteChange}
+                        className={`custom-select ${user.role_id === 1 ? 'site-selection__select--demo' : ''}`}
+                        isDisabled={user.role_id === 1}
+                        isSearchable={true}
+                        placeholder=""
+                        menuPlacement="auto"
+                    />
                 </div>
             </div>
-        </div>
-    );
+        </section>
+    )
 };
 
 
