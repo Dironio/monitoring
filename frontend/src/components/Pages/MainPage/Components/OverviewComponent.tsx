@@ -24,7 +24,6 @@ const OverviewComponent: React.FC<OverviewProps> = ({ user, loading }) => {
     const [topPages, setTopPages] = useState<{ page_url: string; visits: number }[]>([]);
     const [isExpanded, setIsExpanded] = useState(false);
 
-    // Разделяем отображаемые строки (первые 10) и скрываемые
     const displayedPages = isExpanded ? topPages : topPages.slice(0, 10);
 
     const selectedSite = JSON.parse(localStorage.getItem('selectedSite') || 'null');
@@ -111,30 +110,6 @@ const OverviewComponent: React.FC<OverviewProps> = ({ user, loading }) => {
                     </ResponsiveContainer>
                 </div>
             </div>
-
-            {/* Таблица: Популярные страницы */}
-            {/* <div className="card">
-                <h2 className="card-title">Популярные страницы</h2>
-                <div className="table-container">
-                    <table className="table">
-                        <thead>
-                            <tr>
-                                <th className="table-header">URL Страницы</th>
-                                <th className="table-header">Посещения</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {topPages.map((page, index) => (
-                                <tr key={index}>
-                                    <td className="table-cell">{page.page_url.replace("http://localhost:3000", "")}</td>
-                                    <td className="table-cell">{page.visits}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </div> */}
-
 
             <div className="card">
                 <h2 className="card-title">Популярные страницы</h2>

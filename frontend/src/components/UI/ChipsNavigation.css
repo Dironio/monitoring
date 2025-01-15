@@ -1,0 +1,370 @@
+.chips-navigation {
+    width: 100%;
+}
+
+.nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+.nav-item {
+    cursor: pointer;
+    padding: 10px 15px;
+    background-color: #F8F8F8;
+    border-radius: 20px;
+    color: #656565;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 1px solid #EBEBEB;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.nav-item:hover {
+    background-color: #7553FF;
+    color: #FFFFFF;
+    border-color: #7553FF;
+}
+
+.nav-item.selected {
+    background-color: #7553FF;
+    color: #FFFFFF;
+    border-color: #7553FF;
+}
+
+.nav-select {
+    display: inline-block;
+    width: 100px;
+}
+
+.select-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 15px;
+    gap: 8px;
+    background-color: #F8F8F8;
+    border: 1px solid #EBEBEB;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #656565;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.select-trigger:hover {
+    background-color: #7553FF;
+    color: #FFFFFF;
+    border-color: #7553FF;
+}
+
+.select-trigger:hover .select-icon {
+    color: #FFFFFF;
+}
+
+.select-trigger[data-state="open"] {
+    background-color: #7553FF;
+    color: #FFFFFF;
+    border-color: #7553FF;
+}
+
+.select-trigger[data-state="open"] .select-icon {
+    color: #FFFFFF;
+    transform: rotate(180deg);
+}
+
+.select-icon {
+    color: #656565;
+    transition: all 0.3s ease;
+}
+
+
+.select-content {
+    overflow: hidden;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+    animation: slideDownAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1000;
+}
+
+.select-viewport {
+    padding: 8px;
+}
+
+.select-item {
+    font-size: 16px;
+    line-height: 1;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    position: relative;
+    user-select: none;
+    cursor: pointer;
+    color: #656565;
+    transition: all 0.2s ease;
+}
+
+.select-item:hover {
+    background-color: #F8F8F8;
+    color: #7553FF;
+}
+
+.select-item.selected {
+    background-color: #7553FF;
+    color: #FFFFFF;
+}
+
+@keyframes slideDownAndFade {
+    from {
+        opacity: 0;
+        transform: translateY(-2px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-list {
+        gap: 12px;
+    }
+
+    .nav-item {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
+    .select-trigger {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .select-content,
+    .select-trigger,
+    .nav-item,
+    .select-icon {
+        transition: none;
+    }
+}
+
+@-moz-document url-prefix() {
+    .select-trigger {
+        text-align: left;
+        padding-left: 15px;
+    }
+}
+
+@supports (-webkit-overflow-scrolling: touch) {
+    .select-content {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+
+
+/* .select-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100px;
+    padding: 10px 12px;
+    gap: 8px;
+    background-color: #F8F8F8;
+    border: 1px solid #EBEBEB;
+    border-radius: 20px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #656565;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.select-trigger:hover {
+    background-color: #7553FF;
+    color: #FFFFFF;
+    border-color: #7553FF;
+}
+
+.select-trigger:hover .select-icon {
+    color: #FFFFFF;
+}
+
+.select-trigger[data-state="open"] {
+    background-color: #7553FF;
+    color: #FFFFFF;
+    border-color: #7553FF;
+}
+
+.select-trigger[data-state="open"] .select-icon {
+    color: #FFFFFF;
+    transform: rotate(180deg);
+}
+
+.select-icon {
+    color: #656565;
+    transition: all 0.3s ease;
+}
+
+.select-content {
+    overflow: hidden;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    animation: slideDownAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1000;
+}
+
+.select-viewport {
+    padding: 8px;
+}
+
+.select-item {
+    font-size: 16px;
+    line-height: 1;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    position: relative;
+    user-select: none;
+    cursor: pointer;
+    color: #656565;
+    transition: all 0.2s ease;
+}
+
+.select-item:hover {
+    background-color: #F8F8F8;
+    color: #7553FF;
+}
+
+.select-item.selected {
+    background-color: #7553FF;
+    color: #FFFFFF;
+}
+
+@keyframes slideDownAndFade {
+    from {
+        opacity: 0;
+        transform: translateY(-2px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+.select-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 12px;
+    gap: 8px;
+    background-color: #F8F8F8;
+    border: 1px solid #EBEBEB;
+    border-radius: 20px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #656565;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.select-trigger:hover {
+    background-color: #7553FF;
+    color: #FFFFFF;
+    border-color: #7553FF;
+}
+
+.select-trigger:hover .select-icon {
+    color: #FFFFFF;
+}
+
+.select-trigger[data-state="open"] {
+    background-color: #7553FF;
+    color: #FFFFFF;
+    border-color: #7553FF;
+}
+
+.select-trigger[data-state="open"] .select-icon {
+    color: #FFFFFF;
+    transform: rotate(180deg);
+}
+
+.select-icon {
+    color: #656565;
+    transition: all 0.3s ease;
+}
+
+.select-content {
+    overflow: hidden;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    animation: slideDownAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1000;
+}
+
+.select-viewport {
+    padding: 8px;
+}
+
+.select-item {
+    font-size: 16px;
+    line-height: 1;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    position: relative;
+    user-select: none;
+    cursor: pointer;
+    color: #656565;
+    transition: all 0.2s ease;
+}
+
+.select-item:hover {
+    background-color: #F8F8F8;
+    color: #7553FF;
+}
+
+.select-item.selected {
+    background-color: #7553FF;
+    color: #FFFFFF;
+}
+
+.select-empty {
+    padding: 12px;
+    text-align: center;
+    color: #656565;
+}
+
+@keyframes slideDownAndFade {
+    from {
+        opacity: 0;
+        transform: translateY(-2px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+} */
