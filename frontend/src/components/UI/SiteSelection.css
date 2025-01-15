@@ -2,6 +2,10 @@
     width: 250px;
 }
 
+.site-selection{
+    margin-top: 20px;
+}
+
 .site-selection__select {
     display: flex;
     align-items: center;

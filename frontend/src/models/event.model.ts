@@ -71,3 +71,38 @@ export interface HeatmapData {
     };
     clickCount: number;
 }
+
+export interface MetricResponse {
+    day: string;
+    active_users?: number;
+    avg_time?: number;
+    page_url?: string;
+    visits?: number;
+}
+
+export interface MetricData {
+    day: string;
+    value: number;
+    fill: string;
+}
+
+export interface Trend {
+    trend: 'рост' | 'падение' | 'стабильность' | 'недостаточно данных';
+    percentage: number;
+}
+
+export interface TrendsState {
+    users: Trend;
+    time: Trend;
+}
+
+export interface TopPage {
+    page_url: string;
+    visits: number;
+}
+
+export interface MetricData {
+    day: string;
+    value: number;
+    fill: string;
+}

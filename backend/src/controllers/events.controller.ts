@@ -46,19 +46,22 @@ class EventController {
 
     @ControllerErrorHandler()
     async getAverageSessionTime(req: Request, res: Response, next: NextFunction): Promise<Response> {
-        const result = await eventService.getAverageSessionTime();
+        const webId = Number(req.query.web_id);
+        const result = await eventService.getAverageSessionTime(webId);
         return res.status(200).json(result);
     }
 
     @ControllerErrorHandler()
     async getTopPages(req: Request, res: Response, next: NextFunction): Promise<Response> {
-        const result = await eventService.getTopPages();
+        const webId = Number(req.query.web_id);
+        const result = await eventService.getTopPages(webId);
         return res.status(200).json(result);
     }
 
     @ControllerErrorHandler()
     async getAvgTime(req: Request, res: Response, next: NextFunction): Promise<Response> {
-        const result = await eventService.getAvgTime();
+        const webId = Number(req.query.web_id);
+        const result = await eventService.getAvgTime(webId);
         return res.status(200).json(result);
     }
 

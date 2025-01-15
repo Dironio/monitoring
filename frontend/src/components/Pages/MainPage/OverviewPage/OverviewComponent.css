@@ -11,7 +11,7 @@
     background-color: #ffffff;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
+    padding: 20px;
 }
 
 .card-title {
@@ -24,6 +24,11 @@
 .chart-container {
     height: 250px;
     width: 100%;
+}
+
+.chart-wrapper{
+    padding: 20px;
+    
 }
 
 .table-container {

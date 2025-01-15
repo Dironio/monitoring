@@ -25,6 +25,9 @@ eventRouter.get('/scroll-heatmap', authCheck, eventController.getScrollHeatmap);
 eventRouter.get('/page-heatmap', authCheck, eventController.getPageHeatmap);
 
 
+// eventRouter.get('/history', authCheck, eventController.get);
+
+
 // eventRouter.get('/metrics/traffic', authCheck, eventController.getTrafficData);
 // eventRouter.get('/metrics/user-segments', authCheck, eventController.getUserSegments);
 // eventRouter.get('/metrics/event-summary', authCheck, eventController.getEventSummary);

@@ -1,0 +1,82 @@
+.history-container {
+    display: grid;
+    gap: 24px;
+    padding: 24px;
+}
+
+.card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #333;
+}
+
+.chart-wrapper {
+    height: 300px;
+    margin: 20px 0;
+    position: relative;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-header {
+    text-align: left;
+    padding: 12px;
+    border-bottom: 2px solid #eee;
+    color: #666;
+    font-weight: 600;
+}
+
+.table-cell {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.expand-button {
+    margin-top: 16px;
+    padding: 8px 16px;
+    background: #7553FF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.expand-button:hover {
+    background: #6344e0;
+}
+
+.no-data-message {
+    text-align: center;
+    color: #666;
+    padding: 20px;
+}
+
+.trend-up {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.trend-down {
+    color: #ef4444;
+    font-weight: 600;
+}
+
+.trend-stable {
+    color: #6b7280;
+    font-weight: 600;
+}

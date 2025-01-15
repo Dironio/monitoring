@@ -97,74 +97,92 @@ class EventDal {
             WHERE session_id IS NOT NULL 
                 AND ($1::INT IS NULL OR web_id = $1)
             GROUP BY day
-            ORDER BY day DESC
+            ORDER BY day ASC
             LIMIT 30
         `, [web_id]);
 
         return result.rows;
     }
 
-    async getAverageSessionTime(): Promise<RawEvent[]> {
+    async getAverageSessionTime(web_id: number): Promise<RawEvent[]> {
         const result = await pool.query(`
-            SELECT 
-                DATE_TRUNC('day', timestamp_day) AS day,  
-                AVG(session_duration) AS avg_time
-            FROM (
-                SELECT 
-                    session_id,
-                    DATE_TRUNC('day', "timestamp") AS timestamp_day,
-                    SUM(CAST(event_data->>'duration' AS INTEGER)) AS session_duration
-                FROM raw_events
-                WHERE event_data->>'duration' IS NOT NULL AND session_id IS NOT NULL
-                GROUP BY session_id, DATE_TRUNC('day', "timestamp")
-            ) AS session_data
-            GROUP BY timestamp_day
-            ORDER BY timestamp_day DESC
-            LIMIT 30
-          `);
+            SELECT
+            DATE_TRUNC('day', timestamp_day) AS day,
+    AVG(last_duration) AS avg_time
+FROM (
+    SELECT
+        session_id,
+        DATE_TRUNC('day', timestamp) AS timestamp_day,
+        (array_agg(CAST(event_data->>'duration' AS INTEGER) 
+         ORDER BY timestamp DESC))[1] AS last_duration
+    FROM raw_events
+    WHERE 
+        event_data->>'duration' IS NOT NULL 
+        AND session_id IS NOT NULL
+        AND ($1::INT IS NULL OR web_id = $1)
+    GROUP BY session_id, DATE_TRUNC('day', timestamp)
+) AS session_data
+GROUP BY timestamp_day
+ORDER BY timestamp_day ASC
+LIMIT 30
+          `, [web_id]);
 
         return result.rows;
     }
 
-    async getTopPages(): Promise<RawEvent[]> {
+    async getTopPages(web_id: number): Promise<RawEvent[]> {
         const result = await pool.query(`
-            SELECT 
-                page_url, 
-                COUNT(*) AS visits
-            FROM raw_events
-            WHERE event_data::text NOT LIKE '%scrollTop%'
-                AND event_data::text NOT LIKE '%scrollPercentage%'
-                AND page_url IS NOT NULL
-            GROUP BY page_url
-            ORDER BY visits DESC
-            --LIMIT 10
-        `);
+            SELECT
+    REGEXP_REPLACE(page_url, 'http://localhost:[0-9]+', '') as page_url,
+    COUNT(*) AS visits
+FROM raw_events
+WHERE event_data::text NOT LIKE '%scrollTop%'
+    AND event_data::text NOT LIKE '%scrollPercentage%'
+    AND page_url IS NOT NULL
+    AND (1::INT IS NULL OR web_id = 1)
+GROUP BY REGEXP_REPLACE(page_url, 'http://localhost:[0-9]+', '')
+ORDER BY visits DESC
+        `, [web_id]);
 
         return result.rows;
     }
 
 
-    async getAvgTime(): Promise<RawEvent[]> {
+    async getAvgTime(webId: number): Promise<RawEvent[]> {
         const result = await pool.query(`
-        SELECT 
-            timestamp_day AS day,
-            AVG(session_duration) AS avg_session_time,
-            MAX(session_duration) AS max_session_time,
-            SUM(session_duration) AS total_site_time,
-            COUNT(DISTINCT session_id) AS total_sessions
-        FROM (
-            SELECT 
+        WITH session_durations AS (
+            SELECT
                 session_id,
                 DATE_TRUNC('day', "timestamp") AS timestamp_day,
-                SUM(CAST(event_data->>'duration' AS INTEGER)) AS session_duration
+                (array_agg(CAST(event_data->>'duration' AS INTEGER) 
+                 ORDER BY "timestamp" DESC))[1] AS last_duration,
+                COUNT(*) as events_count,
+                COUNT(DISTINCT page_url) as unique_pages
             FROM raw_events
-            WHERE event_data->>'duration' IS NOT NULL AND session_id IS NOT NULL
-            GROUP BY session_id, DATE_TRUNC('day', "timestamp")
-        ) AS session_data
+            WHERE 
+                event_data->>'duration' IS NOT NULL 
+                AND session_id IS NOT NULL
+                AND web_id = $1
+            GROUP BY 
+                session_id, 
+                DATE_TRUNC('day', "timestamp")
+        )
+        SELECT
+            timestamp_day AS day,
+            AVG(last_duration) AS avg_session_time,
+            MAX(last_duration) AS max_session_time,
+            SUM(last_duration) AS total_site_time,
+            COUNT(DISTINCT session_id) AS total_sessions,
+            AVG(events_count) AS avg_events_per_session,
+            AVG(unique_pages) AS avg_pages_per_session,
+            COUNT(CASE WHEN events_count = 1 THEN 1 END)::FLOAT / 
+                COUNT(*) * 100 AS bounce_rate
+        FROM session_durations
         GROUP BY timestamp_day
         ORDER BY timestamp_day DESC
         LIMIT 30
-    `);
+
+    `, [webId]);
 
         return result.rows;
     }
@@ -302,19 +320,19 @@ class EventDal {
     async getClickHeatmapData(webId: number, pageUrl: string): Promise<ClickHeatmapData[]> {
         const result = await pool.query(`
             SELECT 
-    event_data::jsonb->'x' as x,
-    event_data::jsonb->'y' as y,
-    COUNT(*) as click_count
-FROM raw_events
-WHERE 
-    web_id = $1
-    AND page_url = $2
-    AND event_id = 2  -- ID для событий клика
-    AND timestamp >= NOW() - INTERVAL '30 days'
-    AND event_data::jsonb ? 'x'
-    AND event_data::jsonb ? 'y'
-GROUP BY event_data::jsonb->'x', event_data::jsonb->'y'
-ORDER BY click_count DESC;
+                event_data::jsonb->'x' as x,
+                event_data::jsonb->'y' as y,
+                COUNT(*) as click_count
+            FROM raw_events
+            WHERE 
+                web_id = $1
+                AND page_url = $2
+                AND event_id = 2  -- ID для событий клика
+                AND timestamp >= NOW() - INTERVAL '30 days'
+                AND event_data::jsonb ? 'x'
+                AND event_data::jsonb ? 'y'
+            GROUP BY event_data::jsonb->'x', event_data::jsonb->'y'
+            ORDER BY click_count DESC;
         `, [webId, pageUrl]);
 
         return result.rows.map(row => ({

@@ -13,7 +13,7 @@ interface InterfacePageProps {
 const InterfacePage: React.FC<InterfacePageProps> = ({ user, loading }) => {
     const navigate = useNavigate();
     const location = useLocation();
-
+    //Поменять
     const navigationItems: NavItem[] = [
         {
             path: 'heatmap-page',
@@ -22,7 +22,9 @@ const InterfacePage: React.FC<InterfacePageProps> = ({ user, loading }) => {
         {
             path: 'heatmap-scroll',
             label: 'Карта скроллов'
-        }
+        },
+        { path: 'hype-elements', label: 'Популярные элементы' },
+        { path: 'nav-road', label: 'Навигационные пути' }
     ];
 
     useEffect(() => {

@@ -29,16 +29,16 @@ class EventService {
         return await eventDal.getActiveUsersDaily(web_id);
     }
 
-    async getAverageSessionTime(): Promise<RawEvent[]> {
-        return await eventDal.getAverageSessionTime();
+    async getAverageSessionTime(web_id: number): Promise<RawEvent[]> {
+        return await eventDal.getAverageSessionTime(web_id);
     }
 
-    async getTopPages(): Promise<RawEvent[]> {
-        return await eventDal.getTopPages();
+    async getTopPages(web_id: number): Promise<RawEvent[]> {
+        return await eventDal.getTopPages(web_id);
     }
 
-    async getAvgTime(): Promise<RawEvent[]> {
-        return await eventDal.getAvgTime();
+    async getAvgTime(webId: number): Promise<RawEvent[]> {
+        return await eventDal.getAvgTime(webId);
     }
 
 
