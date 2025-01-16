@@ -28,6 +28,7 @@ interface MetricData {
 
 const OverviewComponent: React.FC<OverviewProps> = ({ user, loading }) => {
     const [isExpanded, setIsExpanded] = useState(false);
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
 
     const {
         dailyActiveUsers,
@@ -55,6 +56,12 @@ const OverviewComponent: React.FC<OverviewProps> = ({ user, loading }) => {
         );
     };
 
+    useEffect(() => {
+        if (dailyActiveUsers.length > 0) {
+            setIsInitialLoad(false);
+        }
+    }, [dailyActiveUsers]);
+
     if (loading) {
         return <div>Загрузка...</div>;
     }
@@ -68,7 +75,11 @@ const OverviewComponent: React.FC<OverviewProps> = ({ user, loading }) => {
             <div className="card">
                 <h2 className="card-title">Ежедневные активные пользователи</h2>
                 <div className="chart-wrapper">
-                    {hasValidData(dailyActiveUsers) ? (
+                    {(loading || isInitialLoad) ? (
+                        <div className="no-data-message">
+                            Загрузка данных...
+                        </div>
+                    ) : hasValidData(dailyActiveUsers) ? (
                         <ResponsiveContainer width="100%" height={300}>
                             <LineChart
                                 data={dailyActiveUsers}

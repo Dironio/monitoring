@@ -116,7 +116,7 @@ export const useOverviewMetrics = () => {
                 const processedDailyData = dailyResponse.data
                     .map(item => ({
                         day: item.day,
-                        value: item.active_users || 0,
+                        value: Number(item.active_users) || 0,
                         fill: "hsl(var(--chart-1))"
                     }))
                     .sort((a, b) => new Date(a.day).getTime() - new Date(b.day).getTime());
@@ -141,6 +141,10 @@ export const useOverviewMetrics = () => {
                     time: calculateTrend(processedSessionData)
                 });
 
+                if (processedDailyData.length > 0) {
+                    setDailyActiveUsers(processedDailyData);
+                }
+
             } catch (error) {
                 setError("Ошибка при загрузке данных");
                 console.error("Ошибка при получении данных:", error);
@@ -151,6 +155,10 @@ export const useOverviewMetrics = () => {
 
         fetchMetrics();
     }, []);
+
+    useEffect(() => {
+        console.log('dailyActiveUsers changed:', dailyActiveUsers);
+    }, [dailyActiveUsers]);
 
     return {
         dailyActiveUsers,

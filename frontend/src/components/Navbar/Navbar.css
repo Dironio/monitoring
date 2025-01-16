@@ -33,6 +33,10 @@
     margin-left: 14px;
 }
 
+.search-box {
+    cursor: pointer;
+}
+
 .search-box__items {
     display: flex;
     align-items: center;

@@ -140,7 +140,7 @@ class EventDal {
             WHERE event_data::text NOT LIKE '%scrollTop%'
                 AND event_data::text NOT LIKE '%scrollPercentage%'
                 AND page_url IS NOT NULL
-                AND (1::INT IS NULL OR web_id = 1)
+                AND ($1::INT IS NULL OR web_id = $1)
             GROUP BY REGEXP_REPLACE(page_url, 'http://localhost:[0-9]+', '')
             ORDER BY visits DESC
         `, [web_id]);

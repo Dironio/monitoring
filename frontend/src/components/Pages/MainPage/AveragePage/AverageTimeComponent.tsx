@@ -16,6 +16,9 @@ interface AverageTimeMetric {
     max_session_time: number;
     total_site_time: number;
     total_sessions: number;
+    avg_events_per_session: number;
+    avg_pages_per_session: number;
+    bounce_rate: number;
 }
 
 const AverageTimeComponent: React.FC<AverageTimeComponentProps> = ({ user, loading }) => {
@@ -38,21 +41,21 @@ const AverageTimeComponent: React.FC<AverageTimeComponentProps> = ({ user, loadi
 
     const formatTime = (time: number) => {
         if (time > 60) {
-            return `${(time / 60).toFixed(2)} минуты`;
+            return `${(time / 60).toFixed(0)} минут`;
         }
-        return `${time.toFixed(2)} секунды`;
+        return `${time.toFixed(2)} секунд`;
     };
 
     useEffect(() => {
         if (loading) return;
-    
+
         if (!user) {
             console.error("Пользователь не авторизован");
             return;
         }
-    
+
         const selectedSite = JSON.parse(localStorage.getItem('selectedSite') || 'null');
-    
+
         if (!selectedSite) {
             console.error("Сайт не выбран");
             return;
@@ -69,11 +72,21 @@ const AverageTimeComponent: React.FC<AverageTimeComponentProps> = ({ user, loadi
                         },
                     }
                 );
-                setMetrics(response.data.sort((a, b) => new Date(a.day).getTime() - new Date(b.day).getTime()));
+
+                const processedData = response.data.map(item => ({
+                    ...item,
+                    day: new Date(item.day).toISOString(),
+                    total_site_time: Math.round(Number(item.total_site_time))
+                }));
+                setMetrics(processedData.sort((a, b) =>
+                    new Date(a.day).getTime() - new Date(b.day).getTime()
+                ));
             } catch (error) {
                 console.error("Ошибка при получении метрик сайта:", error);
             }
         };
+
+
 
         fetchMetrics();
     }, [user, loading]);
@@ -86,6 +99,11 @@ const AverageTimeComponent: React.FC<AverageTimeComponentProps> = ({ user, loadi
         } else if (chartType === "pie") {
             setPieChartScale((prev) => Math.max(0.5, Math.min(2, prev + factor)));
         }
+    };
+
+    const hasValidData = (data: AverageTimeMetric[]) => {
+        return Array.isArray(data) && data.length > 0 &&
+            data.every(item => typeof item.total_site_time === 'number' && !isNaN(item.total_site_time));
     };
 
     if (loading) {
@@ -144,22 +162,40 @@ const AverageTimeComponent: React.FC<AverageTimeComponentProps> = ({ user, loadi
                     <span>Масштаб: {pieChartScale.toFixed(1)}x</span>
                     <button onClick={() => handleScaleChange("pie", 0.1)}>+</button>
                 </div>
-                <ResponsiveContainer width="100%" height={300 * pieChartScale}>
-                    <PieChart>
-                        <Pie
-                            data={metrics}
-                            dataKey="total_site_time"
-                            nameKey="day"
-                            label={({ name }) => format(new Date(name), "dd.MM")}
-                            outerRadius={100 * pieChartScale}
-                        >
-                            {metrics.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                            ))}
-                        </Pie>
-                        <Tooltip />
-                    </PieChart>
-                </ResponsiveContainer>
+                {loading ? (
+                    <div className="loading">Загрузка данных...</div>
+                ) : hasValidData(metrics) ? (
+                    <ResponsiveContainer width="100%" height={300 * pieChartScale}>
+                        <PieChart>
+                            <Pie
+                                data={metrics}
+                                dataKey="total_site_time"
+                                nameKey="day"
+                                label={({ name }) => format(new Date(name), "dd.MM")}
+                                outerRadius={100 * pieChartScale}
+                            >
+                                {metrics.map((entry, index) => {
+                                    const hue = (index * 137.508) % 360;
+                                    return (
+                                        <Cell
+                                            key={`cell-${index}`}
+                                            fill={`hsl(${hue}, 70%, 50%)`}
+                                        />
+                                    );
+                                })}
+                            </Pie>
+                            <Tooltip
+                                formatter={(value) => [
+                                    `${Math.round(Number(value))} сек.`,
+                                    "Общее время"
+                                ]}
+                                labelFormatter={(label) => format(new Date(label), "dd.MM.yyyy")}
+                            />
+                        </PieChart>
+                    </ResponsiveContainer>
+                ) : (
+                    <div className="no-data">Нет данных для отображения</div>
+                )}
             </div>
 
             {/* Таблица */}

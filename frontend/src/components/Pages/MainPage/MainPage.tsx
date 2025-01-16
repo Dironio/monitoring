@@ -19,7 +19,7 @@ const MainPage: React.FC<MainPageProps> = ({ user, loading }) => {
         { path: 'average-time', label: 'Среднее время на сайте' },
         // { path: 'behavior-metrics', label: 'Метрики поведения' },
         { path: 'visit-history', label: 'История посещений' },
-        { path: 'sales-analytics', label: 'Аналитика продаж' },
+        // { path: 'sales-analytics', label: 'Аналитика продаж' },
     ];
 
     const handleNavigate = (path: string) => {
