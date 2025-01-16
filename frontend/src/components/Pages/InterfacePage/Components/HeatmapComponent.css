@@ -125,7 +125,7 @@
 
 
 
-.heatmap-page {
+/* .heatmap-page {
     display: flex;
     flex-direction: column;
     height: 100vh;
@@ -176,5 +176,44 @@
     align-items: center;
     height: 100%;
     color: #666;
+} */
+
+
+
+
+.heatmap-page {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
+.heatmap-controls {
+    position: relative;
+    z-index: 100;
+    background: white;
+    padding: 20px;
+}
+
+.page-select-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.page-select {
+    min-width: 300px;
+}
+
+.heatmap-content {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
+
+.select__menu {
+    z-index: 100 !important;
+}
+
+.select__control {
+    z-index: 100 !important;
+}

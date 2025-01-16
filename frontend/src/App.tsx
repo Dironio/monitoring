@@ -20,6 +20,9 @@ import InterfacePage from './components/Pages/InterfacePage/InterfacePage';
 import HeatmapComponent from './components/Pages/InterfacePage/Components/HeatmapComponent';
 import AccountSettings from './components/Pages/AccountPage/AccountSettings/AccountSetting';
 import ModelsPage from './components/Pages/ModelsPage/ModelsPage';
+import ClusteringComponent from './components/Pages/ModelsPage/ClusteringPage/ClusteringPage';
+import BehaviorAnalysisPage from './components/Pages/BehaviorAnalysis/AnalysisPage';
+import HistoryComponent from './components/Pages/MainPage/SessionHistoryPage/SessionHistoryComponent';
 
 
 //сделать компонент 404
@@ -141,6 +144,7 @@ const App: React.FC = () => {
                             >
                                 <Route path="overview" element={<OverviewComponent user={user} loading={loading} />} />
                                 <Route path="average-time" element={<AverageTimeComponent user={user} loading={loading} />} />
+                                <Route path="visit-history" element={<HistoryComponent user={user} loading={loading} />} />
                             </Route>
 
                             <Route
@@ -175,19 +179,20 @@ const App: React.FC = () => {
                                     </ProtectedRoute>
                                 }
                             >
-                                {/* <Route path="models-page" element={<ModelsPage user={user} loading={loading} />} /> */}
+                                <Route path="clustering" element={<ClusteringComponent user={user} loading={loading} />} />
                             </Route>
 
 
 
                             <Route
-                                path="/graphs-navigation"
+                                path="/analytics"
                                 element={
                                     <ProtectedRoute user={user} loading={loading}>
-                                        <h1>Графы и навигация</h1>
+                                        <BehaviorAnalysisPage user={user} loading={loading} />
                                     </ProtectedRoute>
                                 }
                             >
+                                {/* <Route path="behavior-analysis" element={<BehaviorAnalysisComponent user={user} loading={loading} />} /> */}
                                 {/* <Route path="overview" element={<OverviewComponent user={user} loading={loading} />} />
                                 <Route path="average-time" element={<AverageTimeComponent user={user} loading={loading} />} /> */}
                             </Route>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import {
     LineChart,
     Line,
@@ -10,9 +11,35 @@ import {
     BarChart,
     Bar
 } from "recharts";
-import axios from 'axios';
-import "./HistoryComponent.css";
+import "./SessionHistoryComponent.css";
 import { User } from '../../../../models/user.model';
+
+// Определение типов
+interface SessionSummary {
+    session_id: string;
+    session_start: string;
+    total_duration: number;
+    pages_visited: number;
+    events_count: number;
+    traffic_source: string | null;
+}
+
+interface PageAnalytics {
+    page_url: string;
+    views: number;
+    avg_interaction_time: number;
+}
+
+interface InteractionAnalytics {
+    element_type: string;
+    interactions_count: number;
+    avg_duration: number;
+}
+
+interface TimeInterval {
+    time_range: string;
+    count: number;
+}
 
 interface HistoryProps {
     user: User | null;
@@ -20,10 +47,62 @@ interface HistoryProps {
 }
 
 const HistoryComponent: React.FC<HistoryProps> = ({ user, loading }) => {
-    const [sessionHistory, setSessionHistory] = useState<SessionSummary[]>([]);
-    const [pageAnalytics, setPageAnalytics] = useState<PageAnalytics[]>([]);
-    const [interactionTypes, setInteractionTypes] = useState<InteractionAnalytics[]>([]);
-    const [timeIntervals, setTimeIntervals] = useState<TimeInterval[]>([]);
+    const [sessionHistory, setSessionHistory] = useState<SessionSummary[]>([
+        {
+            session_id: '1',
+            session_start: '2025-01-15T10:00:00',
+            total_duration: 300,
+            pages_visited: 5,
+            events_count: 15,
+            traffic_source: 'direct'
+        },
+        {
+            session_id: '2',
+            session_start: '2025-01-15T11:00:00',
+            total_duration: 600,
+            pages_visited: 8,
+            events_count: 25,
+            traffic_source: 'google'
+        },
+    ]);
+
+    const [pageAnalytics, setPageAnalytics] = useState<PageAnalytics[]>([
+        {
+            page_url: '/home',
+            views: 100,
+            avg_interaction_time: 45
+        },
+        {
+            page_url: '/products',
+            views: 75,
+            avg_interaction_time: 60
+        },
+    ]);
+
+    const [interactionTypes, setInteractionTypes] = useState<InteractionAnalytics[]>([
+        {
+            element_type: 'button',
+            interactions_count: 50,
+            avg_duration: 2
+        },
+        {
+            element_type: 'form',
+            interactions_count: 30,
+            avg_duration: 45
+        },
+    ]);
+
+    const [timeIntervals, setTimeIntervals] = useState<TimeInterval[]>([
+        {
+            time_range: '0-30 сек',
+            count: 100
+        },
+        {
+            time_range: '30-60 сек',
+            count: 75
+        },
+    ]);
+
     const [isExpanded, setIsExpanded] = useState(false);
 
     const selectedSite = JSON.parse(localStorage.getItem('selectedSite') || 'null');
@@ -52,6 +131,7 @@ const HistoryComponent: React.FC<HistoryProps> = ({ user, loading }) => {
                 return;
             }
 
+            /*
             try {
                 const [historyResponse, analyticsResponse, interactionsResponse, intervalsResponse] = await Promise.all([
                     axios.get<SessionSummary[]>(`${process.env.REACT_APP_API_URL}/events/history/sessions?web_id=${selectedSite.value}`),
@@ -67,6 +147,7 @@ const HistoryComponent: React.FC<HistoryProps> = ({ user, loading }) => {
             } catch (error) {
                 console.error("Ошибка при получении данных:", error);
             }
+            */
         };
 
         fetchData();

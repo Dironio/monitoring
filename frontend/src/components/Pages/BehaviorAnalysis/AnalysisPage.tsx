@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import './BehaviorAnalysisPage.css';
+import './AnalysisPage.css';
 import SiteSelection from '../../UI/SiteSelection';
 import { User } from '../../../models/user.model';
 import ChipsNavigation from '../../UI/ChipsNavigation';
@@ -54,11 +54,11 @@ const BehaviorAnalysisPage: React.FC<BehaviorAnalysisPageProps> = ({ user, loadi
         navigate(path);
     };
 
-    useEffect(() => {
-        if (location.pathname === '/behavior-analysis') {
-            navigate('behavior-groups');
-        }
-    }, [location.pathname, navigate]);
+    // useEffect(() => {
+    //     if (location.pathname === '/behavior-analysis') {
+    //         navigate('behavior-groups');
+    //     }
+    // }, [location.pathname, navigate]);
 
     return (
         <main className="behavior-analysis-page">

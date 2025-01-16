@@ -40,8 +40,205 @@ const HeatmapComponent: React.FC<HeatmapComponentProps> = ({ user, loading }) =>
     const [pages, setPages] = useState<PageOption[]>([]);
     const [heatmapInstance, setHeatmapInstance] = useState<Heatmap<'value', 'x', 'y'> | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+    const iframeRef = useRef<HTMLIFrameElement>(null);
     const savedSite = localStorage.getItem('selectedSite');
     const site = savedSite ? JSON.parse(savedSite) : null;
+
+    // Функция для пересчета размеров и позиции тепловой карты
+    const updateHeatmapSize = useCallback(() => {
+        if (containerRef.current && heatmapInstance && iframeRef.current) {
+            const iframe = iframeRef.current;
+            const container = containerRef.current;
+
+            // Установка размеров контейнера тепловой карты равными размерам iframe
+            container.style.width = `${iframe.offsetWidth}px`;
+            container.style.height = `${iframe.offsetHeight}px`;
+
+            // Обновление размеров canvas тепловой карты
+            heatmapInstance.repaint();
+        }
+    }, [heatmapInstance]);
+
+    // Обработчик загрузки iframe
+    const handleIframeLoad = useCallback(() => {
+        updateHeatmapSize();
+        // Блокируем все события в iframe
+        if (iframeRef.current) {
+            const iframe = iframeRef.current;
+            iframe.style.pointerEvents = 'none';
+
+            try {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+                if (iframeDoc) {
+                    // Добавляем стили для блокировки взаимодействия
+                    const style = iframeDoc.createElement('style');
+                    style.textContent = `
+                        * {
+                            pointer-events: none !important;
+                            user-select: none !important;
+                        }
+                    `;
+                    iframeDoc.head.appendChild(style);
+                }
+            } catch (e) {
+                console.error('Cannot access iframe document:', e);
+            }
+        }
+    }, [updateHeatmapSize]);
+
+    // const fetchHeatmapData = useCallback(async () => {
+    //     if (!selectedPage || !heatmapInstance || !site?.value) return;
+
+    //     setIsLoadingData(true);
+    //     try {
+    //         const response = await axios.get<HeatmapData[]>(
+    //             `${process.env.REACT_APP_API_URL}/events/click-heatmap`,
+    //             {
+    //                 params: {
+    //                     web_id: site.value,
+    //                     page_url: selectedPage.value
+    //                 },
+    //                 withCredentials: true,
+    //                 headers: {
+    //                     Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    //                 },
+    //             }
+    //         );
+
+    //         const points = response.data.map(item => ({
+    //             x: Math.round(item.eventData.x),
+    //             y: Math.round(item.eventData.y),
+    //             value: item.clickCount
+    //         }));
+
+    //         if (points.length > 0) {
+    //             // Нормализация значений
+    //             const maxValue = Math.max(...points.map(p => p.value));
+    //             const normalizedPoints = points.map(point => ({
+    //                 ...point,
+    //                 value: (point.value / maxValue) * 100 // Нормализуем до 100
+    //             }));
+
+    //             heatmapInstance.setData({
+    //                 max: 100,
+    //                 min: 0,
+    //                 data: normalizedPoints
+    //             });
+    //         }
+    //     } catch (error) {
+    //         console.error('Error fetching heatmap data:', error);
+    //     } finally {
+    //         setIsLoadingData(false);
+    //     }
+    // }, [selectedPage, heatmapInstance, site?.value]);
+
+    const fetchHeatmapData = useCallback(async () => {
+        if (!selectedPage || !heatmapInstance || !site?.value) {
+            console.log('Missing required data:', {
+                selectedPage: !!selectedPage,
+                heatmapInstance: !!heatmapInstance,
+                siteValue: site?.value
+            });
+            return;
+        }
+
+        setIsLoadingData(true);
+        try {
+            // Логируем параметры запроса
+            console.log('Request params:', {
+                webId: site.value,
+                pageUrl: selectedPage.value
+            });
+
+            const response = await axios.get<HeatmapData[]>(
+                `${process.env.REACT_APP_API_URL}/events/click-heatmap`,
+                {
+                    params: {
+                        web_id: site.value,
+                        page_url: encodeURIComponent(selectedPage.value) // Кодируем URL
+                    },
+                    withCredentials: true,
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                    }
+                }
+            );
+
+            console.log('Raw response:', response.data);
+
+            // Проверяем наличие данных
+            if (!response.data || response.data.length === 0) {
+                console.log('No heatmap data received');
+                if (heatmapInstance) {
+                    heatmapInstance.setData({
+                        max: 1,
+                        min: 0,
+                        data: []
+                    });
+                }
+                return;
+            }
+
+            // Преобразуем и нормализуем данные
+            const points = response.data.map(item => ({
+                x: Math.round(item.eventData.x),
+                y: Math.round(item.eventData.y),
+                value: item.clickCount
+            }));
+
+            console.log('Processed points:', points);
+
+            // Находим максимальное значение для нормализации
+            const maxValue = Math.max(...points.map(p => p.value));
+            console.log('Max value:', maxValue);
+
+            // Проверяем существование heatmapInstance перед установкой данных
+            if (heatmapInstance && points.length > 0) {
+                // Устанавливаем данные с более явными настройками
+                heatmapInstance.setData({
+                    max: maxValue || 1,
+                    min: 0,
+                    data: points.map(point => ({
+                        x: point.x,
+                        y: point.y,
+                        value: point.value
+                    }))
+                });
+
+                // Вызываем repaint для обновления визуализации
+                heatmapInstance.repaint();
+                console.log('Heatmap data set and repainted');
+            } else {
+                console.log('Heatmap instance not available or no points to display');
+            }
+
+        } catch (error) {
+            console.error('Error fetching heatmap data:', error);
+            if (error) {
+                console.log('Response data:', error);
+                console.log('Response status:', error);
+            }
+        } finally {
+            setIsLoadingData(false);
+        }
+    }, [selectedPage, heatmapInstance, site?.value]);
+
+    // Инициализация heatmap
+
+    // Слушатель изменения размера окна
+    const handlePageChange = (option: PageOption | null) => {
+        setSelectedPage(option);
+        if (heatmapInstance) {
+            heatmapInstance.setData({ data: [], max: 1, min: 0 }); // Очищаем текущие данные
+        }
+    };
+
+    // Добавляем useEffect для вызова fetchHeatmapData
+    useEffect(() => {
+        if (selectedPage && heatmapInstance) {
+            fetchHeatmapData();
+        }
+    }, [selectedPage, heatmapInstance, fetchHeatmapData]);
 
     const fetchPages = useCallback(async () => {
         if (!site?.value) return;
@@ -68,145 +265,50 @@ const HeatmapComponent: React.FC<HeatmapComponentProps> = ({ user, loading }) =>
         }
     }, [site?.value]);
 
-
-    // const fetchHeatmapData = useCallback(async () => {
-    //     if (!selectedPage || !heatmapInstance || !site?.value) return;
-
-    //     try {
-    //         const response = await axios.get<HeatmapData[]>(
-    //             `${process.env.REACT_APP_API_URL}/events/click-heatmap`,
-    //             {
-    //                 params: {
-    //                     web_id: site.value,
-    //                     page_url: selectedPage.value
-    //                 },
-    //                 withCredentials: true,
-    //                 headers: {
-    //                     Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-    //                 },
-    //             }
-    //         );
-
-    //         console.log('Received heatmap data:', response.data);
-
-    //         const points = response.data.map(item => ({
-    //             x: item.eventData.x,
-    //             y: item.eventData.y,
-    //             value: item.clickCount
-    //         }));
-
-    //         const maxValue = Math.max(...points.map(p => p.value));
-
-    //         heatmapInstance.setData({
-    //             max: maxValue || 1,
-    //             min: 0,
-    //             data: points
-    //         });
-    //     } catch (error) {
-    //         console.error('Error fetching heatmap data:', error);
-    //     }
-    // }, [selectedPage, heatmapInstance, site?.value]);
-
-    const fetchHeatmapData = useCallback(async () => {
-        if (!selectedPage || !heatmapInstance || !site?.value) return;
-
-        setIsLoadingData(true);
-        try {
-            const response = await axios.get<HeatmapData[]>(
-                `${process.env.REACT_APP_API_URL}/events/click-heatmap`,
-                {
-                    params: {
-                        web_id: site.value,
-                        page_url: selectedPage.value
-                    },
-                    withCredentials: true,
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                    },
-                }
-            );
-
-            console.log('Received heatmap data:', response.data);
-
-            const points = response.data.map(item => ({
-                x: Math.round(item.eventData.x),
-                y: Math.round(item.eventData.y),
-                value: item.clickCount
-            }));
-
-            console.log('Processed points:', points);
-
-            if (points.length > 0) {
-                heatmapInstance.setData({
-                    max: Math.max(...points.map(p => p.value)),
-                    min: 0,
-                    data: points
-                });
-            } else {
-                console.log('No points to display');
-            }
-        } catch (error) {
-            console.error('Error fetching heatmap data:', error);
-        } finally {
-            setIsLoadingData(false);
-        }
-    }, [selectedPage, heatmapInstance, site?.value]);
-
-
-
-
+    // useEffect для начальной загрузки страниц
     useEffect(() => {
         fetchPages();
     }, [fetchPages]);
 
-
+    // useEffect для инициализации heatmap
     useEffect(() => {
         if (containerRef.current && !heatmapInstance) {
             const instance = h337.create({
                 container: containerRef.current,
-                radius: 30,
-                maxOpacity: 0.9,
-                minOpacity: 0.1,
+                radius: 25,
+                maxOpacity: 0.8,
+                minOpacity: 0.3,
                 blur: 0.75,
                 gradient: {
-                    '.5': 'blue',
-                    '.8': 'red',
-                    '.95': 'white'
+                    '.2': 'blue',
+                    '.4': 'cyan',
+                    '.6': 'lime',
+                    '.8': 'yellow',
+                    '1.0': 'red'
                 }
             });
             setHeatmapInstance(instance);
+            console.log('Heatmap instance created');
         }
 
         return () => {
             if (heatmapInstance) {
+                heatmapInstance.setData({ data: [], max: 1, min: 0 });
                 setHeatmapInstance(null);
             }
         };
     }, []);
 
-
-    useEffect(() => {
-        fetchHeatmapData();
-    }, [fetchHeatmapData]);
-
-    const handlePageChange = (option: PageOption | null) => {
-        setSelectedPage(option);
-        if (heatmapInstance) {
-            heatmapInstance.setData({ data: [], max: 1, min: 0 });
-        }
-    };
-
     if (loading) return <div>Loading...</div>;
     if (!user) return <div>Please log in</div>;
     if (!site) return <div>Please select a site first</div>;
-    
 
 
-    
+
+
 
     return (
         <div className="heatmap-page">
-
             <div className="heatmap-controls">
                 <h2>Тепловая карта кликов</h2>
                 <div className="page-select-container">
@@ -223,7 +325,7 @@ const HeatmapComponent: React.FC<HeatmapComponentProps> = ({ user, loading }) =>
                 {isLoadingData && <div className="loading-indicator">Загрузка данных...</div>}
             </div>
 
-            <div className="heatmap-content">
+            <div className="heatmap-content" style={{ position: 'relative', zIndex: 1 }}>
                 <div className="heatmap-visualization">
                     <div
                         className="heatmap-container"
@@ -237,6 +339,7 @@ const HeatmapComponent: React.FC<HeatmapComponentProps> = ({ user, loading }) =>
                         {selectedPage ? (
                             <>
                                 <iframe
+                                    ref={iframeRef}
                                     src={selectedPage.value}
                                     style={{
                                         width: '100%',
@@ -258,8 +361,7 @@ const HeatmapComponent: React.FC<HeatmapComponentProps> = ({ user, loading }) =>
                                         width: '100%',
                                         height: '100%',
                                         zIndex: 2,
-                                        pointerEvents: 'none',
-                                        backgroundColor: 'rgba(0, 0, 0, 0.1)'
+                                        pointerEvents: 'none'
                                     }}
                                 />
                             </>
