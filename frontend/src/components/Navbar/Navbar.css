@@ -39,6 +39,7 @@
     justify-content: space-between;
     gap: 10px;
     border-bottom: 1px solid #7553FF;
+    cursor: pointer;
 }
 
 .search-box input {

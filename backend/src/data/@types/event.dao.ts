@@ -15,6 +15,7 @@ export interface CreateEventDao {
     referrer?: string;
     geolocation?: string;
     duration?: number;
+    user_agent?: string;
 }
 
 export interface GetEventsDao {
@@ -36,6 +37,7 @@ export interface GetEventsDao {
     referrer?: string;
     geolocation?: string;
     duration?: number;
+    user_agent?: string;
 }
 
 export interface UpdateEventDao {
@@ -56,6 +58,7 @@ export interface UpdateEventDao {
     referrer?: string;
     geolocation?: string;
     duration?: number;
+    user_agent?: string;
 }
 
 

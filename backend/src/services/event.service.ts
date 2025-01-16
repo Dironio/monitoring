@@ -130,9 +130,14 @@ class EventService {
 
 
 
+    async getHistorySessions(webId: number): Promise<RawEvent[]> {
+        return await eventDal.getHistorySessions(webId);
+    }
 
 
-
+    async getHistoryOneSession(webId: number, session_id: string): Promise<RawEvent[]> {
+        return await eventDal.getHistoryOneSession(webId, session_id);
+    }
 }
 
 const eventService = new EventService();

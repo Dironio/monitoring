@@ -168,6 +168,25 @@ class EventController {
         return res.status(200).json(result);
     }
 
+
+
+
+
+    @ControllerErrorHandler()
+    async getHistorySessions(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await eventService.getHistorySessions(webId);
+        return res.status(200).json(result);
+    }
+
+    @ControllerErrorHandler()
+    async getHistoryOneSession(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const sessionId = String(req.query.session_id);
+        const result = await eventService.getHistoryOneSession(webId, sessionId);
+        return res.status(200).json(result);
+    }
+
 }
 
 const eventController = new EventController();

@@ -19,6 +19,7 @@ import EventAnalysisComponent from './components/Pages/BehaviorMetricPage/Compon
 import InterfacePage from './components/Pages/InterfacePage/InterfacePage';
 import HeatmapComponent from './components/Pages/InterfacePage/Components/HeatmapComponent';
 import AccountSettings from './components/Pages/AccountPage/AccountSettings/AccountSetting';
+import ModelsPage from './components/Pages/ModelsPage/ModelsPage';
 
 
 //сделать компонент 404
@@ -166,7 +167,16 @@ const App: React.FC = () => {
                                 {/* <Route path="heatmap-scroll" element={<EventAnalysisComponent user={user} loading={loading} />} /> */}
                             </Route>
 
-
+                            <Route
+                                path="/models"
+                                element={
+                                    <ProtectedRoute user={user} loading={loading}>
+                                        <ModelsPage user={user} loading={loading} />
+                                    </ProtectedRoute>
+                                }
+                            >
+                                {/* <Route path="models-page" element={<ModelsPage user={user} loading={loading} />} /> */}
+                            </Route>
 
 
 
@@ -194,14 +204,7 @@ const App: React.FC = () => {
                             />
 
 
-                            <Route
-                                path="/forecast-models"
-                                element={
-                                    <ProtectedRoute user={user} loading={loading}>
-                                        <h1>Модели прогнозов</h1>
-                                    </ProtectedRoute>
-                                }
-                            />
+
                             <Route
                                 path="/experiments"
                                 element={

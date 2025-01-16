@@ -3,6 +3,9 @@ import { User } from '../models/user.model';
 import axios from 'axios';
 import { useFetchUser } from './useCurrentUser';
 
+//сделать чтобы при скролле и клике не было запросов на сайт геолокации
+//возможно переделать юзер агент
+
 const EVENT_TYPES = {
     page_view: 1,
     click: 2,
@@ -46,6 +49,24 @@ const getSessionId = (): string => {
     return sessionId;
 };
 
+const getUserAgent = (): {
+    userAgent: string;
+    browser: string;
+    platform: string;
+    language: string;
+} => {
+    const ua = window.navigator;
+
+    const browser = ua.userAgent.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i)?.[1].toLowerCase() || 'unknown';
+
+    return {
+        userAgent: ua.userAgent,
+        browser: browser,
+        platform: ua.platform,
+        language: ua.language
+    };
+};
+
 const clearSession = () => {
     localStorage.removeItem('session_id');
     localStorage.removeItem('session_start');
@@ -86,6 +107,7 @@ const sendAnalytics = async (
     const totalDuration = duration || getSessionDuration();
     const timestamp = new Date().toISOString();
     const geolocation = await getGeolocation();
+    const user_agent = getUserAgent();
 
     try {
         console.log('Отправляемые данные:', {
@@ -98,6 +120,7 @@ const sendAnalytics = async (
             page_url: window.location.href,
             referrer: document.referrer,
             geolocation,
+            user_agent,
         });
 
         const response = await axios.post(`${process.env.REACT_APP_API_URL}/events`, {
@@ -110,6 +133,7 @@ const sendAnalytics = async (
             page_url: window.location.href,
             referrer: document.referrer,
             geolocation,
+            user_agent,
         }, {
             headers: { 'Content-Type': 'application/json' },
         });

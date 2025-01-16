@@ -18,9 +18,9 @@ const Sidebar: React.FC<NavbarProps> = ({ isExpanded, toggleNavbar }) => {
         { path: "/main", label: "Главная", icon: "/assets/main.svg" },
         { path: "/metrics", label: "Метрики поведения", icon: "/assets/graphs-navigation.svg" },
         { path: "/interface", label: "Интерфейс", icon: "/assets/behavior-metrics.svg" },
+        { path: "/models", label: "Модели", icon: "/assets/forecast-models.svg" },
         { path: "/common-metrics", label: "Анализ поведения", icon: "/assets/common-metrics.svg" },
         { path: "/time-metrics", label: "Временные метрики", icon: "/assets/time-metrics.svg" },
-        { path: "/forecast-models", label: "Модели прогнозов", icon: "/assets/forecast-models.svg" },
         { path: "/experiments", label: "Эксперименты", icon: "/assets/experiments.svg" },
     ];
 

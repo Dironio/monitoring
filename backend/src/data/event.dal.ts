@@ -11,14 +11,14 @@ class EventDal {
           INSERT INTO raw_events (
             user_id, product_id, analyst_id, owner_id, event_id, event_data,
             page_url, timestamp, seller_id, web_id, session_id, referrer, geolocation,
-            created_at, updated_at
+            created_at, updated_at, user_agent
           )
           VALUES (\$1, \$2, \$3, \$4, \$5, \$6, \$7, \$8, \$9, \$10, \$11, \$12, \$13, \$14, $15)
           RETURNING *
         `, [
             dao.user_id, dao.product_id, dao.analyst_id, dao.owner_id, dao.event_id,
             dao.event_data, dao.page_url, dao.timestamp, dao.seller_id, dao.web_id,
-            dao.session_id, dao.referrer, dao.geolocation, currentTimestamp, currentTimestamp
+            dao.session_id, dao.referrer, dao.geolocation, currentTimestamp, currentTimestamp, dao.user_agent
         ]);
 
         return result.rows[0];
@@ -55,13 +55,14 @@ class EventDal {
             referrer = $13,
             geolocation = $14,
             updated_at = $15
+            user_agent = $16
           WHERE id = $1
           RETURNING *
         `, [
             dao.id,
             dao.user_id, dao.product_id, dao.analyst_id, dao.owner_id, dao.event_id,
             dao.event_data, dao.page_url, dao.timestamp, dao.seller_id, dao.web_id,
-            dao.session_id, dao.referrer, dao.geolocation, updatedAt
+            dao.session_id, dao.referrer, dao.geolocation, updatedAt, dao.user_agent
         ]);
 
         return result.rows[0];
@@ -107,24 +108,24 @@ class EventDal {
     async getAverageSessionTime(web_id: number): Promise<RawEvent[]> {
         const result = await pool.query(`
             SELECT
-            DATE_TRUNC('day', timestamp_day) AS day,
-    AVG(last_duration) AS avg_time
-FROM (
-    SELECT
-        session_id,
-        DATE_TRUNC('day', timestamp) AS timestamp_day,
-        (array_agg(CAST(event_data->>'duration' AS INTEGER) 
-         ORDER BY timestamp DESC))[1] AS last_duration
-    FROM raw_events
-    WHERE 
-        event_data->>'duration' IS NOT NULL 
-        AND session_id IS NOT NULL
-        AND ($1::INT IS NULL OR web_id = $1)
-    GROUP BY session_id, DATE_TRUNC('day', timestamp)
-) AS session_data
-GROUP BY timestamp_day
-ORDER BY timestamp_day ASC
-LIMIT 30
+                DATE_TRUNC('day', timestamp_day) AS day,
+                AVG(last_duration) AS avg_time
+            FROM (
+                SELECT
+                    session_id,
+                    DATE_TRUNC('day', timestamp) AS timestamp_day,
+                    (array_agg(CAST(event_data->>'duration' AS INTEGER) 
+                ORDER BY timestamp DESC))[1] AS last_duration
+                FROM raw_events
+                WHERE 
+                    event_data->>'duration' IS NOT NULL 
+                    AND session_id IS NOT NULL
+                    AND ($1::INT IS NULL OR web_id = $1)
+                GROUP BY session_id, DATE_TRUNC('day', timestamp)
+            ) AS session_data
+            GROUP BY timestamp_day
+            ORDER BY timestamp_day ASC
+            LIMIT 30
           `, [web_id]);
 
         return result.rows;
@@ -133,15 +134,15 @@ LIMIT 30
     async getTopPages(web_id: number): Promise<RawEvent[]> {
         const result = await pool.query(`
             SELECT
-    REGEXP_REPLACE(page_url, 'http://localhost:[0-9]+', '') as page_url,
-    COUNT(*) AS visits
-FROM raw_events
-WHERE event_data::text NOT LIKE '%scrollTop%'
-    AND event_data::text NOT LIKE '%scrollPercentage%'
-    AND page_url IS NOT NULL
-    AND (1::INT IS NULL OR web_id = 1)
-GROUP BY REGEXP_REPLACE(page_url, 'http://localhost:[0-9]+', '')
-ORDER BY visits DESC
+                REGEXP_REPLACE(page_url, 'http://localhost:[0-9]+', '') as page_url,
+                COUNT(*) AS visits
+            FROM raw_events
+            WHERE event_data::text NOT LIKE '%scrollTop%'
+                AND event_data::text NOT LIKE '%scrollPercentage%'
+                AND page_url IS NOT NULL
+                AND (1::INT IS NULL OR web_id = 1)
+            GROUP BY REGEXP_REPLACE(page_url, 'http://localhost:[0-9]+', '')
+            ORDER BY visits DESC
         `, [web_id]);
 
         return result.rows;
@@ -377,6 +378,91 @@ ORDER BY visits DESC
 
         return result.rows;
     }
+
+
+
+
+
+    async getHistorySessions(webId: number): Promise<RawEvent[]> {
+        const result = await pool.query(`
+            SELECT
+                session_id,
+                MIN(timestamp) as session_start,
+                MAX(timestamp) as session_end,
+                COUNT(*) as events_count,
+                COUNT(DISTINCT page_url) as pages_visited,
+                MAX(duration) as session_duration,
+                STRING_AGG(DISTINCT REGEXP_REPLACE(page_url, 'http://localhost:[0-9]+', ''), ', ') as visited_pages,
+                MIN(referrer) as traffic_source,
+                JSON_BUILD_OBJECT(
+                    'city', MIN(geolocation->>'city'),
+                    'country', MIN(geolocation->>'country'),
+                    'region', MIN(geolocation->>'region'),
+                    'timezone', MIN(geolocation->>'timezone')
+                ) as location_info
+            FROM raw_events
+            WHERE
+                web_id = $1
+                AND session_id IS NOT NULL
+                AND timestamp >= CURRENT_DATE - INTERVAL '30 days'
+            GROUP BY session_id
+            ORDER BY session_start DESC
+            --LIMIT 100
+        `, [webId]);
+
+        return result.rows;
+    }
+
+
+    async getHistoryOneSession(webId: number, session_id: string): Promise<RawEvent[]> {
+        // SELECT 
+        //     session_id,
+        //     page_url,
+        //     event_data->>'tag' as element_type,
+        //     event_data->>'text' as element_text,
+        //     event_data->>'classes' as element_classes,
+        //     CAST(event_data->>'duration' AS INTEGER) as interaction_duration,
+        //     timestamp
+        // FROM raw_events
+        // WHERE 
+        //     web_id = $1
+        //     AND session_id = $2
+        //     AND event_data->>'duration' IS NOT NULL
+        // ORDER BY timestamp;
+        const result = await pool.query(`
+            SELECT
+                session_id,
+                MIN(timestamp) as session_start,
+                MAX(timestamp) as session_end,
+                COUNT(*) as events_count,
+                COUNT(DISTINCT page_url) as pages_visited,
+                MAX(duration) as session_duration,
+                STRING_AGG(DISTINCT REGEXP_REPLACE(page_url, 'http://localhost:[0-9]+', ''), ', ') as visited_pages,
+                MIN(referrer) as traffic_source,
+                JSON_BUILD_OBJECT(
+                    'city', MIN(geolocation->>'city'),
+                    'country', MIN(geolocation->>'country'),
+                    'region', MIN(geolocation->>'region'),
+                    'timezone', MIN(geolocation->>'timezone')
+                ) as location_info
+            FROM raw_events
+            WHERE
+                web_id = $1
+                AND session_id = $2
+                AND timestamp >= CURRENT_DATE - INTERVAL '30 days'
+            GROUP BY session_id
+            ORDER BY session_start DESC
+            --LIMIT 100
+            `, [webId, session_id]);
+
+        return result.rows;
+    }
+
+
+
+
+
+
 }
 
 const eventDal = new EventDal();

@@ -46,7 +46,7 @@ const InterfacePage: React.FC<InterfacePageProps> = ({ user, loading }) => {
                     items={navigationItems}
                     onNavigate={handleNavigation}
                     currentPath={currentPath}
-                    className="interface-nav"
+                    // className="interface-nav"
                     breakpoints={{
                         mobile: 480,
                         tablet: 768,

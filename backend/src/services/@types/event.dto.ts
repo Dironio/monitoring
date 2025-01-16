@@ -16,6 +16,7 @@ export interface RawEvent {
     referrer: string;
     geolocation: string;
     duration: number;
+    user_agent: string;
 }
 
 export interface CreateEventDto {
@@ -35,6 +36,7 @@ export interface CreateEventDto {
     referrer?: string;
     geolocation?: string;
     duration?: number;
+    user_agent?: string;
 }
 
 export interface GetEventDto {
@@ -56,6 +58,7 @@ export interface GetEventDto {
     referrer?: string;
     geolocation?: string;
     duration?: number;
+    user_agent?: string;
 }
 
 export interface UpdateEventDto {
@@ -76,6 +79,7 @@ export interface UpdateEventDto {
     referrer?: string;
     geolocation?: string;
     duration?: number;
+    user_agent?: string;
 }
 
 
