@@ -152,137 +152,139 @@ const AccountSettings: React.FC<AccountSettingProps> = ({ user, loading }) => {
         <main>
             <div className="wrapper">
                 <div className="bg-white">
-                    <div className="main-header">
-                        {isEditable ? (
-                            <button
-                                className="settings-btn"
-                                onClick={handleCancel}
-                                type="button"
-                            >
-                                <img
-                                    src="/assets/arrow.svg"
-                                    alt="Назад"
-                                    className="toggle-btn-arrow"
+                    <div className="settings-wrapper">
+                        <div className="main-header">
+                            {isEditable ? (
+                                <button
+                                    className="settings-btn"
+                                    onClick={handleCancel}
+                                    type="button"
+                                >
+                                    <img
+                                        src="/assets/arrow.svg"
+                                        alt="Назад"
+                                        className="toggle-btn-arrow"
+                                    />
+                                </button>
+                            ) : (
+                                <Link to="/account" className="settings-btn">
+                                    <img
+                                        src="/assets/arrow.svg"
+                                        alt="Назад"
+                                        className="toggle-btn-arrow"
+                                    />
+                                </Link>
+                            )}
+                            <p className="main-header__logo">Настройки аккаунта</p>
+                        </div>
+
+                        <form className="auth__items" onSubmit={handleSubmit(onSubmit)}>
+                            <div className="item-initials">
+                                <InputField
+                                    label="Имя"
+                                    name="firstName"
+                                    placeholder={user?.first_name || "Введите имя"}
+                                    error={errors.firstName}
+                                    register={register}
+                                    onBlur={() => trigger("firstName")}
+                                    disabled={!isEditable}
+                                    value={user?.first_name}
                                 />
-                            </button>
-                        ) : (
-                            <Link to="/account" className="settings-btn">
-                                <img
-                                    src="/assets/arrow.svg"
-                                    alt="Назад"
-                                    className="toggle-btn-arrow"
+                                <InputField
+                                    label="Фамилия"
+                                    name="lastName"
+                                    placeholder={user?.last_name || "Введите фамилию"}
+                                    error={errors.lastName}
+                                    register={register}
+                                    onBlur={() => trigger("lastName")}
+                                    disabled={!isEditable}
+                                    value={user?.last_name}
                                 />
-                            </Link>
-                        )}
-                        <p className="main-header__logo">Настройки аккаунта</p>
+                            </div>
+
+                            <div className="item-initials">
+                                <InputField
+                                    label="Эл. почта"
+                                    name="email"
+                                    type="email"
+                                    placeholder={user?.email || "Введите email"}
+                                    error={errors.email}
+                                    register={register}
+                                    onBlur={() => trigger("email")}
+                                    disabled={!isEditable}
+                                    value={user?.email}
+                                />
+                                <InputField
+                                    label="Логин"
+                                    name="username"
+                                    placeholder={user?.username || "Введите логин"}
+                                    error={errors.username}
+                                    register={register}
+                                    onBlur={() => trigger("username")}
+                                    disabled={!isEditable}
+                                    value={user?.username}
+                                />
+                            </div>
+
+                            {isEditable && (
+                                <>
+                                    <div className="item-initials">
+                                        <InputField
+                                            label="Текущий пароль"
+                                            name="currentPassword"
+                                            type="password"
+                                            placeholder="Введите текущий пароль"
+                                            error={errors.currentPassword}
+                                            register={register}
+                                            onBlur={() => trigger("currentPassword")}
+                                        />
+                                    </div>
+
+                                    <div className="item-initials">
+                                        <InputField
+                                            label="Новый пароль"
+                                            name="newPassword"
+                                            type="password"
+                                            placeholder="Введите новый пароль"
+                                            error={errors.newPassword}
+                                            register={register}
+                                            onBlur={() => trigger("newPassword")}
+                                        />
+                                        <InputField
+                                            label="Подтвердите новый пароль"
+                                            name="confirmNewPassword"
+                                            type="password"
+                                            placeholder="Повторите новый пароль"
+                                            error={errors.confirmNewPassword}
+                                            register={register}
+                                            onBlur={() => trigger("confirmNewPassword")}
+                                        />
+                                    </div>
+                                </>
+                            )}
+
+                            {submitError && (
+                                <div className="error-message">{submitError}</div>
+                            )}
+
+                            <div className="auth__signup">
+                                <button
+                                    type="button"
+                                    className="auth__signup-btn"
+                                    onClick={() => {
+                                        if (!isEditable) {
+                                            setIsEditable(true);
+                                        } else {
+                                            handleSubmit(onSubmit)();
+                                        }
+                                    }}
+                                    disabled={isEditable && !hasChanges}
+                                >
+                                    {isEditable ? "Сохранить" : "Редактировать"}
+                                </button>
+                            </div>
+                        </form>
                     </div>
-
-                    <form className="auth__items" onSubmit={handleSubmit(onSubmit)}>
-                        <div className="item-initials">
-                            <InputField
-                                label="Имя"
-                                name="firstName"
-                                placeholder={user?.first_name || "Введите имя"}
-                                error={errors.firstName}
-                                register={register}
-                                onBlur={() => trigger("firstName")}
-                                disabled={!isEditable}
-                                value={user?.first_name}
-                            />
-                            <InputField
-                                label="Фамилия"
-                                name="lastName"
-                                placeholder={user?.last_name || "Введите фамилию"}
-                                error={errors.lastName}
-                                register={register}
-                                onBlur={() => trigger("lastName")}
-                                disabled={!isEditable}
-                                value={user?.last_name}
-                            />
-                        </div>
-
-                        <div className="item-initials">
-                            <InputField
-                                label="Эл. почта"
-                                name="email"
-                                type="email"
-                                placeholder={user?.email || "Введите email"}
-                                error={errors.email}
-                                register={register}
-                                onBlur={() => trigger("email")}
-                                disabled={!isEditable}
-                                value={user?.email}
-                            />
-                            <InputField
-                                label="Логин"
-                                name="username"
-                                placeholder={user?.username || "Введите логин"}
-                                error={errors.username}
-                                register={register}
-                                onBlur={() => trigger("username")}
-                                disabled={!isEditable}
-                                value={user?.username}
-                            />
-                        </div>
-
-                        {isEditable && (
-                            <>
-                                <div className="item-initials">
-                                    <InputField
-                                        label="Текущий пароль"
-                                        name="currentPassword"
-                                        type="password"
-                                        placeholder="Введите текущий пароль"
-                                        error={errors.currentPassword}
-                                        register={register}
-                                        onBlur={() => trigger("currentPassword")}
-                                    />
-                                </div>
-
-                                <div className="item-initials">
-                                    <InputField
-                                        label="Новый пароль"
-                                        name="newPassword"
-                                        type="password"
-                                        placeholder="Введите новый пароль"
-                                        error={errors.newPassword}
-                                        register={register}
-                                        onBlur={() => trigger("newPassword")}
-                                    />
-                                    <InputField
-                                        label="Подтвердите новый пароль"
-                                        name="confirmNewPassword"
-                                        type="password"
-                                        placeholder="Повторите новый пароль"
-                                        error={errors.confirmNewPassword}
-                                        register={register}
-                                        onBlur={() => trigger("confirmNewPassword")}
-                                    />
-                                </div>
-                            </>
-                        )}
-
-                        {submitError && (
-                            <div className="error-message">{submitError}</div>
-                        )}
-
-                        <div className="auth__signup">
-                            <button
-                                type="button"
-                                className="auth__signup-btn"
-                                onClick={() => {
-                                    if (!isEditable) {
-                                        setIsEditable(true);
-                                    } else {
-                                        handleSubmit(onSubmit)();
-                                    }
-                                }}
-                                disabled={isEditable && !hasChanges}
-                            >
-                                {isEditable ? "Сохранить" : "Редактировать"}
-                            </button>
-                        </div>
-                    </form>
                 </div>
             </div>
         </main>
