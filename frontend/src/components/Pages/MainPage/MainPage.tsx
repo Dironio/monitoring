@@ -17,7 +17,7 @@ const MainPage: React.FC<MainPageProps> = ({ user, loading }) => {
     const navItems = [
         { path: 'overview', label: 'Сводка отчетов' },
         { path: 'average-time', label: 'Среднее время на сайте' },
-        { path: 'behavior-metrics', label: 'Метрики поведения' },
+        // { path: 'behavior-metrics', label: 'Метрики поведения' },
         { path: 'visit-history', label: 'История посещений' },
         { path: 'sales-analytics', label: 'Аналитика продаж' },
     ];
