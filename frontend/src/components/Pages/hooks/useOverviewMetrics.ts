@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import axios from "axios";
 import { compareAsc, parse } from "date-fns";
-import { MetricResponse } from '../../../../models/event.model';
+import { MetricResponse } from '../../../models/event.model';
 
 export interface Trend {
     trend: 'рост' | 'падение' | 'стабильность' | 'недостаточно данных';

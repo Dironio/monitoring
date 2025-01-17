@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trend } from '../mainHooks/useOverviewMetrics';
+import { Trend } from '../../../../models/event.model';
 
 interface TrendDescriptionProps {
     trend: Trend;

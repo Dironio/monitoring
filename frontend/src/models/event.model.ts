@@ -68,8 +68,17 @@ export interface HeatmapData {
     eventData: {
         x: number;
         y: number;
+        count: number;
     };
     clickCount: number;
+}
+
+interface EventData {
+    duration?: number;
+    scrollTop?: number;
+    scrollPercentage?: number;
+    x?: number;
+    y?: number;
 }
 
 export interface MetricResponse {
@@ -105,4 +114,25 @@ export interface MetricData {
     day: string;
     value: number;
     fill: string;
+}
+
+export interface HeatmapEventData {
+    x: number;
+    y: number;
+    clickCount: number;
+}
+
+export interface HeatmapResponseData {
+    points: Array<{
+        x: number;
+        y: number;
+        count: number;
+    }>;
+    maxCount: number;
+}
+
+export interface HeatmapPoint {
+    x: number;
+    y: number;
+    value: number;
 }

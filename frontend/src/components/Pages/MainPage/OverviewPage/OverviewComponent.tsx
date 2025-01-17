@@ -13,7 +13,7 @@ import {
 } from "recharts";
 import { User } from "../../../../models/user.model";
 import { TrendDescription } from "./TrandDescription";
-import { useOverviewMetrics } from "../mainHooks/useOverviewMetrics";
+import { useOverviewMetrics } from "../../hooks/useOverviewMetrics";
 
 interface OverviewProps {
     user: User | null;
