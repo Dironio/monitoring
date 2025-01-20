@@ -203,7 +203,12 @@ const PageSelector: React.FC<PageSelectorProps> = ({ selectedSite,
     //     localStorage.removeItem('selectedPage');
     // }, [selectedSite]);
     return (
-        <div className="page-selector-container">
+        <div className="selector-container">
+            <img
+                src="/assets/burger.svg"
+                alt=""
+                className="selector-icon"
+            />
             <Select
                 value={selectedPage}
                 options={pages}
@@ -211,7 +216,8 @@ const PageSelector: React.FC<PageSelectorProps> = ({ selectedSite,
                 isDisabled={!selectedSite}
                 isSearchable={true}
                 placeholder="Выберите страницу"
-                className="page-selector"
+                className="custom-select-container"
+                classNamePrefix="custom-select"
             />
         </div>
     );

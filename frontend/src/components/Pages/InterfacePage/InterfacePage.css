@@ -1,0 +1,128 @@
+.chips-selection {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+}
+
+/* Общий контейнер для селекторов */
+.selector-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-width: 300px;
+    /* Увеличиваем минимальную ширину */
+    width: 100%;
+    /* Растягиваем на всю доступную ширину */
+}
+
+/* Стили для иконки */
+.selector-icon {
+    position: absolute;
+    left: 10px;
+    width: 20px;
+    height: 20px;
+    z-index: 2;
+}
+
+/* Общие стили для Select */
+.custom-select-container {
+    width: 100%;
+    /* Растягиваем select на всю ширину контейнера */
+}
+
+/* Переопределение стилей React Select */
+.custom-select-container .css-13cymwt-control,
+.custom-select-container .css-t3ipsp-control {
+    height: 40px;
+    /* Фиксированная высота */
+    min-height: 40px;
+    padding-left: 35px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background-color: #fff;
+}
+
+/* Стили для контейнера значения */
+.custom-select-container .css-hlgwow {
+    padding: 0;
+    margin: 0;
+}
+
+/* Стили для значения */
+.custom-select-container .css-1dimb5e-singleValue {
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+    /* Запрещаем перенос текста */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* Добавляем многоточие при переполнении */
+    max-width: calc(100% - 40px);
+    /* Учитываем отступ для иконки */
+    line-height: 40px;
+    /* Выравниваем текст по центру */
+}
+
+/* Стили для плейсхолдера */
+.custom-select-container .css-1wa3eu0-placeholder {
+    margin: 0;
+    line-height: 40px;
+}
+
+/* Стили для input */
+.custom-select-container .css-19bb58m {
+    margin: 0;
+    padding: 0;
+}
+
+/* Стили для индикатора */
+.custom-select-container .css-1wy0on6 {
+    height: 40px;
+}
+
+/* Стили для разделителя */
+.custom-select-container .css-1u9des2-indicatorSeparator {
+    margin: 8px 0;
+}
+
+/* Стили для контейнера индикатора */
+.custom-select-container .css-1xc3v61-indicatorContainer {
+    height: 40px;
+    padding: 8px;
+}
+
+/* Равная высота для обоих селекторов */
+.site-selection__select,
+.page-selector {
+    height: 40px;
+}
+
+/* Стили для меню */
+.custom-select-container .css-1nmdiq5-menu {
+    width: 100%;
+    max-width: none;
+}
+
+/* Стили для опций в меню */
+.custom-select-container .css-1n6sfyn-MenuList {
+    padding: 0;
+}
+
+.custom-select-container .css-10wo9uf-option {
+    padding: 8px 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.css-1jqq78o-placeholder {
+    width: 100%;
+    color: #020202;
+}
+
+.custom-select__input-container .css-19bb58m {
+    width: 100%;
+}
+
+

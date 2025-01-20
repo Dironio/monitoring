@@ -4,6 +4,7 @@ import HeatmapVisualization, { ClickHeatmapData } from './HeatmapVisual';
 import axios from 'axios';
 import { User } from '../../../../models/user.model';
 import { useSiteContext } from '../../../utils/SiteContext';
+import HeatmapPoints from './HeatmapPoints';
 
 interface HeatmapPoint {
     x: number;
@@ -31,6 +32,7 @@ const HeatmapPage: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [scale, setScale] = useState({ x: 1, y: 1 });
     const [maxClicks, setMaxClicks] = useState(0);
+    const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 });
 
     const getPointColor = (clicks: number) => {
         // Нормализуем количество кликов от 0 до 1
@@ -122,6 +124,20 @@ const HeatmapPage: React.FC = () => {
         }
     }, [heatmapData]);
 
+    useEffect(() => {
+        const updateDimensions = () => {
+            if (containerRef.current) {
+                const { width, height } = containerRef.current.getBoundingClientRect();
+                setContainerDimensions({ width, height });
+            }
+        };
+
+        updateDimensions();
+        window.addEventListener('resize', updateDimensions);
+
+        return () => window.removeEventListener('resize', updateDimensions);
+    }, []);
+
     // Проверяем наличие данных и выводим в консоль
     useEffect(() => {
         console.log('Текущие данные:', heatmapData);
@@ -166,58 +182,13 @@ const HeatmapPage: React.FC = () => {
                         }}
                     />
                 )}
-                {showDots && heatmapData && heatmapData.length > 0 && (
-                    <div className={`dots-overlay ${debugMode ? 'debug-mode' : ''}`}>
-                        {heatmapData.map((point, index) => (
-                            <div
-                                key={index}
-                                className="click-dot"
-                                style={{
-                                    left: `${point.eventData.x * scale.x}px`,
-                                    top: `${point.eventData.y * scale.y}px`,
-                                    backgroundColor: getPointColor(point.clickCount),
-                                    width: getPointSize(point.clickCount),
-                                    height: getPointSize(point.clickCount),
-                                    opacity: 0.7 + (point.clickCount / maxClicks) * 0.3
-                                }}
-                                title={`Координаты: (${point.eventData.x}, ${point.eventData.y}), Клики: ${point.clickCount}`}
-                            />
-                        ))}
-                    </div>
-                )}
-
-                {/* Добавляем легенду */}
                 {showDots && heatmapData.length > 0 && (
-                    <div className="heatmap-legend" style={{
-                        position: 'absolute',
-                        right: '20px',
-                        top: '20px',
-                        background: 'rgba(255, 255, 255, 0.9)',
-                        padding: '10px',
-                        borderRadius: '4px',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                        zIndex: 1003
-                    }}>
-                        <div style={{ fontSize: '12px', marginBottom: '5px' }}>
-                            Количество кликов:
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                            <div style={{
-                                width: '12px',
-                                height: '12px',
-                                background: 'rgb(0, 150, 255)',
-                                borderRadius: '50%'
-                            }} />
-                            <span style={{ fontSize: '11px' }}>Мало</span>
-                            <div style={{
-                                width: '12px',
-                                height: '12px',
-                                background: 'rgb(255, 0, 0)',
-                                borderRadius: '50%'
-                            }} />
-                            <span style={{ fontSize: '11px' }}>Много</span>
-                        </div>
-                    </div>
+                    <HeatmapPoints
+                        points={heatmapData}
+                        containerWidth={containerDimensions.width}
+                        containerHeight={containerDimensions.height}
+                        debugMode={debugMode}
+                    />
                 )}
             </div>
         </div>

@@ -85,24 +85,26 @@ const InterfacePage: React.FC<InterfacePageProps> = ({ user, loading }) => {
                         }}
                     />
 
-                    <SiteSelection
-                        user={user}
-                        loading={loading}
-                        onSiteChange={(site) => {
-                            setSelectedSite(site);
-                            setSelectedPage(null);
-                        }}
-                    />
+                    <nav className="chips-selection">
+                        <SiteSelection
+                            user={user}
+                            loading={loading}
+                            onSiteChange={(site) => {
+                                setSelectedSite(site);
+                                setSelectedPage(null);
+                            }}
+                        />
 
-                    {/* <PageSelector selectedSite={selectedSite} /> */}
+                        {/* <PageSelector selectedSite={selectedSite} /> */}
 
-                    <PageSelector
-                        selectedSite={selectedSite}
-                        selectedPage={selectedPage}
-                        onPageChange={(page: { value: string; label: string } | null) => {
-                            setSelectedPage(page);
-                        }}
-                    />
+                        <PageSelector
+                            selectedSite={selectedSite}
+                            selectedPage={selectedPage}
+                            onPageChange={(page: { value: string; label: string } | null) => {
+                                setSelectedPage(page);
+                            }}
+                        />
+                    </nav>
 
                     <section className="content">
                         <Outlet />
