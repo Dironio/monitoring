@@ -327,8 +327,8 @@ class EventDal {
             FROM raw_events
             WHERE 
                 web_id = $1
-                AND page_url = $2
-                AND event_id = 2  -- ID для событий клика
+                AND REGEXP_REPLACE(page_url, ':\d+', '') = $2
+                AND event_id = 2
                 AND timestamp >= NOW() - INTERVAL '30 days'
                 AND event_data::jsonb ? 'x'
                 AND event_data::jsonb ? 'y'

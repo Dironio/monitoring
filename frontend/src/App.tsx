@@ -23,6 +23,8 @@ import ModelsPage from './components/Pages/ModelsPage/ModelsPage';
 import ClusteringComponent from './components/Pages/ModelsPage/ClusteringPage/ClusteringPage';
 import BehaviorAnalysisPage from './components/Pages/BehaviorAnalysis/AnalysisPage';
 import HistoryComponent from './components/Pages/MainPage/SessionHistoryPage/SessionHistoryComponent';
+import HeatmapPage from './components/Pages/InterfacePage/Components/HeatmapPage';
+
 
 
 //сделать компонент 404
@@ -167,7 +169,9 @@ const App: React.FC = () => {
                                     </ProtectedRoute>
                                 }
                             >
-                                <Route path="heatmap-page" element={<HeatmapComponent user={user} loading={loading} />} />
+                                <Route path="heatmap-page" element={<HeatmapPage
+                                // user={user} loading={loading} 
+                                />} />
                                 {/* <Route path="heatmap-scroll" element={<EventAnalysisComponent user={user} loading={loading} />} /> */}
                             </Route>
 

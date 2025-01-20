@@ -519,12 +519,12 @@ const HeatmapComponent: React.FC<HeatmapComponentProps> = ({ user, loading }) =>
                     <label htmlFor="page-select" className="page-select-label">
                         Выберите страницу:
                     </label>
-                    <PageSelector
+                    {/* <PageSelector
                         selectedPage={selectedPage}
                         pages={pages}
                         onPageChange={handlePageChange}
                         isDisabled={!site || pages.length === 0 || isLoadingData}
-                    />
+                    /> */}
                 </div>
                 {isLoadingData && (
                     <div className="loading-indicator" role="status" aria-live="polite">
@@ -534,9 +534,10 @@ const HeatmapComponent: React.FC<HeatmapComponentProps> = ({ user, loading }) =>
             </div>
 
             <HeatmapVisualization
-                selectedPage={selectedPage}
+                selectedPage={selectedPage} 
                 containerRef={containerRef}
                 iframeRef={iframeRef}
+                site={site}
                 user={user}
                 loading={loading}
             />

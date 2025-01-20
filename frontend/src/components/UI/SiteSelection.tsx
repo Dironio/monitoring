@@ -8,9 +8,15 @@ import { User } from "../../models/user.model";
 interface SiteSelectionProps {
     user: User | null;
     loading: boolean;
+    onSiteChange?: (site: { value: number; label: string } | null) => void;
 }
 
-const SiteSelection: React.FC<SiteSelectionProps> = ({ user, loading }) => {
+export interface SiteSelection {
+    value: number;
+    label: string;
+}
+
+const SiteSelection: React.FC<SiteSelectionProps> = ({ user, loading, onSiteChange }) => {
     const [sites, setSites] = useState<WebSite[]>([]);
     const selectRef = useRef<any>(null);
     const [selectedSite, setSelectedSite] = useState<{ value: number; label: string } | null>(() => {
@@ -56,6 +62,9 @@ const SiteSelection: React.FC<SiteSelectionProps> = ({ user, loading }) => {
 
     const handleSiteChange = (selectedOption: { value: number; label: string } | null) => {
         setSelectedSite(selectedOption);
+        if (onSiteChange) {
+            onSiteChange(selectedOption); // Добавляем вызов
+        }
         if (selectedOption) {
             localStorage.setItem('selectedSite', JSON.stringify(selectedOption));
             const event = new CustomEvent('siteSelected', {
