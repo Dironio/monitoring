@@ -116,8 +116,8 @@ class EventService {
         return await eventDal.getScrollHeatmapData(webId, pageUrl);
     }
 
-    async getPageHeatmapData(webId: number, pageUrl: string): Promise<RawEvent[]> {
-        return await eventDal.getPageHeatmapData(webId, pageUrl);
+    async getPageHeatmap(webId: number, pageUrl: string): Promise<RawEvent[]> {
+        return await eventDal.getPageHeatmap(webId, pageUrl);
     }
 
 

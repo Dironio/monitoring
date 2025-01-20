@@ -1,10 +1,11 @@
 import { createContext, useContext } from 'react';
+import { PageOption } from '../UI/PageSelector';
 
 interface SiteContextType {
     selectedSite: { value: number; label: string } | null;
-    selectedPage: { value: string; label: string } | null;
+    selectedPage: PageOption | null;
     setSelectedSite: (site: { value: number; label: string } | null) => void;
-    setSelectedPage: (page: { value: string; label: string } | null) => void;
+    setSelectedPage: (page: PageOption | null) => void;
 }
 
 export const SiteContext = createContext<SiteContextType | undefined>(undefined);

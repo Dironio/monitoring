@@ -118,7 +118,7 @@ class EventController {
 
 
     @ControllerErrorHandler()
-    async getPages(req: Request, res: Response, next: NextFunction): Promise<Response> {
+    async getUniquePages(req: Request, res: Response, next: NextFunction): Promise<Response> {
         const webId = Number(req.query.web_id);
         const result = await eventService.getUniquePages(webId);
         return res.status(200).json(result);
@@ -164,7 +164,7 @@ class EventController {
     async getPageHeatmap(req: Request, res: Response, next: NextFunction): Promise<Response> {
         const webId = Number(req.query.web_id);
         const pageUrl = String(req.query.page_url);
-        const result = await eventService.getPageHeatmapData(webId, pageUrl);
+        const result = await eventService.getPageHeatmap(webId, pageUrl);
         return res.status(200).json(result);
     }
 

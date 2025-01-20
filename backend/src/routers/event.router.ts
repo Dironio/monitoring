@@ -19,7 +19,7 @@ eventRouter.get('/main/average-time', authCheck, eventController.getAvgTime);
 eventRouter.get('/analysis', authCheck, eventController.getAnalysisData);
 
 
-eventRouter.get('/pages', authCheck, eventController.getPages);
+eventRouter.get('/pages', authCheck, eventController.getUniquePages);
 eventRouter.get('/click-heatmap', authCheck, eventController.getClickHeatmap);
 eventRouter.get('/scroll-heatmap', authCheck, eventController.getScrollHeatmap);
 eventRouter.get('/page-heatmap', authCheck, eventController.getPageHeatmap);

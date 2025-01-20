@@ -4,7 +4,7 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import SiteSelection from '../../UI/SiteSelection';
 import ChipsNavigation, { NavItem } from '../../UI/ChipsNavigation';
-import PageSelector from '../../UI/PageSelector';
+import PageSelector, { PageOption } from '../../UI/PageSelector';
 import { SiteContext } from '../../utils/SiteContext';
 
 interface InterfacePageProps {
@@ -57,10 +57,27 @@ const InterfacePage: React.FC<InterfacePageProps> = ({ user, loading }) => {
         return savedSite ? JSON.parse(savedSite) : null;
     });
 
-    const [selectedPage, setSelectedPage] = useState<{ value: string; label: string } | null>(() => {
+    const [selectedPage, setSelectedPage] = useState<PageOption | null>(() => {
         const savedPage = localStorage.getItem('selectedPage');
-        return savedPage ? JSON.parse(savedPage) : null;
+        if (savedPage) {
+            const parsed = JSON.parse(savedPage);
+            return {
+                value: parsed.value,
+                label: parsed.label,
+                fullUrl: parsed.value,
+                path: parsed.value.replace(/^https?:\/\/[^\/]+(:\d+)?/, '')
+            };
+        }
+        return null;
     });
+
+    useEffect(() => {
+        if (selectedPage) {
+            localStorage.setItem('selectedPage', JSON.stringify(selectedPage));
+        } else {
+            localStorage.removeItem('selectedPage');
+        }
+    }, [selectedPage]);
 
     return (
         <SiteContext.Provider value={{ selectedSite, selectedPage, setSelectedSite, setSelectedPage }}>
@@ -80,8 +97,8 @@ const InterfacePage: React.FC<InterfacePageProps> = ({ user, loading }) => {
                         visibleItems={{
                             mobile: 1,
                             tablet: 2,
-                            laptop: 2,
-                            desktop: 2,
+                            laptop: 3,
+                            desktop: 4,
                         }}
                     />
 
@@ -100,7 +117,7 @@ const InterfacePage: React.FC<InterfacePageProps> = ({ user, loading }) => {
                         <PageSelector
                             selectedSite={selectedSite}
                             selectedPage={selectedPage}
-                            onPageChange={(page: { value: string; label: string } | null) => {
+                            onPageChange={(page: PageOption | null) => {
                                 setSelectedPage(page);
                             }}
                         />

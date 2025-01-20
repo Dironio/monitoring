@@ -327,7 +327,7 @@ class EventDal {
             FROM raw_events
             WHERE 
                 web_id = $1
-                AND REGEXP_REPLACE(page_url, ':\d+', '') = $2
+                AND regexp_replace(regexp_replace(page_url, '^https?://[^/]+', ''), ':\d+', '') = regexp_replace(regexp_replace($2, '^https?://[^/]+', ''), ':\d+', '')
                 AND event_id = 2
                 AND timestamp >= NOW() - INTERVAL '30 days'
                 AND event_data::jsonb ? 'x'
@@ -366,7 +366,7 @@ class EventDal {
         }));
     }
 
-    async getPageHeatmapData(webId: number, pageUrl: string): Promise<RawEvent[]> {
+    async getPageHeatmap(webId: number, pageUrl: string): Promise<RawEvent[]> {
         const result = await pool.query(`
             SELECT *
             FROM raw_events
