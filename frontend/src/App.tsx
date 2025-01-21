@@ -70,12 +70,19 @@ const App: React.FC = () => {
                                 user ? <Navigate to="/account" /> : <AuthPage />
                             } />
 
-                            <AccountRoutes user={user} loading={loading} />
+                            {/* <AccountRoutes user={user} loading={loading} />
                             <MainRouter user={user} loading={loading} />
                             <MetricsRouter user={user} loading={loading} />
                             <InterfaceRouter user={user} loading={loading} />
                             <ModelsRouter user={user} loading={loading} />
-                            <AnalyticsRouter user={user} loading={loading} />
+                            <AnalyticsRouter user={user} loading={loading} /> */}
+
+                            {AccountRoutes({ user, loading })}
+                            {MainRouter({ user, loading })}
+                            {MetricsRouter({ user, loading })}
+                            {InterfaceRouter({ user, loading })}
+                            {ModelsRouter({ user, loading })}
+                            {AnalyticsRouter({ user, loading })}
 
                             <Route
                                 path="/application"

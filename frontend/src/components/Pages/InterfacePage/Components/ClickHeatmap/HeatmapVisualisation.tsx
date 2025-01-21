@@ -70,8 +70,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './HeatmapVisualisation.css';
-import { PageOption } from '../../hooks/useHeatmaps';
-import { User } from '../../../../models/user.model';
+import { PageOption } from '../../../hooks/useHeatmaps';
+import { User } from '../../../../../models/user.model';
 
 interface HeatmapPoint {
     eventData: {

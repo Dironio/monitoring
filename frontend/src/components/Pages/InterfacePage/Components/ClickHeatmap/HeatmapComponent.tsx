@@ -377,13 +377,13 @@
 // export default HeatmapComponent;
 
 import { useCallback, useEffect, useState } from "react";
-import { User } from "../../../../models/user.model";
-import { PageOption, useHeatmap } from "../../hooks/useHeatmaps";
-import { usePages } from "../../hooks/usePages";
-import PageSelector from "../../../UI/PageSelector";
-import HeatmapVisualization from "./HeatmapVisualisation";
-import SiteSelection from "../../../UI/SiteSelection";
+import { User } from "../../../../../models/user.model";
+import { PageOption, useHeatmap } from "../../../hooks/useHeatmaps";
+import { usePages } from "../../../hooks/usePages";
+import PageSelector from "../../../../UI/PageSelector";
+import SiteSelection from "../../../../UI/SiteSelection";
 import axios from "axios";
+import HeatmapVisualization from "./HeatmapVisualisation";
 
 interface HeatmapComponentProps {
     user: User | null;
@@ -534,7 +534,7 @@ const HeatmapComponent: React.FC<HeatmapComponentProps> = ({ user, loading }) =>
             </div>
 
             <HeatmapVisualization
-                selectedPage={selectedPage} 
+                selectedPage={selectedPage}
                 containerRef={containerRef}
                 iframeRef={iframeRef}
                 site={site}

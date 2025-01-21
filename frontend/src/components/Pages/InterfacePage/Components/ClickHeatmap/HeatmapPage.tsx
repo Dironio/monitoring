@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import './heatmap.css'
 import HeatmapVisualization, { ClickHeatmapData } from './HeatmapVisual';
 import axios from 'axios';
-import { User } from '../../../../models/user.model';
-import { useSiteContext } from '../../../utils/SiteContext';
+import { User } from '../../../../../models/user.model';
+import { useSiteContext } from '../../../../utils/SiteContext';
 import HeatmapPoints from './HeatmapPoints';
 
 interface HeatmapPoint {
