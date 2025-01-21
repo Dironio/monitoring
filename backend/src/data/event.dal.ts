@@ -190,47 +190,38 @@ class EventDal {
 
 
     async getAnalysisData(webId: number): Promise<RawEvent[]> {
-        // const result = await pool.query(`
-        //     SELECT 
-        //             id,
-        //             user_id,
-        //             event_id,
-        //             event_data,
-        //             page_url,
-        //             timestamp,
-        //             web_id,
-        //             session_id,
-        //             geolocation,
-        //     CASE 
-        //         WHEN event_data::jsonb->>'duration' IS NOT NULL 
-        //         THEN (event_data::jsonb->>'duration')::numeric 
-        //         ELSE 0 
-        //     END as event_duration
-        //     FROM raw_events
-        //         WHERE web_id = $1
-        //             AND timestamp >= NOW() - INTERVAL '30 days'
-        //     ORDER BY timestamp DESC
-        // `, [webId]);
-
-
         const result = await pool.query(`
+            WITH scroll_events AS (
+                SELECT 
+                    session_id,
+                    DATE_TRUNC('second', timestamp) as time_window,
+                    AVG(CAST(event_data->>'duration' AS FLOAT)) as avg_duration,
+                    COUNT(*) as scroll_count
+                FROM raw_events
+                WHERE web_id = $1
+                    AND timestamp >= NOW() - INTERVAL '30 days'
+                    AND event_id = 4  -- События скролла
+                GROUP BY session_id, DATE_TRUNC('second', timestamp)
+            ),
+            non_scroll_events AS (
+                SELECT 
+                    CAST(event_data->>'duration' AS FLOAT) as duration
+                FROM raw_events
+                WHERE web_id = $1
+                    AND timestamp >= NOW() - INTERVAL '30 days'
+                    AND event_id != 4
+            ),
+            combined_events AS (
+                SELECT duration FROM non_scroll_events
+                UNION ALL
+                SELECT avg_duration FROM scroll_events
+            )   
             SELECT 
-                id,
-                user_id,
-                event_id,
-                event_data,
-                page_url,
-                timestamp,
-                web_id,
-                session_id,
-                geolocation,
-                created_at,
-                updated_at
-            FROM raw_events
-            WHERE web_id = $1
-                AND timestamp >= NOW() - INTERVAL '30 days'
-                AND event_data::jsonb->>'duration' IS NOT NULL
-            ORDER BY timestamp DESC
+                FLOOR(duration/100)*100 as duration_range,
+                COUNT(*) as event_count
+            FROM combined_events
+            GROUP BY duration_range
+            ORDER BY duration_range;
         `, [webId]);
 
         return result.rows;
@@ -239,7 +230,7 @@ class EventDal {
 
 
 
-
+    ////////////////////////////////////////////////////////
 
 
     // Метрика: Ключевые события
@@ -302,6 +293,10 @@ class EventDal {
         `, [startDate, endDate]);
         return result.rows[0].returning_users;
     }
+
+
+
+    ////////////////////////////////////////////////////////////////
 
 
 
@@ -380,7 +375,7 @@ class EventDal {
     }
 
 
-
+    //////////////////////////////////////////////////////////////
 
 
     async getHistorySessions(webId: number): Promise<RawEvent[]> {
@@ -415,20 +410,6 @@ class EventDal {
 
 
     async getHistoryOneSession(webId: number, session_id: string): Promise<RawEvent[]> {
-        // SELECT 
-        //     session_id,
-        //     page_url,
-        //     event_data->>'tag' as element_type,
-        //     event_data->>'text' as element_text,
-        //     event_data->>'classes' as element_classes,
-        //     CAST(event_data->>'duration' AS INTEGER) as interaction_duration,
-        //     timestamp
-        // FROM raw_events
-        // WHERE 
-        //     web_id = $1
-        //     AND session_id = $2
-        //     AND event_data->>'duration' IS NOT NULL
-        // ORDER BY timestamp;
         const result = await pool.query(`
             SELECT
                 session_id,
@@ -459,7 +440,7 @@ class EventDal {
     }
 
 
-
+    ////////////////////////////////////////////
 
 
 

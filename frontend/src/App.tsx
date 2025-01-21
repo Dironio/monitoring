@@ -5,25 +5,17 @@ import './App.css'
 import PromoPage from './components/Pages/PromoPage/PromoPage';
 import Sidebar from './components/Navbar/Navbar';
 import AuthPage from './components/Pages/AuthPage/AuthPage';
-import MainPage from './components/Pages/MainPage/MainPage';
-import AccountPage from './components/Pages/AccountPage/AccountPage';
 import ApplicationPage from './components/Pages/ApplicationPage/ApplicationPage';
-import OverviewComponent from './components/Pages/MainPage/OverviewPage/OverviewComponent';
 import UnknownPage from './components/Pages/UnknowPage/UnknowPage';
 import { useFetchUser } from './hooks/useCurrentUser';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import { useAnalytics } from './hooks/useAnalytics';
-import AverageTimeComponent from './components/Pages/MainPage/AveragePage/AverageTimeComponent';
-import MetricPage from './components/Pages/BehaviorMetricPage/BehaviorMetricPage';
-import EventAnalysisComponent from './components/Pages/BehaviorMetricPage/Components/EventAnalysisComponents';
-import InterfacePage from './components/Pages/InterfacePage/InterfacePage';
-import HeatmapComponent from './components/Pages/InterfacePage/Components/HeatmapComponent';
-import AccountSettings from './components/Pages/AccountPage/AccountSettings/AccountSetting';
-import ModelsPage from './components/Pages/ModelsPage/ModelsPage';
-import ClusteringComponent from './components/Pages/ModelsPage/ClusteringPage/ClusteringPage';
-import BehaviorAnalysisPage from './components/Pages/BehaviorAnalysis/AnalysisPage';
-import HistoryComponent from './components/Pages/MainPage/SessionHistoryPage/SessionHistoryComponent';
-import HeatmapPage from './components/Pages/InterfacePage/Components/HeatmapPage';
+import AccountRoutes from './routes/AccountRoute';
+import MainRouter from './routes/MainRoute';
+import MetricsRouter from './routes/MetricsRoute';
+import InterfaceRouter from './routes/InterfaceRoute';
+import ModelsRouter from './routes/ModelsRoute';
+import AnalyticsRouter from './routes/AnalyticsRoute';
 
 
 
@@ -83,49 +75,12 @@ const App: React.FC = () => {
                                 user ? <Navigate to="/account" /> : <AuthPage />
                             } />
 
-
-                            <Route>
-                                <Route
-                                    path="/account"
-                                    element={
-                                        <ProtectedRoute user={user} loading={loading}>
-                                            <AccountPage user={user} loading={loading} />
-                                        </ProtectedRoute>
-                                    }
-                                />
-                                <Route
-                                    path="/account/settings"
-                                    element={
-                                        <ProtectedRoute user={user} loading={loading}>
-                                            <AccountSettings user={user} loading={loading} />
-                                        </ProtectedRoute>
-                                    }
-                                />
-                                {/* <Route
-                                    path="/account/main"
-                                    element={
-                                        <ProtectedRoute user={user} loading={loading}>
-                                            <AccountMain user={user} loading={loading} />
-                                        </ProtectedRoute>
-                                    }
-                                />
-                                <Route
-                                    path="/account/sales-analytics"
-                                    element={
-                                        <ProtectedRoute user={user} loading={loading}>
-                                            <SalesAnalytics user={user} loading={loading} />
-                                        </ProtectedRoute>
-                                    }
-                                />
-                                <Route
-                                    path="/account/sales"
-                                    element={
-                                        <ProtectedRoute user={user} loading={loading}>
-                                            <Sales user={user} loading={loading} />
-                                        </ProtectedRoute>
-                                    }
-                                /> */}
-                            </Route>
+                            <AccountRoutes user={user} loading={loading} />
+                            <MainRouter user={user} loading={loading} />
+                            <MetricsRouter user={user} loading={loading} />
+                            <InterfaceRouter user={user} loading={loading} />
+                            <ModelsRouter user={user} loading={loading} />
+                            <AnalyticsRouter user={user} loading={loading} />
 
                             <Route
                                 path="/application"
@@ -135,73 +90,6 @@ const App: React.FC = () => {
                                     </ProtectedRoute>
                                 }
                             />
-
-                            <Route
-                                path="/main"
-                                element={
-                                    <ProtectedRoute user={user} loading={loading}>
-                                        <MainPage user={user} loading={loading} />
-                                    </ProtectedRoute>
-                                }
-                            >
-                                <Route path="overview" element={<OverviewComponent user={user} loading={loading} />} />
-                                <Route path="average-time" element={<AverageTimeComponent user={user} loading={loading} />} />
-                                <Route path="visit-history" element={<HistoryComponent user={user} loading={loading} />} />
-                            </Route>
-
-                            <Route
-                                path="/metrics"
-                                element={
-                                    <ProtectedRoute user={user} loading={loading}>
-                                        <MetricPage user={user} loading={loading} />
-                                    </ProtectedRoute>
-                                }
-                            >
-                                <Route path="event-analysis" element={<EventAnalysisComponent user={user} loading={loading} />} />
-
-                            </Route>
-
-                            <Route
-                                path="/interface"
-                                element={
-                                    <ProtectedRoute user={user} loading={loading}>
-                                        <InterfacePage user={user} loading={loading} />
-                                    </ProtectedRoute>
-                                }
-                            >
-                                <Route path="heatmap-page" element={<HeatmapPage
-                                // user={user} loading={loading} 
-                                />} />
-                                {/* <Route path="heatmap-scroll" element={<EventAnalysisComponent user={user} loading={loading} />} /> */}
-                            </Route>
-
-                            <Route
-                                path="/models"
-                                element={
-                                    <ProtectedRoute user={user} loading={loading}>
-                                        <ModelsPage user={user} loading={loading} />
-                                    </ProtectedRoute>
-                                }
-                            >
-                                <Route path="clustering" element={<ClusteringComponent user={user} loading={loading} />} />
-                            </Route>
-
-
-
-                            <Route
-                                path="/analytics"
-                                element={
-                                    <ProtectedRoute user={user} loading={loading}>
-                                        <BehaviorAnalysisPage user={user} loading={loading} />
-                                    </ProtectedRoute>
-                                }
-                            >
-                                {/* <Route path="behavior-analysis" element={<BehaviorAnalysisComponent user={user} loading={loading} />} /> */}
-                                {/* <Route path="overview" element={<OverviewComponent user={user} loading={loading} />} />
-                                <Route path="average-time" element={<AverageTimeComponent user={user} loading={loading} />} /> */}
-                            </Route>
-
-
 
                             <Route
                                 path="/time-metrics"
