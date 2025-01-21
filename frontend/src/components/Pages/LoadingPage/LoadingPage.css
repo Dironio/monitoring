@@ -1,0 +1,149 @@
+.loading-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 474px;
+    text-align: center;
+    flex-direction: column;
+    gap: 48px;
+}
+
+.loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+.loading-pulse {
+    width: 80px;
+    height: 80px;
+    background-color: #7553FF;
+    border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.loading-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.loading-text__title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #7553FF;
+}
+
+.loading-dots span {
+    display: inline-block;
+    font-size: 24px;
+    color: #7553FF;
+    animation: dots 1.5s infinite;
+    opacity: 0;
+}
+
+.loading-dots span:nth-child(2) {
+    animation-delay: 0.5s;
+}
+
+.loading-dots span:nth-child(3) {
+    animation-delay: 1s;
+}
+
+.loading-skeleton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 300px;
+}
+
+.skeleton-item {
+    width: 100%;
+    height: 24px;
+    background: linear-gradient(90deg,
+            #f0f0f0 25%,
+            #e0e0e0 50%,
+            #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+    border-radius: 12px;
+}
+
+.skeleton-item--short {
+    width: 60%;
+}
+
+.skeleton-button {
+    width: 180px;
+    height: 48px;
+    border-radius: 22px;
+    background: linear-gradient(90deg,
+            #f0f0f0 25%,
+            #e0e0e0 50%,
+            #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+    margin-top: 12px;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(117, 83, 255, 0.7);
+    }
+
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 20px rgba(117, 83, 255, 0);
+    }
+
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(117, 83, 255, 0);
+    }
+}
+
+@keyframes dots {
+
+    0%,
+    100% {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .loading-main {
+        height: 400px;
+        gap: 32px;
+    }
+
+    .loading-pulse {
+        width: 60px;
+        height: 60px;
+    }
+
+    .loading-text__title {
+        font-size: 20px;
+    }
+
+    .loading-skeleton {
+        max-width: 260px;
+    }
+}
