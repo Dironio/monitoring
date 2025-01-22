@@ -2,6 +2,7 @@ import { Router } from "express";
 import eventController from '../controllers/events.controller';
 import authCheck from '../middlewares/auth.check';
 import { checkRole } from "../middlewares/check.role";
+import clusteringRouter from './clustering.router';
 
 const eventRouter: Router = Router();
 
@@ -30,6 +31,8 @@ eventRouter.get('/history/user-session', authCheck, eventController.getHistoryOn
 // eventRouter.get('/history/page-sequence', authCheck, eventController.getPageSequence);
 // eventRouter.get('/history/session', authCheck, eventController.getHistorySession);
 
+
+eventRouter.use('/clustering', clusteringRouter);
 
 // eventRouter.get('/metrics/traffic', authCheck, eventController.getTrafficData);
 // eventRouter.get('/metrics/user-segments', authCheck, eventController.getUserSegments);
