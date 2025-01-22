@@ -342,27 +342,59 @@ class EventDal {
 
     async getScrollHeatmapData(webId: number, pageUrl: string): Promise<ScrollHeatmapData[]> {
         const result = await pool.query(`
-            SELECT
-                event_data,
-                COUNT(*) as scroll_count
-            FROM raw_events
-            WHERE
-                web_id = $1
-                AND regexp_replace(regexp_replace(page_url, '^https?://[^/]+', ''), ':\d+', '') = regexp_replace(regexp_replace($2, '^https?://[^/]+', ''), ':\d+', '')
-                AND event_id = 4
-                AND timestamp >= NOW() - INTERVAL '30 days'
-                AND event_data::jsonb ? 'scrollTop'
-                AND event_data::jsonb ? 'scrollPercentage'
-            GROUP BY
-                event_data
-            ORDER BY scroll_count DESC;
+WITH scroll_events AS (
+    SELECT
+        session_id,
+        FLOOR(CAST(event_data->>'scrollPercentage' AS FLOAT) / 5) * 5 as percentage_group,
+        -- Удаляем пробелы и преобразуем в число
+        CAST(REPLACE(event_data->>'duration', ' ', '') AS INTEGER) as event_duration,
+        timestamp
+    FROM raw_events
+    WHERE
+        web_id = $1
+        AND regexp_replace(regexp_replace(page_url, '^https?://[^/]+', ''), ':\d+', '') = 
+            regexp_replace(regexp_replace($2, '^https?://[^/]+', ''), ':\d+', '')
+        AND event_id = 4
+        AND timestamp >= NOW() - INTERVAL '30 days'
+        AND event_data::jsonb ? 'scrollTop'
+        AND event_data::jsonb ? 'scrollPercentage'
+        AND event_data::jsonb ? 'duration'
+),
+grouped_scrolls AS (
+    SELECT
+        percentage_group,
+        COUNT(DISTINCT session_id) as unique_visits,
+        COUNT(*) as total_views,
+        SUM(event_duration) as viewing_duration
+    FROM scroll_events
+    WHERE 
+        percentage_group IS NOT NULL
+        AND event_duration > 0
+        AND event_duration < 300000 -- ограничение в 5 минут
+    GROUP BY percentage_group
+    ORDER BY percentage_group
+)
+SELECT
+    percentage_group,
+    unique_visits,
+    total_views,
+    viewing_duration as total_duration,
+    CASE 
+        WHEN (SELECT MAX(viewing_duration) FROM grouped_scrolls) > 0 
+        THEN viewing_duration::float / (SELECT MAX(viewing_duration) FROM grouped_scrolls)
+        ELSE 0 
+    END as intensity
+FROM grouped_scrolls
+ORDER BY percentage_group;
         `, [webId, pageUrl]);
 
         return result.rows.map(row => ({
-            event_data: row.event_data,
-            scroll_count: parseInt(row.scroll_count)
+            percentageGroup: row.percentage_group,
+            duration: row.total_duration,
+            intensity: row.intensity
         }));
     }
+
 
     async getPageHeatmap(webId: number, pageUrl: string): Promise<RawEvent[]> {
         const result = await pool.query(`

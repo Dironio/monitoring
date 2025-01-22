@@ -40,3 +40,21 @@
 .unknow-pg__btn:hover {
     background-color: #5a3dcb;
 }
+
+.unknow-pg__go-back {
+    font-size: 18px;
+    font-weight: 500;
+    color: #7553FF;
+    background-color: transparent;
+    border: 1px solid transparent;
+    margin-bottom: 10px;
+    cursor: pointer;
+    /* text-decoration: none; */
+    transition: all 0.3s ease;
+}
+
+.unknow-pg__go-back:hover {
+    /* text-decoration: underline; */
+    color: #5a3dcb;
+    transition: all 0.3s ease;
+}

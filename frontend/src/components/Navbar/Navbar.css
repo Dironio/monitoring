@@ -86,7 +86,9 @@
 
 
 
-
+.menu-item.selected .menu-item-img {
+    filter: brightness(0) invert(1);
+}
 
 .menu-item.selected {
     background-color: #7553FF;
@@ -100,12 +102,28 @@
 
 .menu-item.selected :hover {
     /* background-color: #5a3dcb; */
-    color: white;
+    filter: brightness(0) invert(1);
+}
+
+.menu-item.selected .menu-item-img,
+.menu-item:hover .menu-item-img {
+    filter: brightness(0) invert(1);
+}
+
+.menu-item.selected img,
+.menu-item:hover img {
+    filter: brightness(0) invert(1);
 }
 
 .menu-item .icon {
     margin-right: 10px;
     /* fill: currentColor; */
+}
+
+
+.menu-item img {
+    width: 22px;
+    height: 22px;
 }
 
 .menu-item img:hover {

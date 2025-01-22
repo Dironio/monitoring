@@ -84,14 +84,6 @@ const App: React.FC = () => {
                             {ModelsRouter({ user, loading })}
                             {AnalyticsRouter({ user, loading })}
 
-                            <Route
-                                path="/application"
-                                element={
-                                    <ProtectedRoute user={user} loading={loading}>
-                                        <ApplicationPage />
-                                    </ProtectedRoute>
-                                }
-                            />
 
                             <Route
                                 path="/time-metrics"
@@ -111,6 +103,14 @@ const App: React.FC = () => {
                                 }
                             />
 
+                            <Route
+                                path="/application"
+                                element={
+                                    <ProtectedRoute user={user} loading={loading}>
+                                        <ApplicationPage />
+                                    </ProtectedRoute>
+                                }
+                            />
                         </Routes>
                     </div>
                 </div>

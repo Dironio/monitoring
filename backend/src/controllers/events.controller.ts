@@ -147,22 +147,12 @@ class EventController {
         const webId = Number(req.query.web_id);
         const pageUrl = String(req.query.page_url);
 
-        const result = await eventService.getScrollHeatmapData(webId, pageUrl);
+        if (!webId || !pageUrl) {
+            throw new Error('Missing required parameters');
+        }
 
-        const formattedData = {
-            points: result.map(item => ({
-                event_data: {
-                    scrollTop: parseInt(String(item.event_data.scrollTop)),
-                    scrollPercentage: parseFloat(String(item.event_data.scrollPercentage)),
-                },
-                scroll_count: item.scroll_count
-            })),
-            maxCount: result.length > 0
-                ? Math.max(...result.map(item => item.scroll_count))
-                : null
-        };
-
-        return res.status(200).json(formattedData);
+        const heatmapData = await eventService.getScrollHeatmapData(webId, pageUrl);
+        return res.status(200).json(heatmapData);
     }
 
     @ControllerErrorHandler()

@@ -1,5 +1,5 @@
 import eventDal from '../data/event.dal';
-import { ClickHeatmapData, CreateEventDto, RawEvent, ScrollHeatmapData, UpdateEventDto } from './@types/event.dto';
+import { ClickHeatmapData, CreateEventDto, RawEvent, ScrollHeatmapData, ScrollHeatmapResponse, UpdateEventDto } from './@types/event.dto';
 
 class EventService {
     async create(dto: CreateEventDto): Promise<RawEvent> {
@@ -112,8 +112,16 @@ class EventService {
         return await eventDal.getClickHeatmapData(webId, pageUrl);
     }
 
-    async getScrollHeatmapData(webId: number, pageUrl: string): Promise<ScrollHeatmapData[]> {
-        return await eventDal.getScrollHeatmapData(webId, pageUrl);
+    async getScrollHeatmapData(webId: number, pageUrl: string): Promise<ScrollHeatmapResponse> {
+        const groups = await eventDal.getScrollHeatmapData(webId, pageUrl);
+        const maxDuration = Math.max(...groups.map(g => g.duration));
+        const totalDuration = groups.reduce((sum, g) => sum + g.duration, 0);
+
+        return {
+            groups,
+            maxDuration,
+            totalDuration
+        };
     }
 
     async getPageHeatmap(webId: number, pageUrl: string): Promise<RawEvent[]> {
