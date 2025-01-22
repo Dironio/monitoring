@@ -342,22 +342,25 @@ class EventDal {
 
     async getScrollHeatmapData(webId: number, pageUrl: string): Promise<ScrollHeatmapData[]> {
         const result = await pool.query(`
-            SELECT 
-                event_data::jsonb as event_data,
+            SELECT
+                event_data,
                 COUNT(*) as scroll_count
             FROM raw_events
-            WHERE web_id = $1 
-                AND page_url = $2
-                AND event_id = 4  -- ID для событий скролла
+            WHERE
+                web_id = $1
+                AND regexp_replace(regexp_replace(page_url, '^https?://[^/]+', ''), ':\d+', '') = regexp_replace(regexp_replace($2, '^https?://[^/]+', ''), ':\d+', '')
+                AND event_id = 4
                 AND timestamp >= NOW() - INTERVAL '30 days'
                 AND event_data::jsonb ? 'scrollTop'
                 AND event_data::jsonb ? 'scrollPercentage'
-            GROUP BY event_data
+            GROUP BY
+                event_data
+            ORDER BY scroll_count DESC;
         `, [webId, pageUrl]);
 
         return result.rows.map(row => ({
-            eventData: JSON.parse(row.event_data),
-            scrollCount: parseInt(row.scroll_count)
+            event_data: row.event_data,
+            scroll_count: parseInt(row.scroll_count)
         }));
     }
 

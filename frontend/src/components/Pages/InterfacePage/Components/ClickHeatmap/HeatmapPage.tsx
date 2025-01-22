@@ -35,20 +35,18 @@ const HeatmapPage: React.FC = () => {
     const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 });
 
     const getPointColor = (clicks: number) => {
-        // Нормализуем количество кликов от 0 до 1
         const normalized = clicks / maxClicks;
 
-        // Градиент от холодного к теплому
-        if (normalized < 0.2) return 'rgb(0, 150, 255)';      // Холодный синий
-        if (normalized < 0.4) return 'rgb(0, 255, 255)';      // Циан
-        if (normalized < 0.6) return 'rgb(0, 255, 150)';      // Бирюзовый
-        if (normalized < 0.8) return 'rgb(255, 150, 0)';      // Оранжевый
-        return 'rgb(255, 0, 0)';                              // Горячий красный
+        if (normalized < 0.2) return 'rgb(0, 150, 255)';
+        if (normalized < 0.4) return 'rgb(0, 255, 255)';
+        if (normalized < 0.6) return 'rgb(0, 255, 150)';
+        if (normalized < 0.8) return 'rgb(255, 150, 0)';
+        return 'rgb(255, 0, 0)';
     };
 
     const getPointSize = (clicks: number) => {
-        const baseSize = 16; // Базовый размер точки
-        const maxSize = 24;  // Максимальный размер точки
+        const baseSize = 16;
+        const maxSize = 24;
         const size = baseSize + (clicks / maxClicks) * (maxSize - baseSize);
         return `${size}px`;
     };
@@ -73,7 +71,6 @@ const HeatmapPage: React.FC = () => {
 
             console.log('Исходные данные:', response.data);
 
-            // Преобразуем данные в нужный формат
             const formattedData = response.data.points.map(point => ({
                 eventData: {
                     x: Number(point.x),
@@ -102,7 +99,6 @@ const HeatmapPage: React.FC = () => {
             const iframe = container.querySelector('iframe');
 
             if (iframe) {
-                // Ждем загрузки iframe
                 iframe.onload = () => {
                     const containerRect = container.getBoundingClientRect();
                     const iframeRect = iframe.getBoundingClientRect();

@@ -73,9 +73,9 @@ export interface ClickHeatmapData {
 }
 
 export interface ScrollHeatmapData {
-    eventData: {
+    event_data: {
         scrollTop: number;
         scrollPercentage: number;
     };
-    scrollCount: number;
+    scroll_count: number;
 }

@@ -146,15 +146,20 @@ class EventController {
     async getScrollHeatmap(req: Request, res: Response, next: NextFunction): Promise<Response> {
         const webId = Number(req.query.web_id);
         const pageUrl = String(req.query.page_url);
+
         const result = await eventService.getScrollHeatmapData(webId, pageUrl);
 
         const formattedData = {
             points: result.map(item => ({
-                scrollTop: item.eventData.scrollTop,
-                scrollPercentage: item.eventData.scrollPercentage,
-                count: item.scrollCount
+                event_data: {
+                    scrollTop: parseInt(String(item.event_data.scrollTop)),
+                    scrollPercentage: parseFloat(String(item.event_data.scrollPercentage)),
+                },
+                scroll_count: item.scroll_count
             })),
-            maxCount: Math.max(...result.map(item => item.scrollCount))
+            maxCount: result.length > 0
+                ? Math.max(...result.map(item => item.scroll_count))
+                : null
         };
 
         return res.status(200).json(formattedData);
