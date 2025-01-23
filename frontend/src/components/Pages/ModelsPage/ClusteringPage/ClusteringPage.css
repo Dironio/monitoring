@@ -1,0 +1,313 @@
+/* ClusteringDashboard.css */
+.dashboard {
+    padding: 1.5rem;
+    max-width: 80rem;
+    margin: 0 auto;
+}
+
+.dashboard__header {
+    margin-bottom: 2rem;
+}
+
+.dashboard__title {
+    font-size: 1.875rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard__subtitle {
+    color: var(--text-secondary);
+}
+
+.methodology {
+    margin-bottom: 2rem;
+}
+
+.methodology__grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .methodology__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.methodology__section {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background-color: var(--background-secondary);
+}
+
+.methodology__title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.methodology__formula {
+    font-family: monospace;
+    font-size: 0.875rem;
+    background-color: var(--background-formula);
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+
+    height: 516px;
+}
+
+@media (min-width: 768px) {
+    .charts-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.chart-container {
+    background-color: var(--background-primary);
+    border-radius: 0.5rem;
+    box-shadow: var(--shadow-sm);
+    height: 530px;
+}
+
+.chart-header {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.chart-title {
+    font-weight: 600;
+    font-size: 1.125rem;
+}
+
+.chart-content {
+    padding: 1rem;
+    height: 400px;
+}
+
+.chart-description {
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.metrics {
+    margin-bottom: 2rem;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .metrics-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.metric-card {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background-color: var(--background-secondary);
+}
+
+.metric-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.metric-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.metric-description {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.analysis {
+    background-color: var(--background-primary);
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.analysis__section {
+    margin-bottom: 1rem;
+}
+
+.analysis__title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.analysis__text {
+    color: var(--text-secondary);
+}
+
+.analysis__list {
+    list-style-type: disc;
+    list-style-position: inside;
+    color: var(--text-secondary);
+}
+
+/* Состояния загрузки и ошибок */
+.loading-state,
+.error-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.error-state {
+    color: var(--color-error);
+}
+
+/* CSS переменные для темной темы */
+:root {
+    --background-primary: #ffffff;
+    --background-secondary: #f3f4f6;
+    --background-formula: #f8fafc;
+    --text-primary: #111827;
+    --text-secondary: #4b5563;
+    --border-color: #e5e7eb;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --color-error: #ef4444;
+}
+
+/* Темная тема */
+[data-theme='dark'] {
+    --background-primary: #1f2937;
+    --background-secondary: #374151;
+    --background-formula: #111827;
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+    --border-color: #4b5563;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.25);
+    --color-error: #f87171;
+}
+
+
+.chart-wrapper {
+    width: 100%;
+    height: 400px;
+    margin: 0;
+    padding: 1rem;
+    background-color: var(--background-primary);
+    border-radius: 0.5rem;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.controls-section {
+    margin: 20px 0;
+    padding: 0 20px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.time-unit-selector {
+    width: 200px;
+    z-index: 100;
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.loading-spinner {
+    background: white;
+    padding: 20px 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-weight: 500;
+}
+
+.error-message {
+    margin: 20px;
+    padding: 15px;
+    background-color: #fff3f3;
+    border: 1px solid #ffcdd2;
+    border-radius: 4px;
+    color: #d32f2f;
+    text-align: center;
+}
+
+/* Стили для TimeUnitSelector */
+.time-unit-selector .select__control {
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    box-shadow: none;
+}
+
+.time-unit-selector .select__control:hover {
+    border-color: #b0b0b0;
+}
+
+.time-unit-selector .select__control--is-focused {
+    border-color: #2196f3;
+    box-shadow: 0 0 0 1px #2196f3;
+}
+
+.time-unit-selector .select__menu {
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.time-unit-selector .select__option {
+    padding: 8px 12px;
+}
+
+.time-unit-selector .select__option--is-focused {
+    background-color: #f5f5f5;
+}
+
+.time-unit-selector .select__option--is-selected {
+    background-color: #2196f3;
+    color: white;
+}
+
+.time-unit-selector .select__value-container {
+    padding: 6px 12px;
+}
+
+.time-unit-selector .select__placeholder {
+    color: #757575;
+}

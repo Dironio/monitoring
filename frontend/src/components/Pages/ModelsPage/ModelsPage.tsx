@@ -1,9 +1,10 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './ModelsPage.css';
 import SiteSelection from '../../UI/SiteSelection';
 import { User } from '../../../models/user.model';
 import ChipsNavigation from '../../UI/ChipsNavigation';
+import { SiteContext } from '../../utils/SiteContext';
 
 interface ModelsPageProps {
     user: User | null;
@@ -13,6 +14,11 @@ interface ModelsPageProps {
 const ModelsPage: React.FC<ModelsPageProps> = ({ user, loading }) => {
     const navigate = useNavigate();
     const location = useLocation();
+
+    const [selectedSite, setSelectedSite] = useState<{ value: number; label: string } | null>(() => {
+        const savedSite = localStorage.getItem('selectedSite');
+        return savedSite ? JSON.parse(savedSite) : null;
+    });
 
     const navItems = [
         {
@@ -53,32 +59,35 @@ const ModelsPage: React.FC<ModelsPageProps> = ({ user, loading }) => {
     }, [location.pathname, navigate]);
 
     return (
-        <main className="main-page">
-            <div className="wrapper-page">
-                {/* <div className="models-header"></div> */}
+        <SiteContext.Provider
+            value={{ selectedSite, setSelectedSite }}
+        >
+            <main className="main-page">
+                <div className="wrapper-page">
+                    {/* <div className="models-header"></div> */}
 
-                <ChipsNavigation
-                    items={navItems}
-                    onNavigate={handleNavigate}
-                    currentPath={location.pathname.split('/').pop() || ''}
-                    breakpoints={{
-                        mobile: 480,
-                        tablet: 768,
-                        laptop: 1024,
-                        desktop: 1280,
-                    }}
-                    visibleItems={{
-                        mobile: 1,
-                        tablet: 2,
-                        laptop: 3,
-                        desktop: 5,
-                    }}
-                />
+                    <ChipsNavigation
+                        items={navItems}
+                        onNavigate={handleNavigate}
+                        currentPath={location.pathname.split('/').pop() || ''}
+                        breakpoints={{
+                            mobile: 480,
+                            tablet: 768,
+                            laptop: 1024,
+                            desktop: 1280,
+                        }}
+                        visibleItems={{
+                            mobile: 1,
+                            tablet: 2,
+                            laptop: 3,
+                            desktop: 5,
+                        }}
+                    />
 
-                <SiteSelection user={user} loading={loading} />
+                    <SiteSelection user={user} loading={loading} />
 
-                <section className="models-content">
-                    {/* <div className="model-info">
+                    <section className="models-content">
+                        {/* <div className="model-info">
                         {navItems.map(item => {
                             const isActive = location.pathname.includes(item.path);
                             if (isActive) {
@@ -92,12 +101,13 @@ const ModelsPage: React.FC<ModelsPageProps> = ({ user, loading }) => {
                             return null;
                         })}
                     </div> */}
-                    <div className="model-visualization">
-                        <Outlet />
-                    </div>
-                </section>
-            </div>
-        </main>
+                        <div className="model-visualization">
+                            <Outlet />
+                        </div>
+                    </section>
+                </div>
+            </main>
+        </SiteContext.Provider>
     );
 };
 

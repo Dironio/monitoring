@@ -30,7 +30,16 @@ class ClusteringController {
     @ControllerErrorHandler()
     async getTemporalAnalysis(req: Request, res: Response, next: NextFunction): Promise<Response> {
         const webId = Number(req.query.web_id);
-        const timeUnit = req.query.time_unit as 'hour' | 'day' | 'week';
+        const timeUnit = (req.query.time_unit as 'hour' | 'day' | 'week') || 'hour';
+
+        if (!webId || isNaN(webId)) {
+            return res.status(400).json({ error: 'Invalid web_id parameter' });
+        }
+
+        if (!['hour', 'day', 'week'].includes(timeUnit)) {
+            return res.status(400).json({ error: 'Invalid time_unit parameter' });
+        }
+
         const result = await clusteringService.getTemporalAnalysis(webId, timeUnit);
         return res.status(200).json(result);
     }

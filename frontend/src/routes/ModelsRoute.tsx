@@ -19,7 +19,9 @@ const ModelsRouter: React.FC<ModelsRouterProps> = ({ user, loading }) => {
                 </ProtectedRoute>
             }
         >
-            <Route path="clustering" element={<ClusteringComponent user={user} loading={loading} />} />
+            <Route path="clustering" element={<ClusteringComponent
+            // user={user} loading={loading} 
+            />} />
         </Route>
     )
 }
