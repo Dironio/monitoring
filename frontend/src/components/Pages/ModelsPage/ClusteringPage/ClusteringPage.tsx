@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid,
     Tooltip, ResponsiveContainer, Legend,
@@ -10,6 +10,7 @@ import { ClusterData, TemporalData } from '../../../../models/cluster.model';
 import { getAPI } from '../../../utils/axiosGet';
 import { TimeUnitOption, TimeUnitSelector } from '../Component/TimeUnitSelector';
 import AnalysisRecommendations from '../Component/AnalysisRecomendationComponent';
+import moment from 'moment';
 
 const ClusteringComponent: React.FC = () => {
     const [clusterData, setClusterData] = useState<ClusterData | null>(null);
@@ -22,8 +23,6 @@ const ClusteringComponent: React.FC = () => {
         label: 'По часам'
     });
 
-
-
     useEffect(() => {
         const fetchData = async () => {
             if (!selectedSite) {
@@ -35,11 +34,11 @@ const ClusteringComponent: React.FC = () => {
             try {
                 setLoading(true);
                 const [clusterResponse, temporalResponse] = await Promise.all([
-                    getAPI.get<ClusterData>(`/events/clustering/interaction-clusters?web_id=${selectedSite.value}&cluster_count=${3}`),
+                    getAPI.get<ClusterData>(`/events/clustering/interaction-clusters?web_id=${selectedSite.value}&cluster_count=${5}`),
                     getAPI.get<TemporalData[]>(`/events/clustering/temporal-analysis?web_id=${selectedSite.value}&time_unit=${timeUnit.value}`)
                 ]);
 
-
+                console.log('Raw response from backend:', temporalResponse.data[0]);
                 console.log('temporal: ', temporalResponse.data);
                 console.log('cluster: ', clusterResponse.data);
                 setClusterData(clusterResponse.data);
@@ -53,6 +52,52 @@ const ClusteringComponent: React.FC = () => {
 
         fetchData();
     }, [selectedSite]);
+
+    const formatTemporalData = (data: TemporalData[]) => {
+        return data.map(item => {
+            console.log('Processing item:', item);
+            const date = moment(item.time_bucket, [
+                moment.ISO_8601,
+                'YYYY-MM-DD HH:mm:ss',
+                'YYYY-MM-DD"T"HH:mm:ss.SSSZ'
+            ]);
+
+            console.log('Parsed date:', date);
+
+            return {
+                original_time: item.time_bucket, // для отладки
+                time_bucket: date.isValid()
+                    ? date.format(getTimeFormat(timeUnit.value))
+                    : `${item.time_bucket}`,
+                event_count: Number(item.event_count),
+                unique_users: Number(item.unique_users)
+            };
+        });
+    };
+
+    const getTimeFormat = (timeUnit: string) => {
+        switch (timeUnit) {
+            case 'hour':
+                return 'HH:00';
+            case 'day':
+                return 'DD.MM';
+            case 'month':
+                return 'MM.YYYY';
+            case 'week':
+                return 'DD.MM';
+            default:
+                return 'HH:00';
+        }
+    };
+
+    const formattedData = useMemo(() => {
+        return formatTemporalData(temporalData);
+    }, [temporalData, timeUnit]);
+
+    useEffect(() => {
+        console.log('Full temporal data:', temporalData);
+        console.log('Time unit:', timeUnit);
+    }, [temporalData, timeUnit]);
 
     if (loading) {
         return <div className="loading-state">Загрузка данных...</div>;
@@ -149,14 +194,18 @@ const ClusteringComponent: React.FC = () => {
                     <div className="chart-content">
                         <div className="chart-wrapper">
                             <ResponsiveContainer width="100%" height={400}>
-                                <LineChart data={temporalData}>
+                                <LineChart data={formattedData}>
                                     <CartesianGrid strokeDasharray="3 3" />
                                     <XAxis
                                         dataKey="time_bucket"
                                         label={{ value: 'Время', position: 'bottom' }}
                                     />
                                     <YAxis
-                                        label={{ value: 'Количество событий', angle: -90, position: 'left' }}
+                                        label={{
+                                            value: 'Количество событий',
+                                            angle: -90,
+                                            position: 'left'
+                                        }}
                                     />
                                     <Tooltip />
                                     <Legend />

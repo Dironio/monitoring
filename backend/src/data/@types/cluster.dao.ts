@@ -25,32 +25,84 @@
 //     std_x: number;
 //     std_y: number;
 // }
-export interface SessionMetrics {
-    duration: number;
-    interactionCount: number;
-    uniqueElements: number;
+// export interface SessionMetrics {
+//     duration: number;
+//     interactionCount: number;
+//     uniqueElements: number;
+//     x: number;
+//     y: number;
+// }
+
+// export interface ClusterSession {
+//     sessionId: string;
+//     metrics: SessionMetrics;
+// }
+
+// export interface ClusterInteraction {
+//     cluster_id: number;
+//     x_coords: number[];
+//     y_coords: number[];
+//     durations: number[];
+//     session_ids: string[];
+//     session_data: {
+//         sessionId: string;
+//         metrics: SessionMetrics;
+//     }[];
+//     cluster_size: number;
+//     center_x: number;
+//     center_y: number;
+//     std_x: number;
+//     std_y: number;
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export interface ClusteringData {
     x: number;
     y: number;
+    duration: number;
+    page_url: string;
+    timestamp: Date;
+    session_id: string;
 }
 
-export interface ClusterSession {
-    sessionId: string;
-    metrics: SessionMetrics;
+export interface ClusterResult {
+    clusters: any[];
+    metrics: {
+        silhouetteScore: number;
+        daviesBouldinIndex: number;
+        clusterSizes: number[];
+    };
 }
 
-export interface ClusterInteraction {
-    cluster_id: number;
-    x_coords: number[];
-    y_coords: number[];
-    durations: number[];
-    session_ids: string[];
-    session_data: {
-        sessionId: string;
-        metrics: SessionMetrics;
-    }[];
-    cluster_size: number;
-    center_x: number;
-    center_y: number;
-    std_x: number;
-    std_y: number;
+export interface TemporalResult {
+    time_bucket: string;
+    event_count: number;
+    unique_users: number;
+}
+
+export interface InteractionData {
+    x: number;
+    y: number;
+    duration: number;
+    page_url: string;
+    timestamp: Date;
+    session_id: string;
+}
+
+export interface TemporalData {
+    time_bucket: string;
+    event_count: number;
+    unique_users: number;
 }

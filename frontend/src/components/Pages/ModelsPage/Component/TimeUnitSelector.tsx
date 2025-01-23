@@ -2,7 +2,7 @@ import React from 'react';
 import Select from 'react-select';
 
 export interface TimeUnitOption {
-    value: 'hour' | 'day' | 'week';
+    value: 'minute' | 'hour' | 'day' | 'month' | 'week';
     label: string;
 }
 
@@ -12,6 +12,7 @@ interface TimeUnitSelectorProps {
 }
 
 const timeUnitOptions: TimeUnitOption[] = [
+    { value: 'minute', label: 'По минутам' },
     { value: 'hour', label: 'По часам' },
     { value: 'day', label: 'По дням' },
     { value: 'week', label: 'По неделям' }

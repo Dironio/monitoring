@@ -1,6 +1,6 @@
-import clusteringDal from '../data/clustering.dal';
-import { ClusterAnalysis, SessionPattern, TemporalMetrics } from './@types/clustering.dto'
-import clusteringUtility from './untils/clustering.utility';
+// import clusteringDal from '../data/clustering.dal';
+// import { ClusterAnalysis, ClusterResult, SessionPattern, TemporalMetrics, TemporalResult } from './@types/clustering.dto'
+// import clusteringUtility from './untils/clustering.utility';
 
 
 // class ClusteringService {
@@ -93,7 +93,7 @@ import clusteringUtility from './untils/clustering.utility';
 //             outliers: []
 //         };
 //     }
-    
+
 //     private getEmptyAnalysis(): ClusterAnalysis {
 //         return {
 //             clusters: [],
@@ -248,186 +248,268 @@ import clusteringUtility from './untils/clustering.utility';
 // export default clusteringService;
 
 
-import {  } from '..';
-import {  } from '../data/@types/cluster.dao';
-import { C } from './untils/clustering.utility';
+// import {  } from '..';
+// import {  } from '../data/@types/cluster.dao';
+// import { C } from './untils/clustering.utility';
 
-export class ClusteringService {
-    constructor(
-        private readonly clusteringDal: ClusteringDal,
-        private readonly clusteringUtility: ClusteringUtility
-    ) {}
+// export class ClusteringService {
+//     constructor(
+//         private readonly clusteringDal: ClusteringDal,
+//         private readonly clusteringUtility: ClusteringUtility
+//     ) {}
 
-    /**
-     * Получает и анализирует кластеры взаимодействий
-     */
-    async getInteractionClusters(webId: number, clusterCount: number): Promise<ClusterAnalysis> {
-        try {
-            const interactionData = await this.clusteringDal.getInteractionClusters(webId);
+//     /**
+//      * Получает и анализирует кластеры взаимодействий
+//      */
+//     async getInteractionClusters(webId: number, clusterCount: number): Promise<ClusterAnalysis> {
+//         try {
+//             const interactionData = await this.clusteringDal.getInteractionClusters(webId);
 
-            if (!interactionData || interactionData.length === 0) {
-                return this.getEmptyAnalysis();
-            }
+//             if (!interactionData || interactionData.length === 0) {
+//                 return this.getEmptyAnalysis();
+//             }
 
-            const clusters = this.transformToClusters(interactionData);
-            
-            if (clusters.length === 0) {
-                return this.getEmptyAnalysis();
-            }
+//             const clusters = this.transformToClusters(interactionData);
 
-            const vectors = this.extractVectors(clusters);
-            const metrics = this.calculateClusterMetrics(clusters, vectors);
+//             if (clusters.length === 0) {
+//                 return this.getEmptyAnalysis();
+//             }
 
-            return {
-                clusters,
-                metrics,
-                outliers: this.detectOutliers(clusters)
-            };
-        } catch (error) {
-            console.error('Error in getInteractionClusters:', error);
-            throw new Error(`Failed to get interaction clusters: ${error.message}`);
-        }
-    }
+//             const vectors = this.extractVectors(clusters);
+//             const metrics = this.calculateClusterMetrics(clusters, vectors);
 
-    /**
-     * Преобразует данные из DAL в формат кластеров
-     */
-    private transformToClusters(interactionData: ClusterInteraction[]): Cluster[] {
-        return interactionData.map(cluster => ({
-            sessions: this.transformSessionData(cluster.session_data),
-            centroid: [cluster.center_x, cluster.center_y] as [number, number]
+//             return {
+//                 clusters,
+//                 metrics,
+//                 outliers: this.detectOutliers(clusters)
+//             };
+//         } catch (error) {
+//             console.error('Error in getInteractionClusters:', error);
+//             throw new Error(`Failed to get interaction clusters: ${error.message}`);
+//         }
+//     }
+
+//     /**
+//      * Преобразует данные из DAL в формат кластеров
+//      */
+//     private transformToClusters(interactionData: ClusterInteraction[]): Cluster[] {
+//         return interactionData.map(cluster => ({
+//             sessions: this.transformSessionData(cluster.session_data),
+//             centroid: [cluster.center_x, cluster.center_y] as [number, number]
+//         }));
+//     }
+
+//     /**
+//      * Преобразует данные сессий
+//      */
+//     private transformSessionData(sessionData: any[]): ClusterSession[] {
+//         return sessionData.map(session => ({
+//             sessionId: session.sessionId,
+//             metrics: {
+//                 avgDuration: session.metrics.duration,
+//                 interactionCount: session.metrics.interactionCount,
+//                 uniqueElements: session.metrics.uniqueElements,
+//                 x: session.metrics.x,
+//                 y: session.metrics.y
+//             }
+//         }));
+//     }
+
+//     /**
+//      * Извлекает векторы координат из кластеров
+//      */
+//     private extractVectors(clusters: Cluster[]): number[][] {
+//         return clusters.flatMap(cluster => 
+//             cluster.sessions.map(session => [
+//                 session.metrics.x,
+//                 session.metrics.y
+//             ])
+//         );
+//     }
+
+//     /**
+//      * Рассчитывает метрики кластеров
+//      */
+//     private calculateClusterMetrics(clusters: Cluster[], vectors: number[][]) {
+//         return {
+//             silhouetteScore: this.calculateSilhouetteScore(vectors, clusters),
+//             daviesBouldinIndex: this.calculateDaviesBouldinIndex(vectors, clusters),
+//             clusterSizes: this.calculateClusterSizes(clusters),
+//             clusterDensity: this.calculateClusterDensities(clusters)
+//         };
+//     }
+
+//     /**
+//      * Рассчитывает показатель силуэта
+//      */
+//     private calculateSilhouetteScore(vectors: number[][], clusters: Cluster[]): number {
+//         try {
+//             return this.clusteringUtility.calculateSilhouetteScore(vectors, clusters);
+//         } catch (error) {
+//             console.warn('Failed to calculate silhouette score:', error);
+//             return 0;
+//         }
+//     }
+
+//     /**
+//      * Рассчитывает индекс Дэвиса-Болдина
+//      */
+//     private calculateDaviesBouldinIndex(vectors: number[][], clusters: Cluster[]): number {
+//         try {
+//             return this.clusteringUtility.calculateDaviesBouldinIndex(vectors, clusters);
+//         } catch (error) {
+//             console.warn('Failed to calculate Davies-Bouldin index:', error);
+//             return 0;
+//         }
+//     }
+
+//     /**
+//      * Рассчитывает размеры кластеров
+//      */
+//     private calculateClusterSizes(clusters: Cluster[]): number[] {
+//         return clusters.map(cluster => cluster.sessions.length);
+//     }
+
+//     /**
+//      * Рассчитывает плотность кластеров
+//      */
+//     private calculateClusterDensities(clusters: Cluster[]): number[] {
+//         return clusters.map(cluster => {
+//             try {
+//                 const points = cluster.sessions.map(session => [
+//                     session.metrics.x,
+//                     session.metrics.y
+//                 ]);
+//                 return this.clusteringUtility.calculateClusterDensity(points);
+//             } catch (error) {
+//                 console.warn('Failed to calculate cluster density:', error);
+//                 return 0;
+//             }
+//         });
+//     }
+
+//     /**
+//      * Определяет выбросы в данных
+//      */
+//     private detectOutliers(clusters: Cluster[]): any[] {
+//         try {
+//             const allPoints = this.extractVectors(clusters);
+//             return this.clusteringUtility.detectOutliers(allPoints);
+//         } catch (error) {
+//             console.warn('Failed to detect outliers:', error);
+//             return [];
+//         }
+//     }
+
+//     /**
+//      * Возвращает пустой анализ при отсутствии данных
+//      */
+//     private getEmptyAnalysis(): ClusterAnalysis {
+//         return {
+//             clusters: [],
+//             metrics: {
+//                 silhouetteScore: 0,
+//                 daviesBouldinIndex: 0,
+//                 clusterSizes: [],
+//                 clusterDensity: []
+//             },
+//             outliers: []
+//         };
+//     }
+
+//     /**
+//      * Проверяет валидность входных данных
+//      */
+//     private validateInputData(webId: number, clusterCount: number): void {
+//         if (!webId || webId <= 0) {
+//             throw new Error('Invalid web ID');
+//         }
+//         if (!clusterCount || clusterCount <= 0) {
+//             throw new Error('Invalid cluster count');
+//         }
+//     }
+// }
+
+
+
+
+import { ClusterResult, TemporalResult, TimeUnit } from './@types/clustering.dto'
+import clusteringDal from '../data/clustering.dal';
+import clusteringUtility from './utils/clustering.utility'
+import * as clustering from 'density-clustering';
+
+class ClusteringService {
+    async getInteractionClusters(webId: number): Promise<ClusterResult> {
+        // Получаем данные через DAL
+        const interactions = await clusteringDal.getInteractions(webId);
+
+        // Подготовка данных для DBSCAN
+        const points = interactions.map(i => ({
+            x: i.x,
+            y: i.y,
+            duration: i.duration
         }));
-    }
 
-    /**
-     * Преобразует данные сессий
-     */
-    private transformSessionData(sessionData: any[]): ClusterSession[] {
-        return sessionData.map(session => ({
-            sessionId: session.sessionId,
-            metrics: {
-                avgDuration: session.metrics.duration,
-                interactionCount: session.metrics.interactionCount,
-                uniqueElements: session.metrics.uniqueElements,
-                x: session.metrics.x,
-                y: session.metrics.y
-            }
-        }));
-    }
+        // Конфигурация DBSCAN
+        const dbscan = new clustering.DBSCAN();
+        const neighborhoodRadius = 30;
+        const minPointsPerCluster = 5;
 
-    /**
-     * Извлекает векторы координат из кластеров
-     */
-    private extractVectors(clusters: Cluster[]): number[][] {
-        return clusters.flatMap(cluster => 
-            cluster.sessions.map(session => [
-                session.metrics.x,
-                session.metrics.y
-            ])
+        const clusterResults = dbscan.run(
+            points.map(p => [p.x, p.y, p.duration]),
+            neighborhoodRadius,
+            minPointsPerCluster,
+            clusteringUtility.calculateDistance
         );
-    }
 
-    /**
-     * Рассчитывает метрики кластеров
-     */
-    private calculateClusterMetrics(clusters: Cluster[], vectors: number[][]) {
+        // Вычисляем метрики качества кластеризации
+        const metrics = {
+            silhouetteScore: clusteringUtility.calculateSilhouetteScore(clusterResults),
+            daviesBouldinIndex: clusteringUtility.calculateDaviesBouldinIndex(clusterResults),
+            clusterSizes: clusteringUtility.getClusterSizes(clusterResults)
+        };
+
         return {
-            silhouetteScore: this.calculateSilhouetteScore(vectors, clusters),
-            daviesBouldinIndex: this.calculateDaviesBouldinIndex(vectors, clusters),
-            clusterSizes: this.calculateClusterSizes(clusters),
-            clusterDensity: this.calculateClusterDensities(clusters)
+            clusters: clusteringUtility.formatClusters(clusterResults, points),
+            metrics
         };
     }
 
-    /**
-     * Рассчитывает показатель силуэта
-     */
-    private calculateSilhouetteScore(vectors: number[][], clusters: Cluster[]): number {
-        try {
-            return this.clusteringUtility.calculateSilhouetteScore(vectors, clusters);
-        } catch (error) {
-            console.warn('Failed to calculate silhouette score:', error);
-            return 0;
-        }
+    async getTemporalAnalysis(webId: number, timeUnit: keyof TimeUnit): Promise<TemporalResult[]> {
+        const temporalData = await clusteringDal.getTemporalData(webId, timeUnit);
+
+        return temporalData.map(data => ({
+            time_bucket: clusteringUtility.formatTimeBucket(data.time_bucket, timeUnit),
+            event_count: data.event_count,
+            unique_users: data.unique_users
+        }));
     }
 
-    /**
-     * Рассчитывает индекс Дэвиса-Болдина
-     */
-    private calculateDaviesBouldinIndex(vectors: number[][], clusters: Cluster[]): number {
-        try {
-            return this.clusteringUtility.calculateDaviesBouldinIndex(vectors, clusters);
-        } catch (error) {
-            console.warn('Failed to calculate Davies-Bouldin index:', error);
-            return 0;
-        }
-    }
+    async getAnalysisSummary(webId: number): Promise<any> {
+        const [interactionClusters, temporalData] = await Promise.all([
+            this.getInteractionClusters(webId),
+            this.getTemporalAnalysis(webId, 'day')
+        ]);
 
-    /**
-     * Рассчитывает размеры кластеров
-     */
-    private calculateClusterSizes(clusters: Cluster[]): number[] {
-        return clusters.map(cluster => cluster.sessions.length);
-    }
+        const metrics = await clusteringDal.getClusterMetrics(webId);
 
-    /**
-     * Рассчитывает плотность кластеров
-     */
-    private calculateClusterDensities(clusters: Cluster[]): number[] {
-        return clusters.map(cluster => {
-            try {
-                const points = cluster.sessions.map(session => [
-                    session.metrics.x,
-                    session.metrics.y
-                ]);
-                return this.clusteringUtility.calculateClusterDensity(points);
-            } catch (error) {
-                console.warn('Failed to calculate cluster density:', error);
-                return 0;
-            }
-        });
-    }
-
-    /**
-     * Определяет выбросы в данных
-     */
-    private detectOutliers(clusters: Cluster[]): any[] {
-        try {
-            const allPoints = this.extractVectors(clusters);
-            return this.clusteringUtility.detectOutliers(allPoints);
-        } catch (error) {
-            console.warn('Failed to detect outliers:', error);
-            return [];
-        }
-    }
-
-    /**
-     * Возвращает пустой анализ при отсутствии данных
-     */
-    private getEmptyAnalysis(): ClusterAnalysis {
         return {
-            clusters: [],
-            metrics: {
-                silhouetteScore: 0,
-                daviesBouldinIndex: 0,
-                clusterSizes: [],
-                clusterDensity: []
+            clusters: {
+                count: interactionClusters.clusters.length,
+                metrics: interactionClusters.metrics,
+                distribution: clusteringUtility.calculateClusterDistribution(interactionClusters)
             },
-            outliers: []
+            temporal: {
+                peakHours: clusteringUtility.findPeakHours(temporalData),
+                activityTrend: clusteringUtility.calculateActivityTrend(temporalData)
+            },
+            metrics: clusteringUtility.summarizeMetrics(metrics)
         };
     }
-
-    /**
-     * Проверяет валидность входных данных
-     */
-    private validateInputData(webId: number, clusterCount: number): void {
-        if (!webId || webId <= 0) {
-            throw new Error('Invalid web ID');
-        }
-        if (!clusterCount || clusterCount <= 0) {
-            throw new Error('Invalid cluster count');
-        }
-    }
-}
+};
 
 
+
+
+const clusteringService = new ClusteringService();
+export default clusteringService;
