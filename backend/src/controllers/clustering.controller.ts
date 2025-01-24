@@ -84,6 +84,21 @@ class ClusteringController {
         const result = await clusteringService.getAnalysisSummary(webId);
         return res.status(200).json(result);
     }
+
+
+
+
+
+
+
+
+
+    @ControllerErrorHandler()
+    async getUserAnalysis(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await clusteringService.getUserAnalysis(Number(webId));
+        return res.json(result);
+    }
 }
 
 const clusteringController = new ClusteringController();

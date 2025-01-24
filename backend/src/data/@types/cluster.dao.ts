@@ -106,3 +106,33 @@ export interface TemporalData {
     event_count: number;
     unique_users: number;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export interface UserMetrics {
+    sessionId: string;
+    timeOnPage: number;
+    scrollDepth: number;
+    clickCount: number;
+}

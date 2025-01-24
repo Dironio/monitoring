@@ -10,4 +10,7 @@ clusteringRouter.get('/interaction-clusters', authCheck, clusteringController.ge
 clusteringRouter.get('/temporal-analysis', authCheck, clusteringController.getTemporalAnalysis);
 clusteringRouter.get('/summary', authCheck, clusteringController.getAnalysisSummary);
 
+
+clusteringRouter.get('/user-analysis', authCheck, clusteringController.getUserAnalysis);
+
 export default clusteringRouter;

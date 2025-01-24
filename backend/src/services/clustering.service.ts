@@ -433,7 +433,7 @@
 
 
 
-import { ClusterResult, TemporalResult, TimeUnit } from './@types/clustering.dto'
+import { ClusterResult, TemporalResult, TimeUnit, UserMetrics } from './@types/clustering.dto'
 import clusteringDal from '../data/clustering.dal';
 import clusteringUtility from './utils/clustering.utility'
 import * as clustering from 'density-clustering';
@@ -505,6 +505,10 @@ class ClusteringService {
             },
             metrics: clusteringUtility.summarizeMetrics(metrics)
         };
+    }
+
+    async getUserAnalysis(webId: number): Promise<UserMetrics[]> {
+        return await clusteringDal.getUserAnalysis(webId);
     }
 };
 

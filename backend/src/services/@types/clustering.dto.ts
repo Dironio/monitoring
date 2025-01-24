@@ -218,3 +218,36 @@ export interface TimeUnit {
     month: string;
     week: string;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export interface UserMetrics {
+    sessionId: string;
+    timeOnPage: number;
+    scrollDepth: number;
+    clickCount: number;
+}

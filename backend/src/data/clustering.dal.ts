@@ -269,7 +269,7 @@
 
 import { TimeUnit } from "../services/@types/clustering.dto";
 import pool from "../pool";
-import { InteractionData, TemporalData } from './@types/cluster.dao'
+import { InteractionData, TemporalData, UserMetrics } from './@types/cluster.dao'
 
 class ClusteringDal {
     getTimeFunction(timeUnit: keyof TimeUnit): string {
@@ -456,6 +456,37 @@ class ClusteringDal {
         `, [webId]);
 
         return result.rows;
+    }
+
+
+
+
+
+
+
+    async getUserAnalysis(webId: number): Promise<UserMetrics[]> {
+        const result = await pool.query(`
+            SELECT 
+                session_id as "sessionId",
+                AVG(duration) as "timeOnPage",
+                MAX(scroll_depth) as "scrollDepth",
+                COUNT(CASE WHEN event_type = 'click' THEN 1 END) as "clickCount"
+            FROM raw_events
+            WHERE web_id = $1 
+            AND duration IS NOT NULL
+            GROUP BY session_id
+        `, [webId]);
+
+        return result.rows
+            .filter(item => item.timeOnPage != null &&
+                item.scrollDepth != null &&
+                item.clickCount != null)
+            .map(item => ({
+                sessionId: item.sessionId,
+                timeOnPage: Number(item.timeOnPage),
+                scrollDepth: Number(item.scrollDepth),
+                clickCount: Number(item.clickCount)
+            }));
     }
 }
 
