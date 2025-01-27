@@ -1,319 +1,4 @@
-// import React, { useState, useEffect, useMemo } from 'react';
-// import {
-//     ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid,
-//     Tooltip, ResponsiveContainer, Legend,
-//     BarChart, Bar, LineChart, Line
-// } from 'recharts';
-// import './ClusteringPage.css';
-// import { useSiteContext } from '../../../utils/SiteContext';
-// import { ClusterData, TemporalData } from '../../../../models/cluster.model';
-// import { getAPI } from '../../../utils/axiosGet';
-// import { TimeUnitOption, TimeUnitSelector } from '../Component/TimeUnitSelector';
-// import AnalysisRecommendations from '../Component/AnalysisRecomendationComponent';
-// import moment from 'moment';
-
-// const ClusteringComponent: React.FC = () => {
-//     const [clusterData, setClusterData] = useState<ClusterData | null>(null);
-//     const [temporalData, setTemporalData] = useState<TemporalData[]>([]);
-//     const [loading, setLoading] = useState<boolean>(true);
-//     const [error, setError] = useState<string | null>(null);
-//     const { selectedSite } = useSiteContext();
-//     const [timeUnit, setTimeUnit] = useState<TimeUnitOption>({
-//         value: 'hour',
-//         label: 'По часам'
-//     });
-
-//     useEffect(() => {
-//         const fetchData = async () => {
-//             if (!selectedSite) {
-//                 setError('Сайт не выбран');
-//                 setLoading(false);
-//                 return;
-//             }
-
-//             try {
-//                 setLoading(true);
-//                 const [clusterResponse, temporalResponse] = await Promise.all([
-//                     getAPI.get<ClusterData>(`/events/clustering/interaction-clusters?web_id=${selectedSite.value}&cluster_count=${5}`),
-//                     getAPI.get<TemporalData[]>(`/events/clustering/temporal-analysis?web_id=${selectedSite.value}&time_unit=${timeUnit.value}`)
-//                 ]);
-
-//                 console.log('Raw response from backend:', temporalResponse.data[0]);
-//                 console.log('temporal: ', temporalResponse.data);
-//                 console.log('cluster: ', clusterResponse.data);
-//                 setClusterData(clusterResponse.data);
-//                 setTemporalData(temporalResponse.data);
-//             } catch (err) {
-//                 console.error(err);
-//             } finally {
-//                 setLoading(false);
-//             }
-//         };
-
-//         fetchData();
-//     }, [selectedSite]);
-
-//     const formatTemporalData = (data: TemporalData[]) => {
-//         return data.map(item => {
-//             console.log('Processing item:', item);
-//             const date = moment(item.time_bucket, [
-//                 moment.ISO_8601,
-//                 'YYYY-MM-DD HH:mm:ss',
-//                 'YYYY-MM-DD"T"HH:mm:ss.SSSZ'
-//             ]);
-
-//             console.log('Parsed date:', date);
-
-//             return {
-//                 original_time: item.time_bucket, // для отладки
-//                 time_bucket: date.isValid()
-//                     ? date.format(getTimeFormat(timeUnit.value))
-//                     : `${item.time_bucket}`,
-//                 event_count: Number(item.event_count),
-//                 unique_users: Number(item.unique_users)
-//             };
-//         });
-//     };
-
-//     const getTimeFormat = (timeUnit: string) => {
-//         switch (timeUnit) {
-//             case 'hour':
-//                 return 'HH:00';
-//             case 'day':
-//                 return 'DD.MM';
-//             case 'month':
-//                 return 'MM.YYYY';
-//             case 'week':
-//                 return 'DD.MM';
-//             default:
-//                 return 'HH:00';
-//         }
-//     };
-
-//     const formattedData = useMemo(() => {
-//         return formatTemporalData(temporalData);
-//     }, [temporalData, timeUnit]);
-
-//     useEffect(() => {
-//         console.log('Full temporal data:', temporalData);
-//         console.log('Time unit:', timeUnit);
-//     }, [temporalData, timeUnit]);
-
-//     if (loading) {
-//         return <div className="loading-state">Загрузка данных...</div>;
-//     }
-
-//     if (error) {
-//         return <div className="error-state">Ошибка: {error}</div>;
-//     }
-
-//     if (!clusterData || !temporalData.length) {
-//         return <div className="error-state">Нет данных для анализа</div>;
-//     }
-
-//     return (
-//         <div className="dashboard">
-//             <header className="dashboard__header">
-//                 <h1 className="dashboard__title">Анализ поведения пользователей</h1>
-//                 <p className="dashboard__subtitle">
-//                     Кластерный анализ и временные паттерны взаимодействия
-//                 </p>
-//             </header>
-
-//             {/* Добавляем селектор времени после header */}
-//             <div className="controls-section">
-//                 <TimeUnitSelector
-//                     value={timeUnit}
-//                     onChange={(option) => option && setTimeUnit(option)}
-//                 />
-//             </div>
-
-//             <section className="methodology">
-//                 <div className="methodology__grid">
-//                     <div className="methodology__section">
-//                         <h3 className="methodology__title">DBSCAN Кластеризация</h3>
-//                         <div className="methodology__formula">
-//                             <p>eps-окрестность: N<sub>eps</sub>(p) = {'{q ∈ D | dist(p,q) ≤ eps}'}</p>
-//                             <p>Плотность: |N<sub>eps</sub>(p)| ≥ minPts</p>
-//                         </div>
-//                     </div>
-//                     <div className="methodology__section">
-//                         <h3 className="methodology__title">Метрики качества</h3>
-//                         <div className="methodology__formula">
-//                             <p>Silhouette Score = (b - a) / max(a, b)</p>
-//                             <p>Davies-Bouldin Index = 1/n Σ max((σi + σj)/d(ci,cj))</p>
-//                         </div>
-//                     </div>
-//                 </div>
-//             </section>
-
-//             <div className="charts-grid">
-//                 <div className="chart-container">
-//                     <div className="chart-header">
-//                         <h2 className="chart-title">Распределение взаимодействий</h2>
-//                     </div>
-//                     <div className="chart-content">
-//                         <div className="chart-wrapper">
-//                             <ResponsiveContainer width="100%" height={400}>
-//                                 <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-//                                     <CartesianGrid strokeDasharray="3 3" />
-//                                     <XAxis
-//                                         dataKey="x_coord"
-//                                         name="X координата"
-//                                         label={{ value: 'X координата', position: 'bottom' }}
-//                                     />
-//                                     <YAxis
-//                                         dataKey="y_coord"
-//                                         name="Y координата"
-//                                         label={{ value: 'Y координата', angle: -90, position: 'left' }}
-//                                     />
-//                                     <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-//                                     <Legend />
-//                                     {clusterData?.clusters.map((cluster, idx) => (
-//                                         <Scatter
-//                                             key={idx}
-//                                             name={`Кластер ${idx + 1}`}
-//                                             data={cluster}
-//                                             fill={`hsl(${(idx * 137) % 360}, 70%, 50%)`}
-//                                         />
-//                                     ))}
-//                                 </ScatterChart>
-//                             </ResponsiveContainer>
-//                         </div>
-//                         <div className="chart-description">
-//                             График показывает распределение точек взаимодействия пользователей.
-//                             Каждый кластер представляет группу похожих паттернов поведения.
-//                         </div>
-//                     </div>
-//                 </div>
-
-//                 <div className="chart-container">
-//                     <div className="chart-header">
-//                         <h2 className="chart-title">Временная активность</h2>
-//                     </div>
-//                     <div className="chart-content">
-//                         <div className="chart-wrapper">
-//                             <ResponsiveContainer width="100%" height={400}>
-//                                 <LineChart data={formattedData}>
-//                                     <CartesianGrid strokeDasharray="3 3" />
-//                                     <XAxis
-//                                         dataKey="time_bucket"
-//                                         label={{ value: 'Время', position: 'bottom' }}
-//                                     />
-//                                     <YAxis
-//                                         label={{
-//                                             value: 'Количество событий',
-//                                             angle: -90,
-//                                             position: 'left'
-//                                         }}
-//                                     />
-//                                     <Tooltip />
-//                                     <Legend />
-//                                     <Line
-//                                         type="monotone"
-//                                         dataKey="event_count"
-//                                         name="Количество событий"
-//                                         stroke="hsl(200, 70%, 50%)"
-//                                     />
-//                                     <Line
-//                                         type="monotone"
-//                                         dataKey="unique_users"
-//                                         name="Уникальные пользователи"
-//                                         stroke="hsl(270, 70%, 50%)"
-//                                     />
-//                                 </LineChart>
-//                             </ResponsiveContainer>
-//                         </div>
-//                         <div className="chart-description">
-//                             График отображает временную динамику активности пользователей,
-//                             показывая как общее количество событий, так и число уникальных пользователей.
-//                         </div>
-//                     </div>
-//                 </div>
-//             </div>
-
-//             <section className="metrics">
-//                 <div className="metrics-grid">
-//                     {clusterData?.metrics && (
-//                         <>
-//                             <div className="metric-card">
-//                                 <h4 className="metric-title">Silhouette Score</h4>
-//                                 <p className="metric-value">{clusterData.metrics.silhouetteScore.toFixed(3)}</p>
-//                                 <p className="metric-description">
-//                                     Показывает качество разделения кластеров (-1 до 1)
-//                                 </p>
-//                             </div>
-//                             <div className="metric-card">
-//                                 <h4 className="metric-title">Davies-Bouldin Index</h4>
-//                                 <p className="metric-value">{clusterData.metrics.daviesBouldinIndex.toFixed(3)}</p>
-//                                 <p className="metric-description">
-//                                     Оценка внутрикластерного расстояния (ниже = лучше)
-//                                 </p>
-//                             </div>
-//                             <div className="metric-card">
-//                                 <h4 className="metric-title">Размеры кластеров</h4>
-//                                 <div className="metric-value">
-//                                     {clusterData.metrics.clusterSizes.map((size, idx) => (
-//                                         <span key={idx} className="metric-size">{size}</span>
-//                                     ))}
-//                                 </div>
-//                                 <p className="metric-description">
-//                                     Количество точек в каждом кластере
-//                                 </p>
-//                             </div>
-//                         </>
-//                     )}
-//                 </div>
-//             </section>
-
-//             <AnalysisRecommendations
-//                 clusterData={clusterData}
-//                 temporalData={temporalData}
-//             />
-//         </div>
-//     );
-// };
-
-
-// export default ClusteringComponent;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import * as tf from '@tensorflow/tfjs';
 import {
     ScatterChart,
@@ -322,16 +7,21 @@ import {
     YAxis,
     CartesianGrid,
     Tooltip,
-    Legend
+    Legend,
+    LabelList,
+    Cell
 } from 'recharts';
 import { getAPI } from '../../../utils/axiosGet';
 import { useSiteContext } from '../../../utils/SiteContext';
+import './ClusteringPage.css';
+import ClusteringMetrics from './utils/QualityMetric';
+import DBSCANClustering from './utils/DBSCANComponent';
 
 interface DataPoint {
     timeOnPage: number;
     scrollDepth: number;
     clickCount: number;
-    sessionId: string;
+    [key: string]: number;
 }
 
 interface KMeansConfig {
@@ -345,10 +35,31 @@ interface KMeansState {
     centroids: number[][];
     error: number;
     iteration: number;
+    normalizedData?: tf.Tensor2D;
 }
 
+interface UserMetric {
+    sessionId: string;
+    timeOnPage: number;
+    scrollDepth: number;
+    clickCount: number;
+}
+
+interface UserAnalysis {
+    data: UserMetric[];
+    status: number;
+    statusText: string;
+}
+
+interface NormalizedResult {
+    normalizedTensor: tf.Tensor2D;
+    min: tf.Tensor1D;
+    max: tf.Tensor1D;
+}
+
+
 const ClusteringPage: React.FC = () => {
-    const [data, setData] = useState<DataPoint[]>([]);
+    // const [data, setData] = useState<DataPoint[]>([]);
     const [config, setConfig] = useState<KMeansConfig>({
         k: 3,
         maxIterations: 100,
@@ -359,33 +70,107 @@ const ClusteringPage: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const { selectedSite } = useSiteContext();
+    const [activePoint, setActivePoint] = useState<number | null>(null);
+    const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
+    const [data, setData] = useState<DataPoint[]>([]);
+    const [dbscanParams, setDbscanParams] = useState({
+        epsilon: 0.5,
+        minPoints: 3
+    });
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    const fetchData = async () => {
+    const fetchClusterData = async () => {
         if (!selectedSite) {
             setError('Сайт не выбран');
             setLoading(false);
             return;
         }
-
         try {
-            const [clusterResponse] = await Promise.all([
-                getAPI.get(`/clustering/user-analysis?web_id=${selectedSite.value}`)
-            ])
+            console.log('Fetching cluster data for web_id:', selectedSite.value);
 
-            // const response = await 
-            //             const rawData = await response.json();
-            // setData(rawData);
+            const clusterData = await getAPI.get<UserAnalysis>(`/events/clustering/user-analysis?web_id=${selectedSite.value}`)
+
+            console.log('Received response:', clusterData);
+
+            if (!Array.isArray(clusterData.data)) {
+                throw new Error('Expected array of data');
+            }
+
+            console.log('First data item:', clusterData.data[0]);
+
+            const invalidItems = clusterData.data.filter(item =>
+                typeof item.sessionId !== 'string' ||
+                typeof item.timeOnPage !== 'number' ||
+                typeof item.scrollDepth !== 'number' ||
+                typeof item.clickCount !== 'number'
+            );
+
+            if (invalidItems.length > 0) {
+                console.error('Invalid items found:', invalidItems);
+                throw new Error(`Found ${invalidItems.length} items with invalid format`);
+            }
+
+            setData(clusterData.data);
+
+            const processedData = clusterData.data.map(item => ({
+                ...item,
+                timeOnPage: Number(item.timeOnPage),
+                scrollDepth: Number(item.scrollDepth),
+                clickCount: Number(item.clickCount)
+            }));
+
+            setData(processedData);
+
         } catch (error) {
-            console.error('Error fetching data:', error);
+            console.error('Detailed error:', error);
+            if (error instanceof Error) {
+                throw new Error(`Data processing error: ${error.message}`);
+            }
+            throw new Error('Invalid data format received from server');
         }
+    };
+
+    const average = (arr: number[]): number =>
+        arr.reduce((acc, val) => acc + val, 0) / arr.length;
+
+    useEffect(() => {
+        if (selectedSite?.value) {
+            fetchClusterData();
+        }
+    }, [selectedSite]);
+
+    const normalizeData = (tensor: tf.Tensor2D): NormalizedResult => {
+        return tf.tidy(() => {
+            // Явно приводим результаты к Tensor1D
+            const min = tensor.min(0) as tf.Tensor1D;
+            const max = tensor.max(0) as tf.Tensor1D;
+
+            // Нормализуем данные
+            const normalizedTensor = tensor.sub(min).div(max.sub(min)) as tf.Tensor2D;
+
+            return {
+                normalizedTensor,
+                min,
+                max
+            };
+        });
+    };
+
+    const normalizeViewData = (data: any[]) => {
+        const maxTime = Math.max(...data.map(d => d.timeOnPage));
+        const maxScroll = Math.max(...data.map(d => d.scrollDepth));
+        const maxClicks = Math.max(...data.map(d => d.clickCount));
+
+        return data.map(item => ({
+            ...item,
+            timeOnPage: maxTime ? (item.timeOnPage / maxTime) * 100 : 0,
+            scrollDepth: maxScroll ? (item.scrollDepth / maxScroll) * 100 : 0,
+            clickCount: maxClicks ? (item.clickCount / maxClicks) * 100 : 0
+        }));
     };
 
     const performKMeans = async () => {
         setIsProcessing(true);
+
         try {
             const features = data.map(d => [
                 d.timeOnPage,
@@ -393,9 +178,10 @@ const ClusteringPage: React.FC = () => {
                 d.clickCount
             ]);
 
-            const tensor = tf.tensor2d(features);
 
-            const { normalizedTensor, min, max } = normalizeData(tensor);
+            const tensor = tf.tensor2d(features);
+            const normalizedResult = normalizeData(tensor);
+            const { normalizedTensor } = normalizedResult;
 
             let centroids = tf.randomUniform([config.k, features[0].length]) as tf.Tensor2D;
             let prevCentroids: tf.Tensor2D;
@@ -474,7 +260,8 @@ const ClusteringPage: React.FC = () => {
                 clusters: Array.from(finalAssignments.dataSync()),
                 centroids: centroids.arraySync() as number[][],
                 error: calculateError(normalizedTensor as tf.Tensor2D, centroids, finalAssignments),
-                iteration
+                iteration,
+                normalizedData: normalizedTensor
             });
 
         } finally {
@@ -482,12 +269,38 @@ const ClusteringPage: React.FC = () => {
         }
     };
 
-    const normalizeData = (tensor: tf.Tensor2D) => {
-        const min = tensor.min(0);
-        const max = tensor.max(0);
-        const normalizedTensor = tensor.sub(min).div(max.sub(min));
-        return { normalizedTensor, min, max };
+
+    const mean = (numbers: number[]): number => {
+        if (numbers.length === 0) return 0;
+        return numbers.reduce((acc, val) => acc + val, 0) / numbers.length;
     };
+
+    const [viewMode, setViewMode] = useState({
+        x: 'timeOnPage',
+        y: 'scrollDepth'
+    });
+
+    const formatTime = (seconds: number): string => {
+        if (seconds < 60) return `${Math.round(seconds)}с`;
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = Math.round(seconds % 60);
+        return `${minutes}м ${remainingSeconds}с`;
+    };
+
+    const formatScroll = (scrollValue: number): number => {
+        const documentHeight = Math.max(
+            document.documentElement.scrollHeight,
+            document.documentElement.offsetHeight
+        );
+        const viewportHeight = window.innerHeight;
+        const maxScroll = documentHeight - viewportHeight;
+
+        const scrollPercent = (scrollValue / maxScroll) * 100;
+        return Math.min(Math.round(scrollPercent), 100);
+    };
+
+
+
 
     const calculateDistances = (points: tf.Tensor2D, centroids: tf.Tensor2D) => {
         return tf.tidy(() => {
@@ -495,6 +308,30 @@ const ClusteringPage: React.FC = () => {
             const centroidsExpanded = tf.expandDims(centroids, 0);
             return tf.sum(tf.square(tf.sub(expanded, centroidsExpanded)), 2);
         });
+    };
+
+    const getAxisName = (key: string): string => {
+        const names = {
+            timeOnPage: 'Время на странице',
+            scrollDepth: 'Глубина скролла',
+            clickCount: 'Количество кликов'
+        };
+        return names[key as keyof typeof names] || '';
+    };
+
+    const getAxisLabel = (key: string): string => {
+        const labels = {
+            timeOnPage: 'Время на странице (сек)',
+            scrollDepth: 'Глубина скролла (%)',
+            clickCount: 'Количество кликов'
+        };
+        return labels[key as keyof typeof labels] || '';
+    };
+
+    const normalizedViewData = useMemo(() => normalizeViewData(data), [data]);
+
+    const handleDBSCANComplete = (clusters: number[]) => {
+        console.log('DBSCAN clustering completed', clusters);
     };
 
     return (
@@ -539,48 +376,173 @@ const ClusteringPage: React.FC = () => {
                 </div>
             </div>
 
+
+            <div className="view-controls">
+                <select
+                    value={viewMode.x}
+                    onChange={e => setViewMode({ ...viewMode, x: e.target.value })}
+                >
+                    <option value="timeOnPage">Время на странице</option>
+                    <option value="scrollDepth">Глубина скролла</option>
+                    <option value="clickCount">Количество кликов</option>
+                </select>
+                <select
+                    value={viewMode.y}
+                    onChange={e => setViewMode({ ...viewMode, y: e.target.value })}
+                >
+                    <option value="scrollDepth">Глубина скролла</option>
+                    <option value="timeOnPage">Время на странице</option>
+                    <option value="clickCount">Количество кликов</option>
+                </select>
+            </div>
+
+
             {state && (
                 <div className="results">
                     <div className="visualization">
                         <ScatterChart
-                            width={600}
-                            height={400}
+                            width={800}
+                            height={600}
                             margin={{
                                 top: 20,
                                 right: 20,
-                                bottom: 20,
-                                left: 20,
+                                bottom: 60,
+                                left: 60,
                             }}
                         >
-                            <CartesianGrid />
+                            <CartesianGrid strokeDasharray="3 3" />
                             <XAxis
                                 type="number"
-                                dataKey="timeOnPage"
-                                name="Время на странице"
+                                dataKey={viewMode.x}
+                                name={getAxisName(viewMode.x)}
+                                label={{
+                                    value: getAxisLabel(viewMode.x),
+                                    position: 'bottom',
+                                    offset: 20
+                                }}
+                                tick={{ fontSize: 12 }}
                             />
                             <YAxis
                                 type="number"
-                                dataKey="scrollDepth"
-                                name="Глубина скролла"
+                                dataKey={viewMode.y}
+                                name={getAxisName(viewMode.y)}
+                                label={{
+                                    value: getAxisLabel(viewMode.y),
+                                    angle: -90,
+                                    position: 'left',
+                                    offset: 40
+                                }}
+                                tick={{ fontSize: 12 }}
+                                domain={[0, 'dataMax + 10']}
                             />
-                            <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-                            <Legend />
-                            {state.clusters.map((cluster, idx) => (
-                                <Scatter
-                                    key={idx}
-                                    name={`Кластер ${idx + 1}`}
-                                    data={data.filter((_, i) => state.clusters[i] === idx)}
-                                    fill={`hsl(${(360 / config.k) * idx}, 70%, 50%)`}
-                                />
-                            ))}
+                            <Tooltip
+                                content={({ payload }) => {
+                                    if (payload && payload.length) {
+                                        const data = payload[0].payload;
+                                        return (
+                                            <div className="custom-tooltip" style={{
+                                                backgroundColor: 'white',
+                                                padding: '10px',
+                                                border: '1px solid #ccc',
+                                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                                                borderRadius: '4px'
+                                            }}>
+                                                <p><strong>Сессия:</strong> {data.sessionId}</p>
+                                                <p><strong>Время:</strong> {formatTime(data.timeOnPage)}</p>
+                                                <p><strong>Скролл:</strong> {Math.round(data.scrollDepth)}%</p>
+                                                <p><strong>Клики:</strong> {data.clickCount}</p>
+                                            </div>
+                                        );
+                                    }
+                                    return null;
+                                }}
+                                wrapperStyle={{ pointerEvents: 'none' }}
+                            />
+                            <Legend
+                                layout="vertical"
+                                align="right"
+                                verticalAlign="middle"
+                                wrapperStyle={{
+                                    paddingLeft: '20px',
+                                    maxHeight: '400px',
+                                    overflowY: 'auto'
+                                }}
+                            />
+                            {Array.from(new Set(state.clusters)).map((clusterIndex, idx) => {
+                                const clusterData = data.filter((_, i) =>
+                                    state.clusters[i] === clusterIndex
+                                );
+
+                                return (
+                                    <Scatter
+                                        key={idx}
+                                        name={`Кластер ${idx + 1} (${clusterData.length})`}
+                                        data={clusterData}
+                                        fill={`hsla(${(360 / config.k) * idx}, 70%, 50%, 0.6)`}
+                                    >
+                                        {clusterData.map((point, pointIdx) => (
+                                            <Cell
+                                                key={pointIdx}
+                                                onMouseEnter={(e: React.MouseEvent) => {
+                                                    setActivePoint(point.sessionId);
+                                                    setTooltipPos({
+                                                        x: e.clientX,
+                                                        y: e.clientY
+                                                    });
+                                                }}
+                                                onMouseLeave={() => {
+                                                    setActivePoint(null);
+                                                }}
+                                            />
+                                        ))}
+                                    </Scatter>
+                                );
+                            })}
                         </ScatterChart>
                     </div>
 
-                    <div className="metrics">
-                        <h3>Метрики кластеризации</h3>
-                        <p>Количество итераций: {state.iteration}</p>
-                        <p>Ошибка кластеризации: {state.error.toFixed(4)}</p>
+                    <div className="cluster-analysis">
+                        <h3>Анализ кластеров</h3>
+                        <div className="cluster-stats">
+                            {Array.from(new Set(state.clusters)).map((clusterIndex, idx) => {
+                                const clusterData = data.filter((_, i) =>
+                                    state.clusters[i] === clusterIndex
+                                );
+                                const avgTime = mean(clusterData.map(d => d.timeOnPage));
+                                const avgScroll = mean(clusterData.map(d => d.scrollDepth));
+                                const avgClicks = mean(clusterData.map(d => d.clickCount));
+
+                                return (
+                                    <div key={idx} className="cluster-stat-item">
+                                        <h4>Кластер {idx + 1}</h4>
+                                        <p>Количество сессий: {clusterData.length}</p>
+                                        <p>Среднее время: {Math.round(avgTime)}с</p>
+                                        <p>Средний скролл: {Math.round(avgScroll)}%</p>
+                                        <p>Среднее кол-во кликов: {Math.round(avgClicks)}</p>
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
+
+                    {state && state.normalizedData && (
+                        <ClusteringMetrics
+                            data={state.normalizedData}
+                            labels={state.clusters}
+                            centroids={state.centroids}
+                        />
+                    )}
+
+
+
+                    {data.length > 0 && (
+                        <DBSCANClustering
+                            data={data}
+                            epsilon={dbscanParams.epsilon}
+                            minPoints={dbscanParams.minPoints}
+                            onClusteringComplete={handleDBSCANComplete}
+                        />
+                    )}
                 </div>
             )}
         </div>

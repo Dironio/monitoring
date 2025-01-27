@@ -466,15 +466,45 @@ class ClusteringDal {
 
     async getUserAnalysis(webId: number): Promise<UserMetrics[]> {
         const result = await pool.query(`
-            SELECT 
-                session_id as "sessionId",
-                AVG(duration) as "timeOnPage",
-                MAX(scroll_depth) as "scrollDepth",
-                COUNT(CASE WHEN event_type = 'click' THEN 1 END) as "clickCount"
-            FROM raw_events
-            WHERE web_id = $1 
-            AND duration IS NOT NULL
-            GROUP BY session_id
+            WITH session_times AS (
+    SELECT
+        session_id,
+        MAX(timestamp) - MIN(timestamp) as total_duration
+    FROM raw_events
+    WHERE web_id = $1
+    GROUP BY session_id
+),
+max_scroll_per_session AS (
+    SELECT
+        session_id,
+        MAX((event_data->>'y')::float) as max_y,
+        -- Используем фиксированную базовую высоту, если documentHeight не доступен
+        -- Можно подстроить это значение под ваш сайт
+        1000 as base_height  
+    FROM raw_events
+    WHERE web_id = $1
+    GROUP BY session_id
+)
+SELECT
+    r.session_id as "sessionId",
+    EXTRACT(EPOCH FROM st.total_duration) as "timeOnPage",
+    -- Нормализуем скролл до процентов, но не больше 100
+    LEAST(
+        ROUND(
+            (ms.max_y / ms.base_height) * 100
+        ),
+        100
+    ) as "scrollDepth",
+    COUNT(CASE WHEN r.event_id = 2 THEN 1 END) as "clickCount"
+FROM raw_events r
+JOIN session_times st ON st.session_id = r.session_id
+JOIN max_scroll_per_session ms ON ms.session_id = r.session_id
+WHERE r.web_id = $1
+GROUP BY 
+    r.session_id, 
+    st.total_duration,
+    ms.max_y,
+    ms.base_height;
         `, [webId]);
 
         return result.rows

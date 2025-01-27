@@ -1,4 +1,4 @@
-/* ClusteringDashboard.css */
+/* ClusteringDashboard.css
 .dashboard {
     padding: 1.5rem;
     max-width: 80rem;
@@ -160,7 +160,6 @@
     color: var(--text-secondary);
 }
 
-/* Состояния загрузки и ошибок */
 .loading-state,
 .error-state {
     display: flex;
@@ -173,7 +172,6 @@
     color: var(--color-error);
 }
 
-/* CSS переменные для темной темы */
 :root {
     --background-primary: #ffffff;
     --background-secondary: #f3f4f6;
@@ -185,7 +183,6 @@
     --color-error: #ef4444;
 }
 
-/* Темная тема */
 [data-theme='dark'] {
     --background-primary: #1f2937;
     --background-secondary: #374151;
@@ -206,6 +203,7 @@
     background-color: var(--background-primary);
     border-radius: 0.5rem;
 }
+ */
 
 
 
@@ -220,8 +218,7 @@
 
 
 
-
-
+/* 
 
 .controls-section {
     margin: 20px 0;
@@ -267,7 +264,7 @@
     text-align: center;
 }
 
-/* Стили для TimeUnitSelector */
+
 .time-unit-selector .select__control {
     background-color: white;
     border: 1px solid #e0e0e0;
@@ -310,4 +307,485 @@
 
 .time-unit-selector .select__placeholder {
     color: #757575;
+} */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* clustering.css */
+
+.kmeans-analysis {
+    /* max-width: 1200px; */
+    /* margin: 0 auto; */
+    margin-top: 20px;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Секция с контролами */
+.controls {
+    margin-bottom: 30px;
+}
+
+.config-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.config-section h3 {
+    margin: 0 0 20px 0;
+    color: #343a40;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.config-inputs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.config-inputs label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.config-inputs input {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+}
+
+.config-inputs input:focus {
+    outline: none;
+    border-color: #4dabf7;
+    box-shadow: 0 0 0 2px rgba(77, 171, 247, 0.2);
+}
+
+.config-section button {
+    width: 100%;
+    padding: 10px;
+    background: #4dabf7;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.config-section button:hover {
+    background: #3c99e6;
+}
+
+.config-section button:disabled {
+    background: #adb5bd;
+    cursor: not-allowed;
+}
+
+/* Секция с результатами */
+.results {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+}
+
+.visualization {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    overflow: hidden;
+}
+
+/* Стили для графика */
+.recharts-scatter-symbol {
+    transition: transform 0.2s;
+}
+
+.recharts-scatter-symbol:hover {
+    transform: scale(1.5);
+}
+
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+    stroke: #e9ecef;
+}
+
+.recharts-xAxis .recharts-cartesian-axis-tick-value,
+.recharts-yAxis .recharts-cartesian-axis-tick-value {
+    font-size: 12px;
+    fill: #6c757d;
+}
+
+/* Секция с метриками */
+.metrics {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.metrics h3 {
+    margin: 0 0 15px 0;
+    color: #343a40;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.metrics p {
+    margin: 8px 0;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .kmeans-analysis {
+        padding: 15px;
+    }
+
+    .config-inputs {
+        grid-template-columns: 1fr;
+    }
+
+    .visualization {
+        padding: 10px;
+    }
+
+    .recharts-xAxis .recharts-cartesian-axis-tick-value,
+    .recharts-yAxis .recharts-cartesian-axis-tick-value {
+        font-size: 10px;
+    }
+}
+
+/* Стили для tooltip */
+.recharts-tooltip-wrapper {
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 8px;
+    font-size: 0.8rem;
+}
+
+/* Стили для легенды */
+.recharts-default-legend {
+    font-size: 0.8rem;
+}
+
+.recharts-legend-item {
+    margin-right: 20px !important;
+}
+
+
+
+
+.cluster-analysis {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.cluster-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.cluster-stat-item {
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+}
+
+.cluster-stat-item h4 {
+    margin: 0 0 10px 0;
+    color: #343a40;
+}
+
+.cluster-stat-item p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.custom-tooltip {
+    background: white;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+
+
+
+.custom-tooltip {
+    background: white;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 1px solid #eee;
+}
+
+.custom-tooltip p {
+    margin: 5px 0;
+    color: #333;
+}
+
+.custom-tooltip strong {
+    color: #666;
+    margin-right: 5px;
+}
+
+
+
+.recharts-scatter,
+.recharts-scatter-symbol,
+.recharts-scatter-line {
+    transition: none !important;
+    animation: none !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Метрика качества */
+
+.clustering-metrics {
+    margin-top: 20px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.clustering-metrics h3 {
+    margin: 0 0 20px 0;
+    color: #333;
+    font-size: 1.2rem;
+}
+
+.metrics-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.metric-item {
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+}
+
+.metric-item h4 {
+    margin: 0 0 10px 0;
+    color: #495057;
+    font-size: 1rem;
+}
+
+.metric-item p {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2196f3;
+    margin: 10px 0;
+}
+
+.metric-item small {
+    display: block;
+    color: #6c757d;
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+
+
+
+
+
+
+
+
+
+/* ДБСКАН */
+
+.dbscan-clustering {
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.clustering-info {
+    margin-bottom: 20px;
+}
+
+.clustering-info h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.2rem;
+}
+
+.parameters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.parameter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.processing-status {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+
+.error-message {
+    color: #dc3545;
+    padding: 10px;
+    background: #f8d7da;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+.clustering-results {
+    margin-top: 20px;
+}
+
+.clustering-results h4 {
+    margin: 0 0 15px 0;
+    color: #495057;
+}
+
+.cluster-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: #e9ecef;
+    border-radius: 4px;
+}
+
+.dbscan-clustering {
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.clustering-info span[title] {
+    cursor: help;
+    border-bottom: 1px dotted #666;
+}
+
+.interpretation {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+.recommendations {
+    margin-top: 15px;
+    padding: 15px;
+    background: #fff3e0;
+    border-radius: 4px;
+}
+
+.recommendations ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.recommendations li {
+    margin: 5px 0;
+    color: #634d36;
+}
+
+
+.data-analysis {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.stats ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.stats li {
+    margin: 5px 0;
+    color: #666;
 }
