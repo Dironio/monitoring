@@ -94,6 +94,7 @@ const updateSessionDuration = () => {
 };
 
 const getSessionDuration = (): number => {
+    updateSessionDuration();
     return parseInt(localStorage.getItem('session_duration') || '0', 10);
 };
 

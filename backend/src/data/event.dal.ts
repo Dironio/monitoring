@@ -8,17 +8,18 @@ class EventDal {
         const currentTimestamp = new Date().toISOString();
 
         const result = await pool.query(`
-          INSERT INTO raw_events (
-            user_id, product_id, analyst_id, owner_id, event_id, event_data,
-            page_url, timestamp, seller_id, web_id, session_id, referrer, geolocation,
-            created_at, updated_at, user_agent
-          )
-          VALUES (\$1, \$2, \$3, \$4, \$5, \$6, \$7, \$8, \$9, \$10, \$11, \$12, \$13, \$14, $15)
-          RETURNING *
-        `, [
+            INSERT INTO raw_events (
+              user_id, product_id, analyst_id, owner_id, event_id, event_data,
+              page_url, timestamp, seller_id, web_id, session_id, referrer, geolocation,
+              created_at, updated_at, user_agent, duration
+            )
+            VALUES (\$1, \$2, \$3, \$4, \$5, \$6, \$7, \$8, \$9, \$10, \$11, \$12, \$13, \$14, \$15, \$16, $17)
+            RETURNING *
+          `, [
             dao.user_id, dao.product_id, dao.analyst_id, dao.owner_id, dao.event_id,
             dao.event_data, dao.page_url, dao.timestamp, dao.seller_id, dao.web_id,
-            dao.session_id, dao.referrer, dao.geolocation, currentTimestamp, currentTimestamp, dao.user_agent
+            dao.session_id, dao.referrer, dao.geolocation, currentTimestamp, currentTimestamp,
+            dao.user_agent, dao.duration
         ]);
 
         return result.rows[0];
