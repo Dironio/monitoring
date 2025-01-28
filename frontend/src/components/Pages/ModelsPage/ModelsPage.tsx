@@ -32,7 +32,7 @@ const ModelsPage: React.FC<ModelsPageProps> = ({ user, loading }) => {
             description: 'DTW и Марковские цепи для анализа путей'
         },
         {
-            path: 'similarity-metrics',
+            path: 'similarity',
             label: 'Метрики сходства',
             description: 'Косинусное сходство и расстояние Левенштейна'
         },

@@ -4,6 +4,7 @@ import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
 import ModelsPage from "../components/Pages/ModelsPage/ModelsPage";
 import ClusteringComponent from "../components/Pages/ModelsPage/ClusteringPage/ClusteringPage";
 import SequenceAnalysisPage from "../components/Pages/ModelsPage/SequencePage/SequenceAnalysisPage";
+import SimilarityPage from "../components/Pages/ModelsPage/SimilarityPage/SimilarityPage";
 
 interface ModelsRouterProps {
     user: User | null;
@@ -25,6 +26,7 @@ const ModelsRouter: React.FC<ModelsRouterProps> = ({ user, loading }) => {
             />} />
 
             <Route path="sequence" element={<SequenceAnalysisPage />} />
+            <Route path="similarity" element={<SimilarityPage />} />
         </Route>
     )
 }
