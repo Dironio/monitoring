@@ -136,3 +136,10 @@ export interface UserMetrics {
     scrollDepth: number;
     clickCount: number;
 }
+
+export interface SequenceEvent {
+    session_id: string;
+    page_url: string;
+    timestamp: Date;
+    duration: number;
+}

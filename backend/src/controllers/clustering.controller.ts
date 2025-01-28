@@ -97,7 +97,14 @@ class ClusteringController {
     async getUserAnalysis(req: Request, res: Response, next: NextFunction): Promise<Response> {
         const webId = Number(req.query.web_id);
         const result = await clusteringService.getUserAnalysis(Number(webId));
-        return res.json(result);
+        return res.status(200).json(result);
+    }
+
+    @ControllerErrorHandler()
+    async getSequenceAnalysis(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await clusteringService.getSequenceAnalysis(Number(webId));
+        return res.status(200).json(result);
     }
 }
 

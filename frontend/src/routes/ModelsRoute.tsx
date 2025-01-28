@@ -3,6 +3,7 @@ import { User } from "../models/user.model";
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
 import ModelsPage from "../components/Pages/ModelsPage/ModelsPage";
 import ClusteringComponent from "../components/Pages/ModelsPage/ClusteringPage/ClusteringPage";
+import SequenceAnalysisPage from "../components/Pages/ModelsPage/SequencePage/SequenceAnalysisPage";
 
 interface ModelsRouterProps {
     user: User | null;
@@ -22,6 +23,8 @@ const ModelsRouter: React.FC<ModelsRouterProps> = ({ user, loading }) => {
             <Route path="clustering" element={<ClusteringComponent
             // user={user} loading={loading} 
             />} />
+
+            <Route path="sequence" element={<SequenceAnalysisPage />} />
         </Route>
     )
 }

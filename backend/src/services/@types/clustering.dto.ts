@@ -251,3 +251,28 @@ export interface UserMetrics {
     scrollDepth: number;
     clickCount: number;
 }
+
+
+
+export interface SequenceTransition {
+    from: string;
+    to: string;
+    count: number;
+}
+
+export interface SequenceCluster {
+    clusterId: number;
+    sessionsCount: number;
+    avgPathLength: number;
+    avgDuration: number;
+    commonTransitions: SequenceTransition[];
+    sessions: string[];
+    paths: string[][];
+}
+
+export interface SequenceAnalysis {
+    totalSessions: number;
+    clustersCount: number;
+    averageSimilarity: number;
+    clusters: SequenceCluster[];
+}

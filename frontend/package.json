@@ -6,6 +6,8 @@
         "-": "^0.0.1",
         "@hookform/resolvers": "^3.9.1",
         "@hotjar/browser": "^1.0.9",
+        "@nivo/core": "^0.88.0",
+        "@nivo/sankey": "^0.88.0",
         "@radix-ui/react-select": "^2.1.4",
         "@tailwindcss/vite": "^4.0.0",
         "@tensorflow/tfjs": "^4.22.0",

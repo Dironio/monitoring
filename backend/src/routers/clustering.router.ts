@@ -12,5 +12,6 @@ clusteringRouter.get('/summary', authCheck, clusteringController.getAnalysisSumm
 
 
 clusteringRouter.get('/user-analysis', authCheck, clusteringController.getUserAnalysis);
+clusteringRouter.get('/analysis', authCheck, clusteringController.getSequenceAnalysis);
 
 export default clusteringRouter;

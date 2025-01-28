@@ -33,6 +33,7 @@ eventRouter.get('/history/user-session', authCheck, eventController.getHistoryOn
 
 
 eventRouter.use('/clustering', clusteringRouter);
+eventRouter.use('/sequence', clusteringRouter);
 
 // eventRouter.get('/metrics/traffic', authCheck, eventController.getTrafficData);
 // eventRouter.get('/metrics/user-segments', authCheck, eventController.getUserSegments);

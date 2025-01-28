@@ -535,14 +535,14 @@ const ClusteringPage: React.FC = () => {
 
 
 
-                    {data.length > 0 && (
+                    {/* {data.length > 0 && (
                         <DBSCANClustering
                             data={data}
                             epsilon={dbscanParams.epsilon}
                             minPoints={dbscanParams.minPoints}
                             onClusteringComplete={handleDBSCANComplete}
                         />
-                    )}
+                    )} */}
                 </div>
             )}
         </div>

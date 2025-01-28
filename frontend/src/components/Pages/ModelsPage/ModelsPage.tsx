@@ -27,7 +27,7 @@ const ModelsPage: React.FC<ModelsPageProps> = ({ user, loading }) => {
             description: 'K-means кластеризация пользовательских сессий'
         },
         {
-            path: 'sequence-analysis',
+            path: 'sequence',
             label: 'Анализ последовательностей',
             description: 'DTW и Марковские цепи для анализа путей'
         },
