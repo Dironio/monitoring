@@ -40,7 +40,17 @@ const BehaviorAnalysisPage: React.FC<BehaviorAnalysisPageProps> = ({ user, loadi
             path: 'analytics-report',
             label: 'Отчётность',
             description: 'Комплексный анализ и визуализация данных'
-        }
+        },
+        {
+            path: 'behavioral-patterns',
+            label: 'Поведенческие паттерны',
+            description: 'Классификация последовательностей действий'
+        },
+        // {
+        //     path: '',
+        //     label: 'Анализ событий',
+        //     description: 'рассмотреть какие добавить'
+        // },
     ];
 
     const periodOptions = [

@@ -31,17 +31,15 @@ const SequenceAnalysisPage: React.FC = () => {
                 throw new Error('Нет данных от сервера');
             }
 
-            // Создаем commonPaths из данных кластеров
             const commonPaths: PathSequence[] = response.data.clusters
                 .filter(cluster => cluster.paths && cluster.paths.length > 0)
                 .map(cluster => ({
-                    path: cluster.paths[0], // берем первый путь из кластера как наиболее репрезентативный
+                    path: cluster.paths[0],
                     frequency: cluster.sessionsCount,
                     avgDuration: cluster.avgDuration
                 }))
-                .sort((a, b) => b.frequency - a.frequency); // сортируем по частоте
+                .sort((a, b) => b.frequency - a.frequency);
 
-            // Создаем pathDetails из commonTransitions всех кластеров
             const pathDetailsMap = new Map<string, PathDetails>();
             response.data.clusters.forEach(cluster => {
                 cluster.commonTransitions.forEach(transition => {
@@ -104,7 +102,6 @@ const SequenceAnalysisPage: React.FC = () => {
         }
     }, [selectedSite]);
 
-    // Эффект для отслеживания изменений в данных
     useEffect(() => {
         if (data) {
             console.log('Data state updated:', {
@@ -123,12 +120,6 @@ const SequenceAnalysisPage: React.FC = () => {
 
     return (
         <div className="sequence-analysis">
-            {/* <h2>Анализ последовательностей</h2> */}
-
-            {/* Популярные пути */}
-
-
-            {/* Визуализация переходов */}
             <div className="sequence-analysis__graph">
                 {data && <TransitionsVisualization data={data} />}
             </div>
@@ -151,7 +142,6 @@ const SequenceAnalysisPage: React.FC = () => {
                     </div>
                 </section>
             )}
-            {/* Детали переходов */}
             <div className="sequence-analysis__description">
                 {data.pathDetails && data.pathDetails.length > 0 && (
                     <section className="path-details">

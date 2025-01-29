@@ -41,11 +41,6 @@ const ModelsPage: React.FC<ModelsPageProps> = ({ user, loading }) => {
             label: 'Временные ряды',
             description: 'Декомпозиция рядов и ARIMA модели'
         },
-        {
-            path: 'behavioral-patterns',
-            label: 'Поведенческие паттерны',
-            description: 'Классификация последовательностей действий'
-        },
     ];
 
     const handleNavigate = (path: string) => {

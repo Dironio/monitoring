@@ -25,8 +25,11 @@ const InterfacePage: React.FC<InterfacePageProps> = ({ user, loading }) => {
             path: 'heatmap-scroll',
             label: 'Карта скроллов'
         },
-        { path: 'hype-elements', label: 'Популярные элементы' },
-        { path: 'nav-road', label: 'Навигационные пути' }
+        {
+            path: 'hype-elements',
+            label: 'Популярные элементы'
+        },
+        // { path: 'nav-road', label: 'Навигационные пути' }
     ];
 
     useEffect(() => {

@@ -1,6 +1,6 @@
 import { TimeUnit } from "../services/@types/clustering.dto";
 import pool from "../pool";
-import { InteractionData, SequenceEvent, TemporalData, UserMetrics } from './@types/cluster.dao'
+import { DeviceMetrics, GeoMetrics, InteractionData, PageTransition, SequenceEvent, SessionMetrics, TemporalData, UserMetrics } from './@types/cluster.dao'
 
 class ClusteringDal {
     getTimeFunction(timeUnit: keyof TimeUnit): string {
@@ -303,6 +303,168 @@ FROM filtered_paths
 ORDER BY session_id, timestamp
 LIMIT 1000;
             `, [webId]);
+
+        return result.rows;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    async getSessionSimilarity(webId: number): Promise<SessionMetrics[]> {
+        const result = await pool.query(`
+            WITH recent_sessions AS (
+                SELECT DISTINCT session_id
+                FROM raw_events
+                WHERE web_id = $1
+                AND timestamp >= CURRENT_DATE - INTERVAL '7 days'
+                LIMIT 100
+            )
+            SELECT 
+                COALESCE(s1.session_id, 'Unknown') as session_a,
+                COALESCE(s2.session_id, 'Unknown') as session_b,
+                COUNT(DISTINCT COALESCE(s1.page_url, 'Unknown')) as common_pages,
+                COALESCE(ABS(SUM(s1.duration) - SUM(s2.duration)), 0) as duration_diff,
+                COALESCE(
+                    CAST(COUNT(DISTINCT s1.page_url) AS FLOAT) /
+                    NULLIF(COUNT(DISTINCT s1.page_url) + COUNT(DISTINCT s2.page_url), 0),
+                    0
+                ) as similarity_score
+            FROM recent_sessions rs1
+            JOIN raw_events s1 ON s1.session_id = rs1.session_id
+            JOIN recent_sessions rs2 ON rs1.session_id < rs2.session_id
+            JOIN raw_events s2 ON s2.session_id = rs2.session_id
+            WHERE s1.web_id = $1 AND s2.web_id = $1
+            GROUP BY s1.session_id, s2.session_id;
+        `, [webId]);
+
+        return result.rows;
+    }
+
+    async getGeoMetrics(webId: number): Promise<GeoMetrics[]> {
+        const result = await pool.query(`
+            SELECT 
+                COALESCE(geolocation->>'country', 'Unknown') as country,
+                COALESCE(geolocation->>'region', 'Unknown') as region,
+                COALESCE(geolocation->>'city', 'Unknown') as city,
+                COUNT(DISTINCT session_id) as session_count,
+                COUNT(DISTINCT user_id) as user_count,
+                COUNT(*) as event_count
+            FROM raw_events
+            WHERE web_id = $1
+            AND timestamp >= CURRENT_DATE - INTERVAL '30 days'
+            GROUP BY 
+                COALESCE(geolocation->>'country', 'Unknown'),
+                COALESCE(geolocation->>'region', 'Unknown'),
+                COALESCE(geolocation->>'city', 'Unknown');
+        `, [webId]);
+
+        return result.rows;
+    }
+
+    async getPageSimilarity(webId: number): Promise<PageTransition[]> {
+        const result = await pool.query(`
+            WITH transitions AS (
+                SELECT 
+                    e.session_id,
+                    e.timestamp,
+                    REGEXP_REPLACE(e.page_url, 'https?://[^/]+', '') as page_url,
+                    REGEXP_REPLACE(LEAD(e.page_url) OVER (
+                        PARTITION BY e.session_id 
+                        ORDER BY e.timestamp
+                    ), 'https?://[^/]+', '') as next_page_url,
+                    FIRST_VALUE(event_data->>'duration') OVER (
+                        PARTITION BY e.session_id 
+                        ORDER BY e.timestamp DESC
+                    ) as session_duration
+                FROM raw_events e
+                WHERE e.web_id = $1
+            )
+            SELECT 
+                page_url as source_url,
+                next_page_url as target_url,
+                COUNT(*) as transition_count,
+                ROUND(AVG(session_duration::integer)::numeric, 2) as avg_duration,
+                MIN(session_duration::integer) as min_duration,
+                MAX(session_duration::integer) as max_duration
+            FROM transitions
+            WHERE 
+                next_page_url IS NOT NULL 
+                AND page_url != next_page_url
+            GROUP BY source_url, target_url
+            HAVING COUNT(*) >= 5
+            ORDER BY transition_count DESC
+            LIMIT 50;
+        `, [webId]);
+
+        return result.rows;
+    }
+
+    async getDeviceMetrics(webId: number): Promise<DeviceMetrics[]> {
+        const result = await pool.query(`
+            WITH browser_details AS (
+                SELECT
+                    session_id,
+                    user_id,
+                    COALESCE(user_agent->>'os', 'Unknown') as os,
+                    CASE 
+                        WHEN (user_agent->>'userAgent') LIKE '%YaBrowser%' THEN 'Yandex Browser'
+                        WHEN (user_agent->>'userAgent') LIKE '%Edg/%' THEN 'Microsoft Edge'
+                        WHEN (user_agent->>'userAgent') LIKE '%Firefox%' THEN 'Firefox'
+                        WHEN (user_agent->>'userAgent') LIKE '%Chrome%' 
+                            AND (user_agent->>'userAgent') NOT LIKE '%Edg/%'
+                            AND (user_agent->>'userAgent') NOT LIKE '%YaBrowser%'
+                            AND (user_agent->>'userAgent') NOT LIKE '%OPR/%' 
+                            THEN 'Chrome'
+                            WHEN (user_agent->>'userAgent') LIKE '%Safari%' 
+                            AND (user_agent->>'userAgent') NOT LIKE '%Chrome%' 
+                            AND (user_agent->>'userAgent') NOT LIKE '%Edg/%'
+                            THEN 'Safari'
+                        WHEN (user_agent->>'userAgent') LIKE '%OPR/%' 
+                            OR (user_agent->>'userAgent') LIKE '%Opera%' 
+                            THEN 'Opera'
+                        ELSE COALESCE(user_agent->>'browser', 'Unknown')
+                    END as browser,
+                    COALESCE(user_agent->>'platform', 'Unknown') as platform,
+                    COALESCE(user_agent->>'browserVersion', 'Unknown') as browser_version,
+                    COALESCE(user_agent->>'language', 'Unknown') as language
+                FROM raw_events
+                WHERE 
+                    web_id = $1
+                    AND timestamp >= CURRENT_DATE - INTERVAL '30 days'
+            )
+            SELECT 
+                os,
+                browser || ' ' || 
+                CASE 
+                    WHEN browser_version != 'Unknown' 
+                    THEN browser_version
+                    ELSE ''
+                END as browser,
+                platform,
+                language,
+                COUNT(DISTINCT session_id) as session_count,
+                COUNT(DISTINCT user_id) as user_count,
+                ROUND(COUNT(DISTINCT session_id)::numeric * 100.0 / SUM(COUNT(DISTINCT session_id)) OVER(), 2) as session_percentage
+            FROM browser_details
+            GROUP BY 
+                os,
+                browser,
+                platform,
+                browser_version,
+                language
+            HAVING COUNT(DISTINCT session_id) >= 3
+            ORDER BY session_count DESC;
+        `, [webId]);
 
         return result.rows;
     }

@@ -433,7 +433,7 @@
 
 
 
-import { ClusterResult, SequenceAnalysis, SequenceTransition, TemporalResult, TimeUnit, UserMetrics } from './@types/clustering.dto'
+import { ClusterResult, DeviceMetrics, GeoMetrics, PageTransition, SequenceAnalysis, SequenceTransition, SessionMetrics, TemporalResult, TimeUnit, UserMetrics } from './@types/clustering.dto'
 import clusteringDal from '../data/clustering.dal';
 import clusteringUtility from './utils/clustering.utility'
 import * as clustering from 'density-clustering';
@@ -649,6 +649,26 @@ class ClusteringService {
                 paths: stats.paths
             }))
         };
+    }
+
+
+
+
+
+    async getSessionSimilarity(webId: number): Promise<SessionMetrics[]> {
+        return await clusteringDal.getSessionSimilarity(webId);
+    }
+
+    async getGeoMetrics(webId: number): Promise<GeoMetrics[]> {
+        return await clusteringDal.getGeoMetrics(webId);
+    }
+
+    async getPageSimilarity(webId: number): Promise<PageTransition[]> {
+        return await clusteringDal.getPageSimilarity(webId);
+    }
+
+    async getDeviceMetrics(webId: number): Promise<DeviceMetrics[]> {
+        return await clusteringDal.getDeviceMetrics(webId);
     }
 }
 

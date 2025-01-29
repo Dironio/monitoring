@@ -17,6 +17,7 @@ import InterfaceRouter from './routes/InterfaceRoute';
 import ModelsRouter from './routes/ModelsRoute';
 import AnalyticsRouter from './routes/AnalyticsRoute';
 import LoadingPage from './components/Pages/LoadingPage/LoadingPage';
+import ExperiementRouter from './routes/ExperiementRoute';
 
 const App: React.FC = () => {
     const { user, loading } = useFetchUser();
@@ -83,6 +84,7 @@ const App: React.FC = () => {
                             {InterfaceRouter({ user, loading })}
                             {ModelsRouter({ user, loading })}
                             {AnalyticsRouter({ user, loading })}
+                            {ExperiementRouter({ user, loading })}
 
 
                             <Route
@@ -94,14 +96,14 @@ const App: React.FC = () => {
                                 }
                             />
 
-                            <Route
+                            {/* <Route
                                 path="/experiments"
                                 element={
                                     <ProtectedRoute user={user} loading={loading}>
                                         <h1>Эксперименты</h1>
                                     </ProtectedRoute>
                                 }
-                            />
+                            /> */}
 
                             <Route
                                 path="/application"

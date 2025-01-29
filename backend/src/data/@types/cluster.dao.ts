@@ -1,73 +1,3 @@
-// export interface ClusterInteraction {
-//     clusters: Array<{
-//         x_coord: number;
-//         y_coord: number;
-//         duration: number;
-//         sessionCount: number;
-//         clusterId: number;
-//     }>;
-//     metrics: {
-//         silhouetteScore: number;
-//         daviesBouldinIndex: number;
-//         clusterSizes: number[];
-//     };
-// }
-
-// export interface ClusterInteraction {
-//     cluster_id: number;
-//     x_coords: number[];
-//     y_coords: number[];
-//     durations: number[];
-//     session_ids: string[];
-//     cluster_size: number;
-//     center_x: number;
-//     center_y: number;
-//     std_x: number;
-//     std_y: number;
-// }
-// export interface SessionMetrics {
-//     duration: number;
-//     interactionCount: number;
-//     uniqueElements: number;
-//     x: number;
-//     y: number;
-// }
-
-// export interface ClusterSession {
-//     sessionId: string;
-//     metrics: SessionMetrics;
-// }
-
-// export interface ClusterInteraction {
-//     cluster_id: number;
-//     x_coords: number[];
-//     y_coords: number[];
-//     durations: number[];
-//     session_ids: string[];
-//     session_data: {
-//         sessionId: string;
-//         metrics: SessionMetrics;
-//     }[];
-//     cluster_size: number;
-//     center_x: number;
-//     center_y: number;
-//     std_x: number;
-//     std_y: number;
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export interface ClusteringData {
     x: number;
     y: number;
@@ -108,26 +38,7 @@ export interface TemporalData {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// К средние
 
 
 export interface UserMetrics {
@@ -142,4 +53,43 @@ export interface SequenceEvent {
     page_url: string;
     timestamp: Date;
     duration: number;
+}
+
+
+// Сходства
+
+
+export interface PageTransition {
+    source_url: string;
+    target_url: string;
+    transition_count: number;
+    avg_duration: number;
+    min_duration: number;
+    max_duration: number;
+}
+
+export interface GeoMetrics {
+    country: string;
+    region: string;
+    city: string;
+    session_count: number;
+    user_count: number;
+    event_count: number;
+}
+
+export interface DeviceMetrics {
+    os: string;
+    browser: string;
+    platform: string;
+    session_count: number;
+    user_count: number;
+}
+
+export interface SessionMetrics {
+    session_id: string;
+    event_count: number;
+    duration: number;
+    start_time: string;
+    end_time: string;
+    page_count: number;
 }

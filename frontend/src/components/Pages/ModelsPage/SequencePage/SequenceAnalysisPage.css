@@ -9,7 +9,6 @@
 
 .common-paths {
     width: 100%;
-    /* Явно указываем ширину */
     background: white;
     border-radius: 8px;
     padding: 20px;

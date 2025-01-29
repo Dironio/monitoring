@@ -13,6 +13,12 @@ clusteringRouter.get('/summary', authCheck, clusteringController.getAnalysisSumm
 
 clusteringRouter.get('/user-analysis', authCheck, clusteringController.getUserAnalysis);
 clusteringRouter.get('/analysis', authCheck, clusteringController.getSequenceAnalysis);
-clusteringRouter.get('/придумать', authCheck, clusteringController.getПридумать)
+
+
+
+clusteringRouter.get('/sessions', authCheck, clusteringController.getSessionSimilarity)
+clusteringRouter.get('/geolocation', authCheck, clusteringController.getGeoMetrics)
+clusteringRouter.get('/pages', authCheck, clusteringController.getPageSimilarity)
+clusteringRouter.get('/devices', authCheck, clusteringController.getDeviceMetrics)
 
 export default clusteringRouter;

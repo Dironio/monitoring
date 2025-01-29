@@ -1,0 +1,32 @@
+.similarity-analytics {
+    padding: 24px;
+    background-color: white;
+}
+
+.similarity-analytics__loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    font-size: 18px;
+}
+
+.similarity-analytics__section {
+    margin-bottom: 32px;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.similarity-analytics__title {
+    margin-bottom: 16px;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.similarity-analytics__chart {
+    height: 400px;
+    width: 100%;
+    border-radius: 4px;
+}

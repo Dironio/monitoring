@@ -106,6 +106,41 @@ class ClusteringController {
         const result = await clusteringService.getSequenceAnalysis(Number(webId));
         return res.status(200).json(result);
     }
+
+
+
+
+
+
+
+
+    @ControllerErrorHandler()
+    async getSessionSimilarity(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await clusteringService.getSessionSimilarity(Number(webId));
+        return res.status(200).json(result);
+    }
+
+    @ControllerErrorHandler()
+    async getGeoMetrics(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await clusteringService.getGeoMetrics(Number(webId));
+        return res.status(200).json(result);
+    }
+
+    @ControllerErrorHandler()
+    async getPageSimilarity(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await clusteringService.getPageSimilarity(Number(webId));
+        return res.status(200).json(result);
+    }
+
+    @ControllerErrorHandler()
+    async getDeviceMetrics(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await clusteringService.getDeviceMetrics(Number(webId));
+        return res.status(200).json(result);
+    }
 }
 
 const clusteringController = new ClusteringController();

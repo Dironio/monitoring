@@ -15,10 +15,10 @@ const MetricPage: React.FC<MetricPageProps> = ({ user, loading }) => {
     const location = useLocation();
 
     const navigationItems: NavItem[] = [
-        {
-            path: 'event-analysis',
-            label: 'Анализ событий'
-        },
+        // {
+        //     path: 'event-analysis',
+        //     label: 'Анализ событий'
+        // },
         {
             path: 'category',
             label: 'Категории пользователей'
@@ -30,7 +30,7 @@ const MetricPage: React.FC<MetricPageProps> = ({ user, loading }) => {
         {
             path: 'geography',
             label: 'География пользователей'
-        }
+        },
     ];
 
     useEffect(() => {
