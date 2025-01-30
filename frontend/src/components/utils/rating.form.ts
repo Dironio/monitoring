@@ -5,8 +5,6 @@ export const sendFeedback = async (payload: FeedbackPayload) => {
     try {
         const eventData = {
             user_id: payload.user?.id,
-            product_id: null,
-            analyst_id: null,
             event_data: {
                 rating: payload.rating,
                 feedback_type: 'service_rating',
@@ -15,14 +13,10 @@ export const sendFeedback = async (payload: FeedbackPayload) => {
             },
             page_url: payload.pageUrl,
             timestamp: new Date().toISOString(),
-            seller_id: null,
-            owner_id: null,
             web_id: 1,
             session_id: localStorage.getItem('sessionId'),
             referrer: document.referrer,
-            geolocation: null,
             event_id: 25,
-            duration: null,
             user_agent: {
                 userAgent: payload.userAgent
             }
