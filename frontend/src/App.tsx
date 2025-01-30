@@ -18,6 +18,8 @@ import ModelsRouter from './routes/ModelsRoute';
 import AnalyticsRouter from './routes/AnalyticsRoute';
 import LoadingPage from './components/Pages/LoadingPage/LoadingPage';
 import ExperiementRouter from './routes/ExperiementRoute';
+import ConsentModal from './components/Modals/ConsentModal';
+import RatingModal from './components/Modals/RatingModal';
 
 const App: React.FC = () => {
     const { user, loading } = useFetchUser();
@@ -37,6 +39,7 @@ const App: React.FC = () => {
 
     // useAnalytics()
 
+
     if (loading) {
         return <LoadingPage />;
     }
@@ -44,6 +47,10 @@ const App: React.FC = () => {
     return (
 
         <div className="App">
+            <ConsentModal />
+            <ProtectedRoute user={user} loading={loading}>
+                <RatingModal user={user} loading={loading} />
+            </ProtectedRoute>
             <div
                 className={`app-container ${user
                     ? isNavbarExpanded

@@ -1,0 +1,134 @@
+.consent-modal-overlay {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    animation: all 0.3s ease-out;
+    z-index: 1000;
+}
+
+.consent-modal {
+    background-color: #ffffff;
+    border-radius: 0;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    margin-bottom: 0;
+    max-width: none;
+}
+
+.consent-modal-content {
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.consent-modal-title {
+    color: #020202;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.consent-modal-text {
+    color: #5F6368;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.consent-modal-text p {
+    margin-bottom: 10px;
+}
+
+.consent-modal-text ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 15px 0;
+}
+
+.consent-modal-text li {
+    margin-bottom: 15px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.consent-modal-text li:before {
+    content: "•";
+    color: #7553ff;
+    position: absolute;
+    left: 0;
+}
+
+.consent-modal-policy {
+    font-size: 16px;
+    color: #020202;
+    margin-top: 10px;
+    padding-top: 15px;
+    border-top: 1px solid #e8e8e8;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+.consent-button {
+    background-color: #7553ff;
+    color: white;
+    border: none;
+    padding: 8px 70px;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: block;
+    align-content: center;
+}
+
+.consent-button:hover {
+    background-color: #5a3dcb;
+}
+
+.consent-button:active {
+    transform: scale(0.98);
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 640px) {
+    .consent-modal {
+        margin: 0;
+    }
+
+    .consent-modal-content {
+        padding: 10px;
+    }
+
+    .consent-modal-title {
+        font-size: 14px;
+    }
+
+    .consent-modal-text {
+        font-size: 14px;
+    }
+
+    .consent-modal-policy {
+        font-size: 14px;
+    }
+}
