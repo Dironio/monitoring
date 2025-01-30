@@ -48,9 +48,9 @@ const SurveySelector: React.FC<SurveySelectorProps> = ({ onSelect }) => {
     };
 
     return (
-        <div className= "w-[280px]" >
+        <div className= "" >
         <Select onValueChange={ (value) => onSelect(Number(value)) }>
-            <SelectTrigger className="w-full" disabled = { loading } >
+            <SelectTrigger className="" disabled = { loading } >
                 <SelectValue placeholder={ loading ? "Загрузка..." : "Выберите опрос" } />
                     </SelectTrigger>
                     <SelectContent>
