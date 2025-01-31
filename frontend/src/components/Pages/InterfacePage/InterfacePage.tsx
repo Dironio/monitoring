@@ -6,6 +6,7 @@ import SiteSelection from '../../UI/SiteSelection';
 import ChipsNavigation, { NavItem } from '../../UI/ChipsNavigation';
 import PageSelector, { PageOption } from '../../UI/PageSelector';
 import { SiteContext } from '../../utils/SiteContext';
+import { SiteOption } from '../../../models/site.model';
 
 interface InterfacePageProps {
     user: User | null;
@@ -15,6 +16,29 @@ interface InterfacePageProps {
 const InterfacePage: React.FC<InterfacePageProps> = ({ user, loading }) => {
     const navigate = useNavigate();
     const location = useLocation();
+
+
+
+
+
+
+    const [selectedSite, setSelectedSite] = useState<SiteOption | null>(() => {
+        const savedSite = localStorage.getItem('selectedSite');
+        return savedSite ? JSON.parse(savedSite) : null;
+    });
+
+    const [selectedPage, setSelectedPage] = useState<PageOption | null>(() => {
+        const savedPage = localStorage.getItem('selectedPage');
+        return savedPage ? JSON.parse(savedPage) : null;
+    });
+
+    const [selectedSurvey, setSelectedSurvey] = useState<number | null>(null);
+
+
+
+
+
+
     //Поменять
     const navigationItems: NavItem[] = [
         {
@@ -52,28 +76,6 @@ const InterfacePage: React.FC<InterfacePageProps> = ({ user, loading }) => {
         setSelectedSite(site);
     };
 
-
-
-
-    const [selectedSite, setSelectedSite] = useState<{ value: number; label: string } | null>(() => {
-        const savedSite = localStorage.getItem('selectedSite');
-        return savedSite ? JSON.parse(savedSite) : null;
-    });
-
-    const [selectedPage, setSelectedPage] = useState<PageOption | null>(() => {
-        const savedPage = localStorage.getItem('selectedPage');
-        if (savedPage) {
-            const parsed = JSON.parse(savedPage);
-            return {
-                value: parsed.value,
-                label: parsed.label,
-                fullUrl: parsed.value,
-                path: parsed.value.replace(/^https?:\/\/[^\/]+(:\d+)?/, '')
-            };
-        }
-        return null;
-    });
-
     useEffect(() => {
         if (selectedPage) {
             localStorage.setItem('selectedPage', JSON.stringify(selectedPage));
@@ -82,8 +84,30 @@ const InterfacePage: React.FC<InterfacePageProps> = ({ user, loading }) => {
         }
     }, [selectedPage]);
 
+
+
+
+
+
+
+
+
+
+
+    
+
     return (
-        <SiteContext.Provider value={{ selectedSite, selectedPage, setSelectedSite, setSelectedPage }}>
+        <SiteContext.Provider
+            value={{
+                selectedSite,
+                selectedPage,
+                selectedSurvey,
+                setSelectedSite,
+                setSelectedPage,
+                setSelectedSurvey
+            }}
+        >
+            {/* <SiteContext.Provider value={{ selectedSite, selectedPage, setSelectedSite, setSelectedPage }}> */}
             <main className="main-page">
                 <div className="wrapper-page">
                     <ChipsNavigation
@@ -131,7 +155,7 @@ const InterfacePage: React.FC<InterfacePageProps> = ({ user, loading }) => {
                     </section>
                 </div>
             </main>
-        </SiteContext.Provider>
+        </SiteContext.Provider >
     );
 };
 

@@ -5,6 +5,8 @@ import ChipsNavigation, { NavItem } from '../../UI/ChipsNavigation';
 import { useEffect, useState } from 'react';
 import SiteSelection from '../../UI/SiteSelection';
 import { SiteContext } from '../../utils/SiteContext';
+import ExperimentFilters from './Components/utils/ExperimentFilters';
+import { SiteOption } from '../../../models/site.model';
 
 
 interface ExperiementPageProps {
@@ -16,9 +18,23 @@ const ExperiementPage: React.FC<ExperiementPageProps> = ({ user, loading }) => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [selectedSite, setSelectedSite] = useState<{ value: number; label: string } | null>(() => {
+    // const [selectedSite, setSelectedSite] = useState<{ value: number; label: string } | null>(() => {
+    //     const savedSite = localStorage.getItem('selectedSite');
+    //     return savedSite ? JSON.parse(savedSite) : null;
+    // });
+
+
+    const [selectedSite, setSelectedSite] = useState<SiteOption | null>(() => {
         const savedSite = localStorage.getItem('selectedSite');
         return savedSite ? JSON.parse(savedSite) : null;
+    });
+    const [selectedPage, setSelectedPage] = useState<number | null>(() => {
+        const saved = localStorage.getItem('selectedPage');
+        return saved ? JSON.parse(saved).value : null;
+    });
+    const [selectedSurvey, setSelectedSurvey] = useState<number | null>(() => {
+        const saved = localStorage.getItem('selectedSurvey');
+        return saved ? JSON.parse(saved).value : null;
     });
 
 
@@ -43,8 +59,16 @@ const ExperiementPage: React.FC<ExperiementPageProps> = ({ user, loading }) => {
 
     return (
         <SiteContext.Provider
-            value={{ selectedSite, setSelectedSite }}
+            value={{
+                selectedSite,
+                setSelectedSite,
+                selectedSurvey,
+                setSelectedSurvey
+            }}
         >
+            {/* <SiteContext.Provider
+            value={{ selectedSite, setSelectedSite }}
+        > */}
             <main className="main-page">
                 <div className="wrapper-page">
                     <ChipsNavigation
@@ -66,7 +90,8 @@ const ExperiementPage: React.FC<ExperiementPageProps> = ({ user, loading }) => {
                         }}
                     />
 
-                    <SiteSelection user={user} loading={loading} />
+                    {/* <SiteSelection user={user} loading={loading} /> */}
+                    <ExperimentFilters user={user} disabled={loading} />
 
                     <section className="content">
                         <Outlet />

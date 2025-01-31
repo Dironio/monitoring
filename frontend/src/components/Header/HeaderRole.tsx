@@ -29,13 +29,13 @@ export const HeaderRole: React.FC<HeaderRoleProps> = ({ user }) => {
         case 3:
             return (
                 <Link to="/dashboard">
-                    <button className="header__btn">Аналитика сайта</button>
+                    <button className="header__btn">Составить отчет</button>
                 </Link>
             );
         case 4:
             return (
                 <Link to="/admin-dashboard">
-                    <button className="header__btn">Статистика сайтов</button>
+                    <button className="header__btn">Составить отчет</button>
                 </Link>
             );
         default:

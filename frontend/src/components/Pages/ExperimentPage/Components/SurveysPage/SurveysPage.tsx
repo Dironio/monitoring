@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSiteContext } from "../../../../utils/SiteContext";
 import './SurveysPage.css';
+import SurveySelector from "../../../../UI/SurveysSelection";
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 interface SurveyData {
     rating: number;
@@ -25,32 +27,32 @@ const SurveysPage: React.FC = () => {
     const fetchStatistics = async (surveyId: number) => {
         setLoading(true);
         try {
-            const { data } = await axios.get('/api/events', {
-                params: {
-                    event_id: 25,
-                    survey_id: surveyId
-                }
-            });
+            // const { data } = await axios.get('/api/events', {
+            //     params: {
+            //         event_id: 25,
+            //         survey_id: surveyId
+            //     }
+            // });
 
-            const ratingCounts = data.reduce((acc: Record<number, number>, event: any) => {
-                const rating = event.event_data.rating;
-                acc[rating] = (acc[rating] || 0) + 1;
-                return acc;
-            }, {});
+            // const ratingCounts = data.reduce((acc: Record<number, number>, event: any) => {
+            //     const rating = event.event_data.rating;
+            //     acc[rating] = (acc[rating] || 0) + 1;
+            //     return acc;
+            // }, {});
 
-            const total = Object.values(ratingCounts).reduce((sum: number, count: number) => sum + count, 0);
-            const avg = data.reduce((sum: number, event: any) => sum + event.event_data.rating, 0) / total;
+            // const total = Object.values(ratingCounts).reduce((sum: number, count: number) => sum + count, 0);
+            // const avg = data.reduce((sum: number, event: any) => sum + event.event_data.rating, 0) / total;
 
-            const statsData = Object.entries(ratingCounts).map(([rating, count]) => ({
-                rating: Number(rating),
-                count: count as number,
-                percentage: ((count as number) / total) * 100,
-                fill: `hsl(var(--chart-${Number(rating)}))`
-            }));
+            // const statsData = Object.entries(ratingCounts).map(([rating, count]) => ({
+            //     rating: Number(rating),
+            //     count: count as number,
+            //     percentage: ((count as number) / total) * 100,
+            //     fill: `hsl(var(--chart-${Number(rating)}))`
+            // }));
 
-            setStatistics(statsData);
-            setTotalResponses(total);
-            setAverageRating(Number(avg.toFixed(2)));
+            // setStatistics(statsData);
+            // setTotalResponses(total);
+            // setAverageRating(Number(avg.toFixed(2)));
         } catch (error) {
             console.error('Error fetching statistics:', error);
         } finally {
@@ -62,7 +64,7 @@ const SurveysPage: React.FC = () => {
             <div className="survey-statistics__header">
                 <h1 className="survey-statistics__title">Статистика опросов</h1>
                 <div className="survey-statistics__selector">
-                    <SurveySelector onSelect={setSelectedSurveyId} />
+                    {/* <SurveySelector onSelect={setSelectedSurveyId} /> */}
                 </div>
             </div>
 
@@ -96,11 +98,11 @@ const SurveysPage: React.FC = () => {
                                     <XAxis dataKey="rating" />
                                     <YAxis />
                                     <Tooltip />
-                                    <Bar
+                                    {/* <Bar
                                         dataKey="count"
                                         name="Количество ответов"
                                         className={({ rating }) => `chart-bar chart-bar--${rating}`}
-                                    />
+                                    /> */}
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>

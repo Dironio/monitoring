@@ -1,0 +1,5 @@
+.filters-wrapper {
+    display: flex;
+    gap: 16px;
+    max-width: fit-content;
+}

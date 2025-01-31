@@ -1,45 +1,51 @@
 import { useEffect, useState } from 'react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "";
+import { getAPI } from '../utils/axiosGet';
+import CustomSelect, { SelectOption } from './CustomSelect';
+import './SurveysSelection.css';
+import { useSiteContext } from '../utils/SiteContext';
+
+interface SurveySelectorProps {
+    onChange: (id: number | null) => void;
+    disabled?: boolean;
+}
 
 interface Survey {
     id: number;
     text: string;
 }
 
-interface SurveySelectorProps {
-    onSelect: (surveyId: number) => void;
-}
-
-const SurveySelector: React.FC<SurveySelectorProps> = ({ onSelect }) => {
-    const [surveys, setSurveys] = useState<Survey[]>([]);
+const SurveySelector: React.FC<SurveySelectorProps> = ({ onChange, disabled }) => {
+    const [surveys, setSurveys] = useState<SelectOption[]>([]);
     const [loading, setLoading] = useState(true);
+    const [selectedSurvey, setSelectedSurvey] = useState<number>(() => {
+        const saved = localStorage.getItem('selectedSurvey');
+        return saved ? JSON.parse(saved).value : undefined;
+    });
+
+    const { selectedSite } = useSiteContext();
 
     useEffect(() => {
-        fetchSurveys();
-    }, []);
+        if (selectedSite) {
+            fetchSurveys();
+        }
+    }, [selectedSite]);
 
     const fetchSurveys = async () => {
+
+        if (!selectedSite) {
+            return;
+        }
+
         try {
-            const { data } = await axios.get(`/api/events?web_id=${selectedPage.value}`, {
-                params: {
+            const response = await getAPI.get<Survey[]>(
+                `/events/experiement/surveys?web_id=${selectedSite.value}`
+            );
 
-                }
-            });
-
-            const uniqueSurveys = data.reduce((acc: Survey[], event: any) => {
-                const surveyData = event.event_data;
-                if (surveyData?.survey_id && surveyData?.survey_text) {
-                    if (!acc.some(s => s.id === surveyData.survey_id)) {
-                        acc.push({
-                            id: surveyData.survey_id,
-                            text: surveyData.survey_text
-                        });
-                    }
-                }
-                return acc;
-            }, []);
-
-            setSurveys(uniqueSurveys);
+            const formattedSurveys: SelectOption[] = response.data.map(survey => ({
+                value: survey.id,
+                label: survey.text
+            }));
+            setSurveys(formattedSurveys);
         } catch (error) {
             console.error('Error fetching surveys:', error);
         } finally {
@@ -47,24 +53,26 @@ const SurveySelector: React.FC<SurveySelectorProps> = ({ onSelect }) => {
         }
     };
 
+    const handleChange = (value: string | number | (string | number)[]) => {
+        const numericValue = Number(value);
+        setSelectedSurvey(numericValue);
+        onChange(numericValue);
+    };
+
+    useEffect(() => {
+        fetchSurveys();
+    }, []);
+
     return (
-        <div className= "" >
-        <Select onValueChange={ (value) => onSelect(Number(value)) }>
-            <SelectTrigger className="" disabled = { loading } >
-                <SelectValue placeholder={ loading ? "Загрузка..." : "Выберите опрос" } />
-                    </SelectTrigger>
-                    <SelectContent>
-    {
-        surveys.map((survey) => (
-            <SelectItem key= { survey.id } value = { survey.id.toString() } >
-            { survey.text }
-            </SelectItem>
-        ))
-    }
-    </SelectContent>
-        </Select>
-        </div>
-  );
+        <CustomSelect
+            options={surveys}
+            value={selectedSurvey}
+            onChange={handleChange}
+            loading={loading}
+            className="w-[300px]"
+        // disabled={disabled}
+        />
+    );
 };
 
 export default SurveySelector;

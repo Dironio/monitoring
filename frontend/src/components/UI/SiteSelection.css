@@ -1,4 +1,4 @@
-.site-selection__select-container {
+/* .site-selection__select-container {
     width: 250px;
 }
 
@@ -100,7 +100,7 @@
 
 .css-26l3qy-menu {
     border-radius: 24px !important;
-}
+} */
 
 
 
@@ -178,3 +178,74 @@
     font-size: 14px;
     color: var(--text-secondary);
 } */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.site-select-container {
+    width: 310px;
+    position: relative;
+}
+
+.site-select-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 8px;
+}
+
+.burger-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.select-wrapper {
+    width: 100%;
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+}
+
+/* Стили для кастомного селекта */
+.select-trigger {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    padding-left: 48px;
+    cursor: pointer;
+    min-height: 40px;
+}
+
+.select-value {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.select-arrow {
+    width: 20px;
+    height: 20px;
+    margin-left: 8px;
+}
+
+.select-placeholder {
+    color: #6B7280;
+}

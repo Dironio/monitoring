@@ -1,125 +1,128 @@
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
-import Select from "react-select";
-import './SiteSelection.css';
-import { WebSite } from "../../models/site.model";
+import "./SiteSelection.css";
 import { User } from "../../models/user.model";
+import CustomSelect, { SelectOption } from "./CustomSelect";
+import { SiteOption, WebSite } from "../../models/site.model";
+import { getAPI } from "../utils/axiosGet";
+
 
 interface SiteSelectionProps {
     user: User | null;
     loading: boolean;
-    onSiteChange?: (site: { value: number; label: string } | null) => void;
+    onSiteChange?: (site: SiteOption | null) => void;
+    disabled?: boolean;
 }
 
-export interface SiteSelection {
-    value: number;
-    label: string;
-}
-
-const SiteSelection: React.FC<SiteSelectionProps> = ({ user, loading, onSiteChange }) => {
-    const [sites, setSites] = useState<WebSite[]>([]);
-    const selectRef = useRef<any>(null);
-    const [selectedSite, setSelectedSite] = useState<{ value: number; label: string } | null>(() => {
+const SiteSelection: React.FC<SiteSelectionProps> = ({ user, loading, onSiteChange, disabled }) => {
+    const [sites, setSites] = useState<SiteOption[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [selectedValue, setSelectedValue] = useState<string | number>(() => {
         const savedSite = localStorage.getItem('selectedSite');
-        return savedSite ? JSON.parse(savedSite) : null;
+        return savedSite ? JSON.parse(savedSite).value : '';
     });
+    const [isOpen, setIsOpen] = useState(false);
+    const selectRef = useRef<any>(null);
+
+
+
+    const handleSiteChange = (value: string | number | (string | number)[]) => {
+        const processedValue = Array.isArray(value) ? value[0] : value;
+        const numericValue = typeof processedValue === 'number' ? processedValue : Number(processedValue);
+
+        setSelectedValue(processedValue);
+
+        if (!processedValue || isNaN(numericValue)) {
+            onSiteChange?.(null);
+            localStorage.removeItem('selectedSite');
+            return;
+        }
+
+        const selectedOption = sites.find(site => site.value === numericValue);
+        if (selectedOption) {
+            const siteOption: SiteOption = {
+                value: selectedOption.value,
+                label: selectedOption.label
+            };
+            onSiteChange?.(siteOption);
+            localStorage.setItem('selectedSite', JSON.stringify(siteOption));
+
+            window.dispatchEvent(new CustomEvent('siteSelected', {
+                detail: {
+                    siteId: numericValue,
+                    isDemo: numericValue === 1
+                }
+            }));
+        }
+    };
 
     const fetchAvailableSites = async () => {
         if (!user) return;
 
         try {
-            const response = await axios.get<WebSite[]>(`${process.env.REACT_APP_API_URL}/sites/web`, {
-                withCredentials: true,
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                },
-            });
+            const response = await getAPI.get<WebSite[]>(`/sites/web`);
 
-            setSites(response.data);
+            const siteOptions = response.data.map(site => ({
+                value: site.id,
+                label: site.site
+            }));
+            setSites(siteOptions);
 
-            if (user.role_id === 1) {
+            if ((user.role_id === 1 || !selectedValue) && response.data.length > 0) {
                 const demoSite = response.data.find(site => site.id === 1);
                 if (demoSite) {
-                    handleSiteChange({
-                        value: demoSite.id,
-                        label: demoSite.site
-                    });
-                }
-            }
-            else if (!selectedSite && response.data.length > 0) {
-                const demoSite = response.data.find(site => site.id === 1);
-                if (demoSite) {
-                    handleSiteChange({
-                        value: demoSite.id,
-                        label: demoSite.site
-                    });
+                    handleSiteChange(demoSite.id);
                 }
             }
         } catch (error) {
             console.error("Ошибка загрузки сайтов", error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
-    const handleSiteChange = (selectedOption: { value: number; label: string } | null) => {
-        setSelectedSite(selectedOption);
-        if (onSiteChange) {
-            onSiteChange(selectedOption); // Добавляем вызов
-        }
-        if (selectedOption) {
-            localStorage.setItem('selectedSite', JSON.stringify(selectedOption));
-            const event = new CustomEvent('siteSelected', {
-                detail: {
-                    siteId: selectedOption.value,
-                    isDemo: selectedOption.value === 1
-                }
-            });
-            window.dispatchEvent(event);
+    const handleIconClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (selectRef.current) {
+            selectRef.current.select.onMenuOpen();
+            setIsOpen(true);
         }
     };
 
     useEffect(() => {
         fetchAvailableSites();
-    }, [user]);
-
-
-    const handleIconClick = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (selectRef.current) {
-            selectRef.current.onMenuOpen();
-        }
-    };
-
-    if (loading) return <div>Загрузка...</div>;
-    if (!user) return null;
-
+    }, []);
     return (
-        <section className="site-selection">
-            <div className="site-selection__select-container">
-                <div className="site-selection__select">
-                    <img
-                        src="/assets/burger.svg"
-                        alt=""
-                        className="site-selection__icon"
-                        onClick={handleIconClick}
-                    />
-                    <Select
-                        value={selectedSite}
-                        options={sites.map((site) => ({
-                            value: site.id,
-                            label: site.site,
-                        }))}
-                        onChange={handleSiteChange}
-                        className={`custom-select ${user.role_id === 1 ? 'site-selection__select--demo' : ''}`}
-                        isDisabled={user.role_id === 1}
-                        isSearchable={true}
-                        placeholder=""
-                        menuPlacement="auto"
-                    />
-                </div>
+        <div className="site-select-container">
+            <div
+                className="site-select-icon"
+                onClick={handleIconClick}
+                role="button"
+                tabIndex={0}
+            >
+                <img
+                    src="/assets/burger.svg"
+                    alt="Меню"
+                    className="burger-icon"
+                />
             </div>
-        </section>
-    )
+            <div className="select-wrapper">
+                <CustomSelect
+                    ref={selectRef}
+                    options={sites}
+                    value={selectedValue}
+                    onChange={handleSiteChange}
+                    placeholder="Все пользователи"
+                    // disabled={disabled || user?.role_id === 1}
+                    loading={isLoading}
+                    searchable
+                    className="site-select"
+                    onMenuOpen={() => setIsOpen(true)}
+                    onMenuClose={() => setIsOpen(false)}
+                    menuIsOpen={isOpen}
+                />
+            </div>
+        </div>
+    );
 };
-
 
 export default SiteSelection;
