@@ -78,8 +78,9 @@ const ModelsPage: React.FC<ModelsPageProps> = ({ user, loading }) => {
                             desktop: 5,
                         }}
                     />
-
-                    <SiteSelection user={user} loading={loading} />
+                    <div className="models__site-select">
+                        <SiteSelection user={user} loading={loading} />
+                    </div>
 
                     <section className="models-content">
                         {/* <div className="model-info">

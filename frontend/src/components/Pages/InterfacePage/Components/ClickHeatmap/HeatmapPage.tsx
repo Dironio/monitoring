@@ -170,12 +170,7 @@ const HeatmapPage: React.FC = () => {
                 {!debugMode && (
                     <iframe
                         src={selectedPage?.value}
-                        style={{
-                            width: '100%',
-                            height: 'calc(100vh - 100px)',
-                            position: 'relative',
-                            pointerEvents: 'none'
-                        }}
+                        className='page-container__iframe'
                     />
                 )}
                 {showDots && heatmapData.length > 0 && (

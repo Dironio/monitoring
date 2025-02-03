@@ -166,7 +166,7 @@ const PageSelector: React.FC<PageSelectorProps> = ({
         <div className="selector-container">
             <img
                 src="/assets/burger.svg"
-                alt=""
+                alt="Меню страниц"
                 className="selector-icon"
             />
             <Select<PageOption>

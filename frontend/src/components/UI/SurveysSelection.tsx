@@ -64,14 +64,22 @@ const SurveySelector: React.FC<SurveySelectorProps> = ({ onChange, disabled }) =
     }, []);
 
     return (
-        <CustomSelect
-            options={surveys}
-            value={selectedSurvey}
-            onChange={handleChange}
-            loading={loading}
-            className="w-[300px]"
-        // disabled={disabled}
-        />
+        <div className="survey-selector">
+            <img
+                src="/assets/burger.svg"
+                alt="Меню страниц"
+                className="selector-icon"
+            />
+            <CustomSelect
+                options={surveys}
+                value={selectedSurvey}
+                onChange={handleChange}
+                loading={loading}
+                // disabled={disabled}
+                className="survey-selector__select"
+                placeholder="Выберите опрос"
+            />
+        </div>
     );
 };
 

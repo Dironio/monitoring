@@ -92,7 +92,7 @@ const SiteSelection: React.FC<SiteSelectionProps> = ({ user, loading, onSiteChan
         fetchAvailableSites();
     }, []);
     return (
-        <div className="site-select-container">
+        <div className={`site-select-container ${isOpen ? 'is-open' : ''}`}>
             <div
                 className="site-select-icon"
                 onClick={handleIconClick}
@@ -105,22 +105,19 @@ const SiteSelection: React.FC<SiteSelectionProps> = ({ user, loading, onSiteChan
                     className="burger-icon"
                 />
             </div>
-            <div className="select-wrapper">
-                <CustomSelect
-                    ref={selectRef}
-                    options={sites}
-                    value={selectedValue}
-                    onChange={handleSiteChange}
-                    placeholder="Все пользователи"
-                    // disabled={disabled || user?.role_id === 1}
-                    loading={isLoading}
-                    searchable
-                    className="site-select"
-                    onMenuOpen={() => setIsOpen(true)}
-                    onMenuClose={() => setIsOpen(false)}
-                    menuIsOpen={isOpen}
-                />
-            </div>
+            <CustomSelect
+                ref={selectRef}
+                options={sites}
+                value={selectedValue}
+                onChange={handleSiteChange}
+                placeholder="Все пользователи"
+                loading={isLoading}
+                searchable
+                className={`site-select ${isOpen ? 'is-open' : ''}`}
+                onMenuOpen={() => setIsOpen(true)}
+                onMenuClose={() => setIsOpen(false)}
+                menuIsOpen={isOpen}
+            />
         </div>
     );
 };

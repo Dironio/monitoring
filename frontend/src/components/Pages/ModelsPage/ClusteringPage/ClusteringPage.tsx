@@ -339,203 +339,229 @@ const ClusteringPage: React.FC = () => {
             <div className="controls">
                 <div className="config-section">
                     <h3>Параметры кластеризации</h3>
-                    <div className="config-inputs">
-                        <label>
-                            Количество кластеров (K):
-                            <input
-                                type="number"
-                                value={config.k}
-                                onChange={e => setConfig({
-                                    ...config,
-                                    k: parseInt(e.target.value)
-                                })}
-                                min={2}
-                                max={10}
-                            />
-                        </label>
-                        <label>
-                            Максимум итераций:
-                            <input
-                                type="number"
-                                value={config.maxIterations}
-                                onChange={e => setConfig({
-                                    ...config,
-                                    maxIterations: parseInt(e.target.value)
-                                })}
-                                min={10}
-                                max={1000}
-                            />
-                        </label>
+                    <div className="input-button-container">
+                        <div className="config-inputs">
+                            <label>
+                                Количество кластеров (K):
+                                <input
+                                    type="number"
+                                    value={config.k}
+                                    onChange={e => setConfig({
+                                        ...config,
+                                        k: parseInt(e.target.value)
+                                    })}
+                                    min={2}
+                                    max={10}
+                                />
+                            </label>
+                            <label>
+                                Максимум итераций:
+                                <input
+                                    type="number"
+                                    value={config.maxIterations}
+                                    onChange={e => setConfig({
+                                        ...config,
+                                        maxIterations: parseInt(e.target.value)
+                                    })}
+                                    min={10}
+                                    max={1000}
+                                />
+                            </label>
+                        </div>
+                        <button
+                            onClick={performKMeans}
+                            disabled={isProcessing}
+                        >
+                            {isProcessing ? 'Обработка...' : 'Запустить анализ'}
+                        </button>
                     </div>
-                    <button
-                        onClick={performKMeans}
-                        disabled={isProcessing}
-                    >
-                        {isProcessing ? 'Обработка...' : 'Запустить анализ'}
-                    </button>
                 </div>
             </div>
 
 
-            <div className="view-controls">
-                <select
-                    value={viewMode.x}
-                    onChange={e => setViewMode({ ...viewMode, x: e.target.value })}
-                >
-                    <option value="timeOnPage">Время на странице</option>
-                    <option value="scrollDepth">Глубина скролла</option>
-                    <option value="clickCount">Количество кликов</option>
-                </select>
-                <select
-                    value={viewMode.y}
-                    onChange={e => setViewMode({ ...viewMode, y: e.target.value })}
-                >
-                    <option value="scrollDepth">Глубина скролла</option>
-                    <option value="timeOnPage">Время на странице</option>
-                    <option value="clickCount">Количество кликов</option>
-                </select>
-            </div>
 
 
             {state && (
-                <div className="results">
-                    <div className="visualization">
-                        <ScatterChart
-                            width={800}
-                            height={600}
-                            margin={{
-                                top: 20,
-                                right: 20,
-                                bottom: 60,
-                                left: 60,
-                            }}
+                <div className='view-container'>
+                    {/* <div className="view-controls">
+                        <select
+                            value={viewMode.x}
+                            onChange={e => setViewMode({ ...viewMode, x: e.target.value })}
                         >
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis
-                                type="number"
-                                dataKey={viewMode.x}
-                                name={getAxisName(viewMode.x)}
-                                label={{
-                                    value: getAxisLabel(viewMode.x),
-                                    position: 'bottom',
-                                    offset: 20
-                                }}
-                                tick={{ fontSize: 12 }}
-                            />
-                            <YAxis
-                                type="number"
-                                dataKey={viewMode.y}
-                                name={getAxisName(viewMode.y)}
-                                label={{
-                                    value: getAxisLabel(viewMode.y),
-                                    angle: -90,
-                                    position: 'left',
-                                    offset: 40
-                                }}
-                                tick={{ fontSize: 12 }}
-                                domain={[0, 'dataMax + 10']}
-                            />
-                            <Tooltip
-                                content={({ payload }) => {
-                                    if (payload && payload.length) {
-                                        const data = payload[0].payload;
-                                        return (
-                                            <div className="custom-tooltip" style={{
-                                                backgroundColor: 'white',
-                                                padding: '10px',
-                                                border: '1px solid #ccc',
-                                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                                                borderRadius: '4px'
-                                            }}>
-                                                <p><strong>Сессия:</strong> {data.sessionId}</p>
-                                                <p><strong>Время:</strong> {formatTime(data.timeOnPage)}</p>
-                                                <p><strong>Скролл:</strong> {Math.round(data.scrollDepth)}%</p>
-                                                <p><strong>Клики:</strong> {data.clickCount}</p>
-                                            </div>
-                                        );
-                                    }
-                                    return null;
-                                }}
-                                wrapperStyle={{ pointerEvents: 'none' }}
-                            />
-                            <Legend
-                                layout="vertical"
-                                align="right"
-                                verticalAlign="middle"
-                                wrapperStyle={{
-                                    paddingLeft: '20px',
-                                    maxHeight: '400px',
-                                    overflowY: 'auto'
-                                }}
-                            />
-                            {Array.from(new Set(state.clusters)).map((clusterIndex, idx) => {
-                                const clusterData = data.filter((_, i) =>
-                                    state.clusters[i] === clusterIndex
-                                );
+                            <option value="timeOnPage">Время на странице</option>
+                            <option value="scrollDepth">Глубина скролла</option>
+                            <option value="clickCount">Количество кликов</option>
+                        </select>
+                        <select
+                            value={viewMode.y}
+                            onChange={e => setViewMode({ ...viewMode, y: e.target.value })}
+                        >
+                            <option value="scrollDepth">Глубина скролла</option>
+                            <option value="timeOnPage">Время на странице</option>
+                            <option value="clickCount">Количество кликов</option>
+                        </select>
+                    </div> */}
 
-                                return (
-                                    <Scatter
-                                        key={idx}
-                                        name={`Кластер ${idx + 1} (${clusterData.length})`}
-                                        data={clusterData}
-                                        fill={`hsla(${(360 / config.k) * idx}, 70%, 50%, 0.6)`}
-                                    >
-                                        {clusterData.map((point, pointIdx) => (
-                                            <Cell
-                                                key={pointIdx}
-                                                onMouseEnter={(e: React.MouseEvent) => {
-                                                    setActivePoint(point.sessionId);
-                                                    setTooltipPos({
-                                                        x: e.clientX,
-                                                        y: e.clientY
-                                                    });
-                                                }}
-                                                onMouseLeave={() => {
-                                                    setActivePoint(null);
-                                                }}
-                                            />
-                                        ))}
-                                    </Scatter>
-                                );
-                            })}
-                        </ScatterChart>
-                    </div>
 
-                    <div className="cluster-analysis">
-                        <h3>Анализ кластеров</h3>
-                        <div className="cluster-stats">
-                            {Array.from(new Set(state.clusters)).map((clusterIndex, idx) => {
-                                const clusterData = data.filter((_, i) =>
-                                    state.clusters[i] === clusterIndex
-                                );
-                                const avgTime = mean(clusterData.map(d => d.timeOnPage));
-                                const avgScroll = mean(clusterData.map(d => d.scrollDepth));
-                                const avgClicks = mean(clusterData.map(d => d.clickCount));
 
-                                return (
-                                    <div key={idx} className="cluster-stat-item">
-                                        <h4>Кластер {idx + 1}</h4>
-                                        <p>Количество сессий: {clusterData.length}</p>
-                                        <p>Среднее время: {Math.round(avgTime)}с</p>
-                                        <p>Средний скролл: {Math.round(avgScroll)}%</p>
-                                        <p>Среднее кол-во кликов: {Math.round(avgClicks)}</p>
-                                    </div>
-                                );
-                            })}
+                    <div className="results">
+                        <div className="visualization">
+                            <div className="view-controls">
+                                <select
+                                    className="view-controls__select"
+                                    value={viewMode.x}
+                                    onChange={e => setViewMode({ ...viewMode, x: e.target.value })}
+                                >
+                                    <option value="timeOnPage">Время на странице</option>
+                                    <option value="scrollDepth">Глубина скролла</option>
+                                    <option value="clickCount">Количество кликов</option>
+                                </select>
+                                <select
+                                    className="view-controls__select"
+                                    value={viewMode.y}
+                                    onChange={e => setViewMode({ ...viewMode, y: e.target.value })}
+                                >
+                                    <option value="scrollDepth">Глубина скролла</option>
+                                    <option value="timeOnPage">Время на странице</option>
+                                    <option value="clickCount">Количество кликов</option>
+                                </select>
+                            </div>
+                            <ScatterChart
+                                width={800}
+                                height={600}
+                                margin={{
+                                    top: 20,
+                                    right: 20,
+                                    bottom: 60,
+                                    left: 60,
+                                }}
+                            >
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis
+                                    type="number"
+                                    dataKey={viewMode.x}
+                                    name={getAxisName(viewMode.x)}
+                                    label={{
+                                        value: getAxisLabel(viewMode.x),
+                                        position: 'bottom',
+                                        offset: 20
+                                    }}
+                                    tick={{ fontSize: 12 }}
+                                />
+                                <YAxis
+                                    type="number"
+                                    dataKey={viewMode.y}
+                                    name={getAxisName(viewMode.y)}
+                                    label={{
+                                        value: getAxisLabel(viewMode.y),
+                                        angle: -90,
+                                        position: 'left',
+                                        offset: 40
+                                    }}
+                                    tick={{ fontSize: 12 }}
+                                    domain={[0, 'dataMax + 10']}
+                                />
+                                <Tooltip
+                                    content={({ payload }) => {
+                                        if (payload && payload.length) {
+                                            const data = payload[0].payload;
+                                            return (
+                                                <div className="custom-tooltip" style={{
+                                                    backgroundColor: 'white',
+                                                    padding: '10px',
+                                                    border: '1px solid #ccc',
+                                                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                                                    borderRadius: '4px'
+                                                }}>
+                                                    <p><strong>Сессия:</strong> {data.sessionId}</p>
+                                                    <p><strong>Время:</strong> {formatTime(data.timeOnPage)}</p>
+                                                    <p><strong>Скролл:</strong> {Math.round(data.scrollDepth)}%</p>
+                                                    <p><strong>Клики:</strong> {data.clickCount}</p>
+                                                </div>
+                                            );
+                                        }
+                                        return null;
+                                    }}
+                                    wrapperStyle={{ pointerEvents: 'none' }}
+                                />
+                                <Legend
+                                    layout="vertical"
+                                    align="right"
+                                    verticalAlign="middle"
+                                    wrapperStyle={{
+                                        paddingLeft: '20px',
+                                        maxHeight: '400px',
+                                        overflowY: 'auto'
+                                    }}
+                                />
+                                {Array.from(new Set(state.clusters)).map((clusterIndex, idx) => {
+                                    const clusterData = data.filter((_, i) =>
+                                        state.clusters[i] === clusterIndex
+                                    );
+
+                                    return (
+                                        <Scatter
+                                            key={idx}
+                                            name={`Кластер ${idx + 1} (${clusterData.length})`}
+                                            data={clusterData}
+                                            fill={`hsla(${(360 / config.k) * idx}, 70%, 50%, 0.6)`}
+                                        >
+                                            {clusterData.map((point, pointIdx) => (
+                                                <Cell
+                                                    key={pointIdx}
+                                                    onMouseEnter={(e: React.MouseEvent) => {
+                                                        setActivePoint(point.sessionId);
+                                                        setTooltipPos({
+                                                            x: e.clientX,
+                                                            y: e.clientY
+                                                        });
+                                                    }}
+                                                    onMouseLeave={() => {
+                                                        setActivePoint(null);
+                                                    }}
+                                                />
+                                            ))}
+                                        </Scatter>
+                                    );
+                                })}
+                            </ScatterChart>
                         </div>
-                    </div>
 
-                    {state && state.normalizedData && (
-                        <ClusteringMetrics
-                            data={state.normalizedData}
-                            labels={state.clusters}
-                            centroids={state.centroids}
-                        />
-                    )}
+                        <div className="cluster-analysis">
+                            <h3>Анализ кластеров</h3>
+                            <div className="cluster-stats">
+                                {Array.from(new Set(state.clusters)).map((clusterIndex, idx) => {
+                                    const clusterData = data.filter((_, i) =>
+                                        state.clusters[i] === clusterIndex
+                                    );
+                                    const avgTime = mean(clusterData.map(d => d.timeOnPage));
+                                    const avgScroll = mean(clusterData.map(d => d.scrollDepth));
+                                    const avgClicks = mean(clusterData.map(d => d.clickCount));
+
+                                    return (
+                                        <div key={idx} className="cluster-stat-item">
+                                            <h4>Кластер {idx + 1}</h4>
+                                            <p>Количество сессий: {clusterData.length}</p>
+                                            <p>Среднее время: {Math.round(avgTime)}с</p>
+                                            <p>Средний скролл: {Math.round(avgScroll)}%</p>
+                                            <p>Среднее кол-во кликов: {Math.round(avgClicks)}</p>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        {state && state.normalizedData && (
+                            <ClusteringMetrics
+                                data={state.normalizedData}
+                                labels={state.clusters}
+                                centroids={state.centroids}
+                            />
+                        )}
 
 
 
-                    {/* {data.length > 0 && (
+                        {/* {data.length > 0 && (
                         <DBSCANClustering
                             data={data}
                             epsilon={dbscanParams.epsilon}
@@ -543,6 +569,7 @@ const ClusteringPage: React.FC = () => {
                             onClusteringComplete={handleDBSCANComplete}
                         />
                     )} */}
+                    </div>
                 </div>
             )}
         </div>

@@ -127,3 +127,131 @@
     padding: 0 !important;
 
 } */
+
+
+
+
+
+
+
+
+
+
+
+.selector-container {
+    position: relative;
+    width: 310px;
+    display: flex;
+    align-items: center;
+}
+
+.selector-icon {
+    position: absolute;
+    left: 12px;
+    width: 20px;
+    height: 20px;
+    z-index: 2;
+    opacity: 0.7;
+}
+
+/* Стили для кастомизации React-Select */
+.custom-select-container {
+    width: 100%;
+}
+
+/* Контейнер селекта */
+.custom-select__control {
+    min-height: 40px !important;
+    padding-left: 32px !important;
+    border: 1px solid #E5E7EB !important;
+    border-radius: 8px !important;
+    background-color: white !important;
+    box-shadow: none !important;
+    cursor: pointer !important;
+}
+
+.custom-select__control:hover {
+    border-color: #D1D5DB !important;
+}
+
+/* Контейнер значения */
+.custom-select__value-container {
+    padding: 2px 8px !important;
+}
+
+/* Плейсхолдер */
+.custom-select__placeholder {
+    color: #6B7280 !important;
+    margin: 0 !important;
+}
+
+/* Единичное значение */
+.custom-select__single-value {
+    color: #111827 !important;
+    margin: 0 !important;
+}
+
+/* Индикатор (стрелка) */
+.custom-select__indicator {
+    padding: 8px !important;
+    color: #6B7280 !important;
+}
+
+.custom-select__indicator-separator {
+    display: none !important;
+}
+
+/* Выпадающее меню */
+.custom-select__menu {
+    margin-top: 4px !important;
+    border: 1px solid #E5E7EB !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Опции */
+.custom-select__option {
+    padding: 8px 12px !important;
+    cursor: pointer !important;
+    color: #111827 !important;
+    background-color: white !important;
+}
+
+.custom-select__option:hover {
+    background-color: #F3F4F6 !important;
+}
+
+.custom-select__option--is-selected {
+    background-color: #F3F4F6 !important;
+    color: #111827 !important;
+    font-weight: 500 !important;
+}
+
+.custom-select__option--is-focused {
+    background-color: #F3F4F6 !important;
+}
+
+/* Инпут поиска */
+.custom-select__input-container {
+    margin: 0 !important;
+    padding: 0 !important;
+    color: #111827 !important;
+}
+
+/* Состояние disabled */
+.custom-select__control--is-disabled {
+    background-color: #F3F4F6 !important;
+    opacity: 0.7 !important;
+}
+
+/* Состояние загрузки */
+.custom-select__loading-indicator {
+    color: #6B7280 !important;
+}
+
+/* Для длинного текста в опциях */
+.custom-select__option div {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

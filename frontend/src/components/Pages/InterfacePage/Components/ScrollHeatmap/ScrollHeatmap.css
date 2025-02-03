@@ -17,11 +17,9 @@
 
 
 .header-section {
-    padding: 20px;
-    background-color: #fff;
-    border-bottom: 1px solid #eee;
-    z-index: 1002;
-    position: relative;
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
 }
 
 .controls-container {
@@ -71,7 +69,6 @@
     box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
 }
 
-/* Стили для легенды */
 .legend-container {
     position: fixed;
     right: 40px;
@@ -138,24 +135,33 @@
     font-size: 16px;
 }
 
-/* Стили для кнопок */
 .build-button,
 .debug-button {
-    padding: 8px 16px;
-    border-radius: 4px;
-    border: none;
+    border: transparent;
+    border-radius: 10px;
     cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: 500;
+    font-size: 16px;
+    transition: all 0.3s ease;
 }
 
 .build-button {
-    background-color: #007bff;
-    color: white;
+    background-color: #7553FF;
+    color: #FFFFFF;
+    border: transparent;
+    border-color: #7553FF;
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
 }
 
 .build-button:hover {
-    background-color: #0056b3;
+    background-color: #5a3dcb;
 }
 
 .build-button:disabled {
@@ -172,14 +178,12 @@
     background-color: #5a6268;
 }
 
-/* Стили для заголовка */
 .main-title {
     margin: 0;
     font-size: 24px;
     color: #333;
 }
 
-/* Добавляем стили для скролла в iframe */
 .page-preview {
     scrollbar-width: thin;
     scrollbar-color: #888 #f1f1f1;
@@ -210,12 +214,10 @@
     }
 }
 
-
-/* Медиа-запросы для адаптивности */
 @media (max-width: 768px) {
-    .controls-container {
+    .header-buttons {
         flex-direction: column;
-        gap: 1rem;
+        width: 100%;
     }
 
     .build-button,

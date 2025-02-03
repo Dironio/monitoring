@@ -124,7 +124,7 @@ const ScrollHeatmap: React.FC = () => {
             <div className="heatmap-content">
                 <div className="header-section">
                     <div className="controls-container">
-                        <h1 className="main-title">Карта скроллов</h1>
+                        {/* <h1 className="main-title">Карта скроллов</h1> */}
                         <div className="header-buttons">
                             <button
                                 onClick={fetchHeatmapData}

@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useRef, useState } from 'react';
+import { forwardRef, ReactHTMLElement, useEffect, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import './CustomSelect.css';
 
@@ -22,6 +22,7 @@ export interface CustomSelectProps {
     onMenuOpen?: () => void;
     onMenuClose?: () => void;
     menuIsOpen?: boolean;
+    // children?: HTMLDivElement;
 }
 
 const CustomSelect = forwardRef<HTMLDivElement, CustomSelectProps>(({
@@ -120,25 +121,21 @@ const CustomSelect = forwardRef<HTMLDivElement, CustomSelectProps>(({
     };
 
     return (
-        <div className={`custom-select ${className}`}
-            ref={ref}
-        >
+        <div className={`custom-select ${className}`} ref={ref}>
             <div
                 className={`
-                    select-trigger 
-                    ${loading ? 'select-trigger--disabled' : ''} 
-                    ${isOpen ? 'select-trigger--open' : ''}
-                    
-                    ${error ? 'select-trigger--error' : ''}
-                `}
-                // ${disabled ? 'select-trigger--disabled' : ''}
+            custom-select__trigger
+            ${loading ? 'custom-select__trigger--disabled' : ''}
+            ${isOpen ? 'custom-select__trigger--open' : ''}
+            ${error ? 'custom-select__trigger--error' : ''}
+        `}
                 onClick={() => !loading && setIsOpen(!isOpen)}
             >
-                <span className={`select-value ${!value ? 'select-placeholder' : ''}`}>
+                <span className={`custom-select__value ${!value ? 'custom-select__value--placeholder' : ''}`}>
                     {getDisplayValue()}
                 </span>
                 <svg
-                    className={`select-arrow ${isOpen ? 'select-arrow--open' : ''}`}
+                    className={`custom-select__arrow ${isOpen ? 'custom-select__arrow--open' : ''}`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -152,46 +149,50 @@ const CustomSelect = forwardRef<HTMLDivElement, CustomSelectProps>(({
                 </svg>
             </div>
 
-            {error && <div className="select-error">{error}</div>}
+            {error && <div className="custom-select__error">{error}</div>}
 
             <CSSTransition
                 in={isOpen && !loading}
                 timeout={200}
-                classNames="select-options"
+                classNames="custom-select__options-animation"
                 unmountOnExit
                 nodeRef={optionsRef}
             >
-                <div ref={optionsRef} className="select-options">
+                <div ref={optionsRef} className="custom-select__options">
                     {searchable && (
-                        <div className="select-search">
+                        <div className="custom-select__search">
                             <input
                                 ref={searchInputRef}
                                 type="text"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Поиск..."
-                                className="select-search__input"
+                                className="custom-select__search-input"
                                 onClick={(e) => e.stopPropagation()}
                             />
                         </div>
                     )}
 
-                    <div className="select-options-list">
+                    <div className="custom-select__options-list">
                         {filteredOptions.length > 0 ? (
                             filteredOptions.map((option) => (
                                 <div
                                     key={option.value}
                                     className={`
-                                        select-option 
-                                        ${multiSelect
-                                            ? (value as (string | number)[])?.includes(option.value) ? 'select-option--selected' : ''
-                                            : value === option.value ? 'select-option--selected' : ''
+                                custom-select__option
+                                ${multiSelect
+                                            ? (value as (string | number)[])?.includes(option.value)
+                                                ? 'custom-select__option--selected'
+                                                : ''
+                                            : value === option.value
+                                                ? 'custom-select__option--selected'
+                                                : ''
                                         }
-                                    `}
+                            `}
                                     onClick={() => handleOptionClick(option.value)}
                                 >
                                     {multiSelect && (
-                                        <span className="select-option__checkbox">
+                                        <span className="custom-select__option-checkbox">
                                             {(value as (string | number)[])?.includes(option.value) && '✓'}
                                         </span>
                                     )}
@@ -199,7 +200,7 @@ const CustomSelect = forwardRef<HTMLDivElement, CustomSelectProps>(({
                                 </div>
                             ))
                         ) : (
-                            <div className="select-no-results">
+                            <div className="custom-select__no-results">
                                 Ничего не найдено
                             </div>
                         )}
@@ -208,7 +209,7 @@ const CustomSelect = forwardRef<HTMLDivElement, CustomSelectProps>(({
             </CSSTransition>
         </div>
     );
-};
+})
 
 CustomSelect.displayName = 'CustomSelect';
 

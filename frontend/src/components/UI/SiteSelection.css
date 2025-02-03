@@ -194,7 +194,7 @@
 
 
 
-.site-select-container {
+/* .site-select-container {
     width: 310px;
     position: relative;
 }
@@ -223,7 +223,6 @@
     border-radius: 8px;
 }
 
-/* Стили для кастомного селекта */
 .select-trigger {
     display: flex;
     align-items: center;
@@ -248,4 +247,72 @@
 
 .select-placeholder {
     color: #6B7280;
+} */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.site-selection {
+    width: 310px;
+    position: relative;
+}
+
+.site-selection__container {
+    background-color: #fff;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.site-selection__container:hover {
+    border-color: #D1D5DB;
+}
+
+.site-select-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    background-color: white;
+    border-radius: 10px;
+    padding: 1px 10px;
+    width: 250px;
+}
+
+.site-selection__icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 8px;
+}
+
+.site-selection__icon-image {
+    width: 24px;
+    height: 24px;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.site-selection__icon:hover .site-selection__icon-image {
+    opacity: 1;
 }
