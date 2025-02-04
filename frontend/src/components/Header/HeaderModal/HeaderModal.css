@@ -52,9 +52,6 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    /* padding: 10px; */
-    /* background-color: #F8F8F8; */
-    /* border-radius: 8px; */
     cursor: pointer;
     fill: #5F6368;
     transition: background-color 0.3s ease;
@@ -93,6 +90,15 @@
     font-weight: 500;
     transition: all .3s ease;
     margin-bottom: 10px;
+
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.header-modal__nav-item img {
+    height: 24px;
+    width: 24px;
 }
 
 .header-modal__nav-item:hover {
@@ -106,28 +112,25 @@
 }
 
 .header-modal__logout {
-    /* text-align: center; */
     display: flex;
-    /* align-items: center; */
+    align-items: center;
     justify-content: flex-start;
-    width: 100%;
-}
-
-.header-modal__logout-btn {
-    /* background-color: #FF4D4F; */
-    /* color: #fff; */
+    gap: 20px;
     background-color: white;
     font-size: 16px;
     font-weight: 500;
-    padding: 10px 20px;
-    border: none;
+    padding: 10px 12px;
+    transition: all 0.3s ease;
     border-radius: 10px;
     cursor: pointer;
-    width: 100%;
-    transition: all 0.3s ease;
 }
 
-.header-modal__logout-btn:hover {
+.header-modal__logout img {
+    width: 24px;
+    height: 24px;
+}
+
+.header-modal__logout:hover {
     /* background-color: #FF3335; */
     background-color: #FF4D4F;
     color: #fff;
@@ -169,6 +172,16 @@
     }
 }
 
+@keyframes rotateAnimation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 @media (max-width: 650px) {
     .header-modal {
         position: fixed;
@@ -193,14 +206,15 @@
     }
 }
 
-
-@keyframes rotateAnimation {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
+@media (max-width: 540px) {
+    .header-modal {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 420px;
+        align-content: center;
+        height: 100vh;
+        animation: slideIn 0.3s ease-out forwards;
     }
 }
 
@@ -209,9 +223,10 @@
         position: fixed;
         top: 0;
         right: 0;
-        width: 470px;
+        width: 100%;
         align-content: center;
-        height: 100vh;
+        /* height: 100vh; */
+        height: 100%;
         animation: slideIn 0.3s ease-out forwards;
     }
 

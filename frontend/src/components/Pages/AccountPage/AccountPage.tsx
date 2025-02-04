@@ -15,7 +15,7 @@ const AccountPage: React.FC<AccountPageProps> = ({ user, loading }) => {
     const navigationItems: NavItem[] = [
         {
             path: 'main',
-            label: 'Личный кабинет'
+            label: 'Главная'
         },
         {
             path: 'settings',

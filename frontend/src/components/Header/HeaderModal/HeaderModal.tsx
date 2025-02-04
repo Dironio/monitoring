@@ -63,14 +63,14 @@ const HeaderModal: React.FC<HeaderModalProps> = ({ user, closeModal }) => {
             <nav className="header-modal__nav">
                 <Link to="/account" >
                     <div className="header-modal__nav-item">
-                        {/* <img src="" alt="" /> */}
+                        <img src="/assets/personal-acc.svg" alt="" />
                         <p>Личный кабинет</p>
                     </div>
                 </Link>
 
                 <Link to="/account/application" >
                     <div className="header-modal__nav-item">
-                        {/* <img src="" alt="" /> */}
+                        <img src="/assets/application.svg" alt="" />
                         <p>Оставить заявку</p>
                     </div>
                 </Link>
@@ -78,13 +78,16 @@ const HeaderModal: React.FC<HeaderModalProps> = ({ user, closeModal }) => {
 
             <hr className="header-modal__hr" />
 
-            <div className="header-modal__logout">
-                <button
+            <div className="header-modal__logout" onClick={handleLogout}>
+                <img src="/assets/logout.svg" alt="" />
+                <p>Выйти</p>
+
+                {/* <button
                     className="header-modal__logout-btn"
                     onClick={handleLogout}
                 >
                     Выйти
-                </button>
+                </button> */}
             </div>
 
             <hr className="header-modal__hr" />
