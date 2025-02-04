@@ -19,8 +19,8 @@
 
 .config-section h3 {
     margin: 0 0 20px 0;
-    color: #343a40;
-    font-size: 1.2rem;
+    color: #5f5f5f;
+    font-size: 20px;
     font-weight: 600;
 }
 
@@ -228,6 +228,7 @@
     padding: 20px;
     background: #fff;
     border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .cluster-stats {
@@ -240,19 +241,19 @@
 .cluster-stat-item {
     background: white;
     padding: 15px;
-    border-radius: 6px;
-    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    border: 2px solid #EBEBEB;
 }
 
 .cluster-stat-item h4 {
     margin: 0 0 10px 0;
-    color: #343a40;
+    color: #5f5f5f;
 }
 
 .cluster-stat-item p {
     margin: 5px 0;
-    font-size: 0.9rem;
-    color: #495057;
+    font-size: 16px;
+    color: #5f5f5f;
 }
 
 .custom-tooltip {
@@ -276,11 +277,11 @@
 
 .custom-tooltip p {
     margin: 5px 0;
-    color: #333;
+    color: #5f5f5f;
 }
 
 .custom-tooltip strong {
-    color: #666;
+    color: #5f5f5f;
     margin-right: 5px;
 }
 
@@ -318,7 +319,7 @@
 /* Метрика качества */
 
 .clustering-metrics {
-    margin-top: 20px;
+    margin-bottom: 40px;
     padding: 20px;
     background: white;
     border-radius: 8px;
@@ -327,7 +328,7 @@
 
 .clustering-metrics h3 {
     margin: 0 0 20px 0;
-    color: #333;
+    color: #5f5f5f;
     font-size: 1.2rem;
 }
 
@@ -339,9 +340,8 @@
 
 .metric-item {
     padding: 15px;
-    background: #f8f9fa;
-    border-radius: 6px;
-    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    border: 2px solid #EBEBEB;
 }
 
 .metric-item h4 {

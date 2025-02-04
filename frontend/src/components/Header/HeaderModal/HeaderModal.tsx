@@ -11,7 +11,6 @@ interface HeaderModalProps {
 }
 
 // пофиксить стили
-// картинку на настройки
 const HeaderModal: React.FC<HeaderModalProps> = ({ user, closeModal }) => {
     const { handleLogout } = useLogout(() => closeModal());
     const [isVisible, setIsVisible] = useState(false);
@@ -33,34 +32,51 @@ const HeaderModal: React.FC<HeaderModalProps> = ({ user, closeModal }) => {
 
     return (
         <div className={`header-modal ${isVisible ? 'show' : ''}`} onClick={handleModalClick}>
-            <div className="header-modal__logo">
-                <img
-                    className="header-modal__logo-img"
-                    src="/assets/user.svg"
-                    alt="Пользователь"
-                />
-            </div>
-
-            <div className="header-modal__personal-info">
-                <p className="header-modal__username">{user?.username}</p>
-                <p className="header-modal__email">{user?.email}</p>
-            </div>
-
-            <div className="header-modal__settings">
-                <Link to="/account" onClick={closeModal}>
-                    <p className="settings-user">Настройки</p>
+            <div className="header-modal__user">
+                <div className="header-modal__logo">
                     <img
-                        src="/assets/settings-icon.svg"
-                        alt="Настройки"
                         className="header-modal__logo-img"
+                        src="/assets/user.svg"
+                        alt="Пользователь"
                     />
-                </Link>
+                </div>
+
+                <div className="header-modal__personal-info">
+                    <p className="header-modal__username">{user?.username}</p>
+                    <p className="header-modal__email">{user?.email}</p>
+                </div>
+
+                <div className="header-modal__settings">
+                    <Link to="/account/settings" onClick={closeModal} className="header-modal__settings-link">
+                        <img
+                            src="/assets/settings-icon.svg"
+                            alt="Настройки"
+                            className="header-modal__settings-img"
+                        />
+                    </Link>
+                </div>
+
             </div>
 
-            <HeaderRole user={user} />
+            {/* <HeaderRole user={user} /> */}
 
+            <nav className="header-modal__nav">
+                <Link to="/account" >
+                    <div className="header-modal__nav-item">
+                        {/* <img src="" alt="" /> */}
+                        <p>Личный кабинет</p>
+                    </div>
+                </Link>
 
-            <hr />
+                <Link to="/account/application" >
+                    <div className="header-modal__nav-item">
+                        {/* <img src="" alt="" /> */}
+                        <p>Оставить заявку</p>
+                    </div>
+                </Link>
+            </nav>
+
+            <hr className="header-modal__hr" />
 
             <div className="header-modal__logout">
                 <button
@@ -68,6 +84,23 @@ const HeaderModal: React.FC<HeaderModalProps> = ({ user, closeModal }) => {
                     onClick={handleLogout}
                 >
                     Выйти
+                </button>
+            </div>
+
+            <hr className="header-modal__hr" />
+
+            <div className="header-modal__info">
+                <button
+                    className="header-modal__info-btn"
+                    onClick={closeModal}
+                >
+                    Условия использования
+                </button>
+                <button
+                    className="header-modal__info-btn"
+                    onClick={closeModal}
+                >
+                    Политика конфиденциальности
                 </button>
             </div>
 

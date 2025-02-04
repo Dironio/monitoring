@@ -1,13 +1,21 @@
+import { User } from '../../../models/user.model';
 import './PromoPage.css'
 
-const PromoPage: React.FC = () => {
+interface PromoPageProps {
+    user: User | null;
+    loading: boolean;
+}
+
+const PromoPage: React.FC<PromoPageProps> = ({ user, loading }) => {
 
     return (
         <main>
             <div className="wrapper">
                 <div className="bg-white">
                     <div className="main-header">
-                        <p className="main-header__logo">Анализ и мониторинг поведения</p>
+                        <p className="main-header__logo">Информационная система для мониторинга и анализа
+                            <br />
+                            поведения пользователей на веб-платформе</p>
                         <button className="main-header__btn">Начать работу</button>
                     </div>
                     <div className="main-grid">
@@ -54,13 +62,17 @@ const PromoPage: React.FC = () => {
                     </div>
 
                 </div>
-
-                <div className="footer-main">
-                    <p className="footer-main__title">Принимайте быстрые и эффективные решения на основе данных</p>
-                    <div className="footer-main__btn">
-                        <button className="footer-main__btn-start">Начать пользоваться</button>
+                {user ? (
+                    <div className="footer-main"></div>
+                ) : (
+                    <div className="footer-main">
+                        <p className="footer-main__title">Принимайте быстрые и эффективные решения на основе данных</p>
+                        <div className="footer-main__btn">
+                            <button className="footer-main__btn-start">Начать пользоваться</button>
+                        </div>
                     </div>
-                </div>
+
+                )}
             </div>
         </main>
     )

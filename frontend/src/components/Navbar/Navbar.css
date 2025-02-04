@@ -96,6 +96,10 @@
     fill: white;
 }
 
+.menu-item.selected:hover{
+    background-color: #5a3dcb;
+}
+
 .menu-item.selected img {
     color: white;
 }
@@ -131,7 +135,7 @@
 }
 
 .menu-item:hover {
-    background-color: #5a3dcb;
+    background-color: #7553FF;
     color: white;
 }
 

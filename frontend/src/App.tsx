@@ -73,7 +73,7 @@ const App: React.FC = () => {
                     <div className="content-wrapper">
                         <Routes>
                             <Route path="*" element={<UnknownPage />} />
-                            <Route path="/" element={<PromoPage />} />
+                            <Route path="/" element={<PromoPage user={user} loading={loading} />} />
                             <Route path="/auth" element={
                                 user ? <Navigate to="/account" /> : <AuthPage />
                             } />
@@ -112,14 +112,14 @@ const App: React.FC = () => {
                                 }
                             /> */}
 
-                            <Route
+                            {/* <Route
                                 path="/application"
                                 element={
                                     <ProtectedRoute user={user} loading={loading}>
                                         <ApplicationPage />
                                     </ProtectedRoute>
                                 }
-                            />
+                            /> */}
                         </Routes>
                     </div>
                 </div>

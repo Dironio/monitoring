@@ -66,8 +66,9 @@ const MetricPage: React.FC<MetricPageProps> = ({ user, loading }) => {
                         desktop: 4,
                     }}
                 />
-
-                <SiteSelection user={user} loading={loading} />
+                <div className="main-page__select">
+                    <SiteSelection user={user} loading={loading} />
+                </div>
 
                 <section className="content">
                     <Outlet />

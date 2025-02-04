@@ -102,7 +102,7 @@ const ApplicationPage: React.FC = () => {
                                         className="toggle-btn-arrow"
                                     />
                                 </Link>
-                                <p className="form-selection-title">Настройки аккаунта</p>
+                                <p className="form-selection-title">Заявки</p>
                             </div>
                             <ul className="form-selection-list">
                                 <li

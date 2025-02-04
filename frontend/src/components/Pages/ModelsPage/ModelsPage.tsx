@@ -5,6 +5,7 @@ import SiteSelection from '../../UI/SiteSelection';
 import { User } from '../../../models/user.model';
 import ChipsNavigation from '../../UI/ChipsNavigation';
 import { SiteContext } from '../../utils/SiteContext';
+import LoadingPage from '../LoadingPage/LoadingPage';
 
 interface ModelsPageProps {
     user: User | null;
@@ -52,6 +53,10 @@ const ModelsPage: React.FC<ModelsPageProps> = ({ user, loading }) => {
             navigate('clustering');
         }
     }, [location.pathname, navigate]);
+
+    if (loading) {
+        return <LoadingPage />;
+    }
 
     return (
         <SiteContext.Provider

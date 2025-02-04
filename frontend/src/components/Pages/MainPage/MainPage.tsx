@@ -56,8 +56,9 @@ const MainPage: React.FC<MainPageProps> = ({ user, loading }) => {
                         desktop: Infinity,
                     }}
                 />
-
-                <SiteSelection user={user} loading={loading} />
+                <div className="main-page__select">
+                    <SiteSelection user={user} loading={loading} />
+                </div>
 
                 <section className="content">
                     <Outlet />

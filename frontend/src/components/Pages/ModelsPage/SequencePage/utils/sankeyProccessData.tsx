@@ -144,6 +144,8 @@ export const TransitionsVisualization: React.FC<{ data: SequenceAnalysis }> = ({
             mostVisited
         });
 
+        console.log('Transitions:', transitions);
+        console.log('Levels:', levels);
         return { nodes, links };
     }, [data]);
 

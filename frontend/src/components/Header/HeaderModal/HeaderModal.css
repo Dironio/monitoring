@@ -14,6 +14,12 @@
     animation: slideDown 0.3s ease-out forwards;
 }
 
+.header-modal__user {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .header-modal__logo {
     display: flex;
     justify-content: center;
@@ -46,15 +52,51 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px;
-    background-color: #F8F8F8;
-    border-radius: 8px;
+    /* padding: 10px; */
+    /* background-color: #F8F8F8; */
+    /* border-radius: 8px; */
     cursor: pointer;
+    fill: #5F6368;
     transition: background-color 0.3s ease;
+    animation: rotateAnimation 0.3s ease-out forwards;
 }
 
 .header-modal__settings:hover {
-    background-color: #EDEDED;
+    animation: rotateAnimation 0.3s ease-out forwards;
+}
+
+
+.header-modal__settings-link:hover .header-modal__settings-img {
+    animation: rotateAnimation 1s ease-in-out;
+}
+
+
+.header-modal__settings-img {
+    height: 24px;
+    width: 24px;
+    fill: #ebebeb
+}
+
+.header-modal__settings-link {
+    display: flex;
+    align-items: center;
+}
+
+.header-modal__nav {
+    margin-top: 10px;
+}
+
+.header-modal__nav-item {
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all .3s ease;
+    margin-bottom: 10px;
+}
+
+.header-modal__nav-item:hover {
+    background-color: #ebebeb;
 }
 
 .settings-user {
@@ -64,23 +106,55 @@
 }
 
 .header-modal__logout {
-    text-align: center;
+    /* text-align: center; */
+    display: flex;
+    /* align-items: center; */
+    justify-content: flex-start;
+    width: 100%;
 }
 
 .header-modal__logout-btn {
-    background-color: #FF4D4F;
-    color: #fff;
+    /* background-color: #FF4D4F; */
+    /* color: #fff; */
+    background-color: white;
     font-size: 16px;
     font-weight: 500;
     padding: 10px 20px;
     border: none;
-    border-radius: 22px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    width: 100%;
+    transition: all 0.3s ease;
 }
 
 .header-modal__logout-btn:hover {
-    background-color: #FF3335;
+    /* background-color: #FF3335; */
+    background-color: #FF4D4F;
+    color: #fff;
+}
+
+.header-modal__hr {
+    display: block;
+    border: none;
+    border-top: 1px solid #ebebeb;
+    width: 100%;
+}
+
+
+.header-modal__info-btn {
+    border: none;
+    background-color: transparent;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 5px 10px;
+    color: #5F6368;
+    cursor: pointer;
+    margin-bottom: 5px;
+    transition: all .3s ease;
+}
+
+.header-modal__info-btn:hover {
+    color: #9E9E9E;
 }
 
 @keyframes slideDown {
@@ -116,6 +190,17 @@
             opacity: 1;
             transform: translateX(0);
         }
+    }
+}
+
+
+@keyframes rotateAnimation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
     }
 }
 

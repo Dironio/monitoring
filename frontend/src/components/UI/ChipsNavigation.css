@@ -37,6 +37,12 @@
     background-color: #7553FF;
     color: #FFFFFF;
     border-color: #7553FF;
+    transition: all 0.3s ease;
+}
+
+.nav-item.selected:hover {
+    background-color: #5a3dcb;
+    border-color: #5a3dcb;
 }
 
 .nav-select {
