@@ -160,6 +160,67 @@
     color: #9E9E9E;
 }
 
+
+
+
+
+.header-modal__close-btn {
+    position: absolute;
+    top: 2px;
+    left: -30px;
+    width: 32px;
+    height: 32px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all .3s ease;
+}
+
+.header-modal__close-icon {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    transition: all .3s ease;
+}
+
+.header-modal__close-btn:hover {
+    background-color: rgba(0, 0, 0, 0.1); 
+}
+
+.header-modal__close-icon::before,
+.header-modal__close-icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background-color: #5F6368;
+    transition: all .3s ease;
+}
+
+.header-modal__close-icon::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.header-modal__close-icon::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.header-modal__close-btn:hover .header-modal__close-icon::before,
+.header-modal__close-btn:hover .header-modal__close-icon::after {
+    background-color: #666;
+}
+
+.header-modal__close-btn:hover .header-modal__close-icon {
+    transform: rotate(90deg);
+}
+
 @keyframes slideDown {
     from {
         opacity: 0;

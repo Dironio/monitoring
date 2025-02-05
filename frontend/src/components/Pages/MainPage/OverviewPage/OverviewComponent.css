@@ -26,12 +26,17 @@
     width: 100%;
 }
 
-.chart-wrapper{
+.chart-wrapper {
     padding: 20px;
-    
+
 }
 
-.table-container {
+
+
+
+
+
+/* .table-container {
     overflow-x: auto;
 }
 
@@ -55,7 +60,7 @@
     color: #111827;
     border-bottom: 1px solid #e5e7eb;
     font-size: 0.875rem;
-}
+} */
 
 
 

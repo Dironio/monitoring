@@ -107,11 +107,20 @@ const HeaderModal: React.FC<HeaderModalProps> = ({ user, closeModal }) => {
                 </button>
             </div>
 
-            <button
+            {/* <button
                 className="header-modal__close-btn"
                 onClick={closeModal}
             >
                 Закрыть
+            </button> */}
+
+            <button
+                className="header-modal__close-btn"
+                onClick={closeModal}
+                aria-label="Закрыть"
+            >
+                {/* Крестик с использованием псевдоэлементов */}
+                <span className="header-modal__close-icon"></span>
             </button>
         </div>
     );

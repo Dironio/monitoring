@@ -162,7 +162,10 @@ const ClusteringMetrics: React.FC<ClusteringMetricsProps> = ({
     if (isCalculating) {
         return (
             <div className="clustering-metrics">
-                <h3>Расчёт метрик качества...</h3>
+                <div className="loading-container">
+                    <h3>Расчёт метрик качества...</h3>
+                    <div className="spinner"></div>
+                </div>
             </div>
         );
     }

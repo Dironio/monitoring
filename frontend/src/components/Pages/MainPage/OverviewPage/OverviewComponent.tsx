@@ -174,7 +174,7 @@ const OverviewComponent: React.FC<OverviewProps> = ({ user, loading }) => {
                 )}
             </div>
 
-            <div className="card">
+            {/* <div className="card">
                 <h2 className="card-title">Популярные страницы</h2>
                 <div className="table-container">
                     <table className="table">
@@ -204,7 +204,53 @@ const OverviewComponent: React.FC<OverviewProps> = ({ user, loading }) => {
                         {isExpanded ? 'Скрыть' : 'Показать больше'}
                     </button>
                 )}
+            </div> */}
+
+
+
+
+
+
+
+            <div className="card">
+                <h2 className="card-title">Популярные страницы</h2>
+                <div className="table-container">
+                    <table className="table">
+                        <thead>
+                            <tr>
+                                <th className="table-header">URL Страницы</th>
+                                <th className="table-header">Посещения</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {displayedPages.map((page, index) => (
+                                <tr key={index} className="table-row">
+                                    <td className="table-cell">
+                                        {page.page_url.replace("http://localhost:3000", "")}
+                                    </td>
+                                    <td className="table-cell">{page.visits}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    {!isExpanded && topPages.length > 10 && (
+                        <div className="table-gradient">
+                            <button
+                                className="expand-button"
+                                onClick={() => setIsExpanded(true)}
+                            >
+                                Показать больше ▼
+                            </button>
+                        </div>
+                    )}
+                    {isExpanded && (
+                        <button className="expand-button expanded" onClick={() => setIsExpanded(false)}>
+                            Скрыть ▲
+                        </button>
+                    )}
+                </div>
             </div>
+
         </section>
     );
 };

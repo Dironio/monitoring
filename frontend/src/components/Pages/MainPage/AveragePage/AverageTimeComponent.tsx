@@ -111,11 +111,11 @@ const AverageTimeComponent: React.FC<AverageTimeComponentProps> = ({ user, loadi
     }
 
     return (
-        <section className="metrics-container">
+        <section className="average-time">
             {/* Линейный график */}
-            <div className="bg-white shadow-md rounded-lg p-6">
-                <h2 className="text-lg">Среднее время сессий по дням</h2>
-                <div className="scale-controls">
+            <div className="average-time__chart">
+                <h2 className="average-time__title">Среднее время сессий по дням</h2>
+                <div className="average-time__scale-controls">
                     <button onClick={() => handleScaleChange("line", -0.1)}>-</button>
                     <span>Масштаб: {lineChartScale.toFixed(1)}x</span>
                     <button onClick={() => handleScaleChange("line", 0.1)}>+</button>
@@ -134,9 +134,9 @@ const AverageTimeComponent: React.FC<AverageTimeComponentProps> = ({ user, loadi
             </div>
 
             {/* Гистограмма */}
-            <div className="bg-white shadow-md rounded-lg p-6">
-                <h2 className="text-lg">Количество сессий по дням</h2>
-                <div className="scale-controls">
+            <div className="average-time__chart">
+                <h2 className="average-time__title">Количество сессий по дням</h2>
+                <div className="average-time__scale-controls">
                     <button onClick={() => handleScaleChange("bar", -0.1)}>-</button>
                     <span>Масштаб: {barChartScale.toFixed(1)}x</span>
                     <button onClick={() => handleScaleChange("bar", 0.1)}>+</button>
@@ -155,15 +155,15 @@ const AverageTimeComponent: React.FC<AverageTimeComponentProps> = ({ user, loadi
             </div>
 
             {/* Круговая диаграмма */}
-            <div className="bg-white shadow-md rounded-lg p-6">
-                <h2 className="text-lg">Общее время по дням</h2>
-                <div className="scale-controls">
+            <div className="average-time__chart">
+                <h2 className="average-time__title">Общее время по дням</h2>
+                <div className="average-time__scale-controls">
                     <button onClick={() => handleScaleChange("pie", -0.1)}>-</button>
                     <span>Масштаб: {pieChartScale.toFixed(1)}x</span>
                     <button onClick={() => handleScaleChange("pie", 0.1)}>+</button>
                 </div>
                 {loading ? (
-                    <div className="loading">Загрузка данных...</div>
+                    <div className="average-time__loading">Загрузка данных...</div>
                 ) : hasValidData(metrics) ? (
                     <ResponsiveContainer width="100%" height={300 * pieChartScale}>
                         <PieChart>
@@ -194,37 +194,37 @@ const AverageTimeComponent: React.FC<AverageTimeComponentProps> = ({ user, loadi
                         </PieChart>
                     </ResponsiveContainer>
                 ) : (
-                    <div className="no-data">Нет данных для отображения</div>
+                    <div className="average-time__no-data">Нет данных для отображения</div>
                 )}
             </div>
 
             {/* Таблица */}
-            <div className="bg-white shadow-md rounded-lg p-6">
-                <h2 className="text-lg">Данные по дням</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Дата</th>
-                            <th>Среднее время</th>
-                            <th>Макс. время</th>
-                            <th>Общее время</th>
-                            <th>Сессий</th>
+            <div className="average-time__table-container">
+                <h2 className="average-time__title">Данные по дням</h2>
+                <table className="average-time__table">
+                    <thead className="average-time__table-head">
+                        <tr className="average-time__table-header-row">
+                            <th className="average-time__table-header">Дата</th>
+                            <th className="average-time__table-header">Среднее время</th>
+                            <th className="average-time__table-header">Макс. время</th>
+                            <th className="average-time__table-header">Общее время</th>
+                            <th className="average-time__table-header">Сессий</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="average-time__table-body">
                         {(expanded ? metrics : metrics.slice(0, 10)).map((metric) => (
-                            <tr key={metric.day}>
-                                <td>{format(new Date(metric.day), "dd.MM.yyyy")}</td>
-                                <td>{formatTime(metric.avg_session_time)}</td>
-                                <td>{formatTime(metric.max_session_time)}</td>
-                                <td>{formatTime(metric.total_site_time)}</td>
-                                <td>{metric.total_sessions}</td>
+                            <tr className="average-time__table-row" key={metric.day}>
+                                <td className="average-time__table-cell">{format(new Date(metric.day), "dd.MM.yyyy")}</td>
+                                <td className="average-time__table-cell">{formatTime(metric.avg_session_time)}</td>
+                                <td className="average-time__table-cell">{formatTime(metric.max_session_time)}</td>
+                                <td className="average-time__table-cell">{formatTime(metric.total_site_time)}</td>
+                                <td className="average-time__table-cell">{metric.total_sessions}</td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
                 {metrics.length > 10 && (
-                    <button onClick={() => setExpanded(!expanded)}>
+                    <button className="average-time__expand-button" onClick={() => setExpanded(!expanded)}>
                         {expanded ? "Свернуть" : "Развернуть"}
                     </button>
                 )}
