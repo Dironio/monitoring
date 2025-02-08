@@ -2,7 +2,9 @@ import { Route } from "react-router-dom";
 import { User } from "../models/user.model";
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
 import MetricPage from "../components/Pages/BehaviorMetricPage/BehaviorMetricPage";
-import EventAnalysisComponent from "../components/Pages/BehaviorMetricPage/Components/EventAnalysisComponents";
+import EventAnalysisComponent from "../components/Pages/BehaviorMetricPage/MetricsMain/EventAnalysisComponents";
+import TechnicalMonitoringPage from "../components/Pages/BehaviorMetricPage/TechnicalMonitoringPage/TechnicalMonitoringPage";
+import GeographyPage from "../components/Pages/BehaviorMetricPage/GeographyPage/GeographyPage";
 
 interface MetricsRouterProps {
     user: User | null;
@@ -19,7 +21,14 @@ const MetricsRouter: React.FC<MetricsRouterProps> = ({ user, loading }) => {
                 </ProtectedRoute>
             }
         >
-            <Route path="event-analysis" element={<EventAnalysisComponent user={user} loading={loading} />} />
+            <Route path="main" element={<EventAnalysisComponent user={user} loading={loading} />} />
+            {/* <Route path="category" element={<EventAnalysisComponent user={user} loading={loading} />} /> */}
+            <Route path="technique" element={<TechnicalMonitoringPage
+            // user={user} loading={loading} 
+            />} />
+            <Route path="geography" element={<GeographyPage
+            // user={user} loading={loading} 
+            />} />
 
         </Route>
     )
