@@ -51,7 +51,7 @@ const TimeOnSite: React.FC = () => {
             <p>
                 Тенденция: {timeOnSiteData.length > 1 ? (timeOnSiteData[timeOnSiteData.length - 1].averageTime > timeOnSiteData[timeOnSiteData.length - 2].averageTime ? 'Увеличивается' : 'Снижается') : 'Недостаточно данных'}
             </p>
-            <Line data={data} options={options} />
+            {/* <Line data={data} options={options} /> */}
         </div>
     );
 };

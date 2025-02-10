@@ -2,12 +2,20 @@ import { useEffect, useState } from "react";
 import { useSiteContext } from "../../../../utils/SiteContext";
 import './SurveysPage.css';
 import SurveySelector from "../../../../UI/SurveysSelection";
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { getAPI } from "../../../../utils/axiosGet";
 
 interface SurveyData {
     rating: number;
     count: number;
     percentage: number;
+}
+
+interface SurveyResponse {
+    user_id: number;
+    rating: number;
+    user_agent_string: string;
+    created_at: string;
 }
 
 const SurveysPage: React.FC = () => {
@@ -18,53 +26,57 @@ const SurveysPage: React.FC = () => {
     const [totalResponses, setTotalResponses] = useState(0);
     const [averageRating, setAverageRating] = useState(0);
 
-    useEffect(() => {
-        if (selectedSurveyId) {
-            fetchStatistics(selectedSurveyId);
-        }
-    }, [selectedSurveyId]);
-
     const fetchStatistics = async (surveyId: number) => {
+        if (!selectedSite?.value || !surveyId) {
+            return;
+        }
+
         setLoading(true);
         try {
-            // const { data } = await axios.get('/api/events', {
-            //     params: {
-            //         event_id: 25,
-            //         survey_id: surveyId
-            //     }
-            // });
+            const response = await getAPI.get<SurveyResponse[]>(
+                `/events/experiement/survey-statistics?web_id=${selectedSite.value}&survey_id=${surveyId}`
+            );
 
-            // const ratingCounts = data.reduce((acc: Record<number, number>, event: any) => {
-            //     const rating = event.event_data.rating;
-            //     acc[rating] = (acc[rating] || 0) + 1;
-            //     return acc;
-            // }, {});
+            const ratingCounts = response.data.reduce((acc, curr) => {
+                acc[curr.rating] = (acc[curr.rating] || 0) + 1;
+                return acc;
+            }, {} as Record<number, number>);
 
-            // const total = Object.values(ratingCounts).reduce((sum: number, count: number) => sum + count, 0);
-            // const avg = data.reduce((sum: number, event: any) => sum + event.event_data.rating, 0) / total;
+            const total = response.data.length;
+            setTotalResponses(total);
 
-            // const statsData = Object.entries(ratingCounts).map(([rating, count]) => ({
-            //     rating: Number(rating),
-            //     count: count as number,
-            //     percentage: ((count as number) / total) * 100,
-            //     fill: `hsl(var(--chart-${Number(rating)}))`
-            // }));
+            const sum = response.data.reduce((acc, curr) => acc + curr.rating, 0);
+            const avg = total > 0 ? sum / total : 0;
+            setAverageRating(Number(avg.toFixed(1)));
 
-            // setStatistics(statsData);
-            // setTotalResponses(total);
-            // setAverageRating(Number(avg.toFixed(2)));
+            const stats: SurveyData[] = Object.entries(ratingCounts).map(([rating, count]) => ({
+                rating: Number(rating),
+                count,
+                percentage: (count / total) * 100
+            }));
+
+            stats.sort((a, b) => a.rating - b.rating);
+            setStatistics(stats);
+
         } catch (error) {
             console.error('Error fetching statistics:', error);
+            setStatistics([]);
+            setTotalResponses(0);
+            setAverageRating(0);
         } finally {
             setLoading(false);
         }
     };
+
     return (
         <div className="survey-statistics">
             <div className="survey-statistics__header">
                 <h1 className="survey-statistics__title">Статистика опросов</h1>
                 <div className="survey-statistics__selector">
-                    {/* <SurveySelector onSelect={setSelectedSurveyId} /> */}
+                    <SurveySelector
+                        onChange={(surveyId) => setSelectedSurveyId(surveyId)}
+                        disabled={loading}
+                    />
                 </div>
             </div>
 
@@ -90,19 +102,34 @@ const SurveysPage: React.FC = () => {
                     </div>
 
                     <div className="survey-statistics__chart-container">
-                        <h2 className="survey-statistics__card-title">Распределение оценок</h2>
+                        <h2 className="survey-statistics__chart-title">Распределение оценок</h2>
                         <div className="survey-statistics__chart">
-                            <ResponsiveContainer>
+                            <ResponsiveContainer width="100%" height={300}>
                                 <BarChart data={statistics}>
                                     <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="rating" />
-                                    <YAxis />
-                                    <Tooltip />
-                                    {/* <Bar
+                                    <XAxis
+                                        dataKey="rating"
+                                        label={{ value: 'Оценка', position: 'bottom' }}
+                                    />
+                                    <YAxis
+                                        label={{ value: 'Количество ответов', angle: -90, position: 'insideLeft' }}
+                                    />
+                                    <Tooltip
+                                        formatter={(value: number, name: string) => [value, 'Количество ответов']}
+                                        labelFormatter={(label) => `Оценка: ${label}`}
+                                    />
+                                    <Bar
                                         dataKey="count"
+                                        fill="#3B82F6"
                                         name="Количество ответов"
-                                        className={({ rating }) => `chart-bar chart-bar--${rating}`}
-                                    /> */}
+                                    >
+                                        {statistics.map((entry, index) => (
+                                            <Cell
+                                                key={`cell-${index}`}
+                                                fill={`hsl(${(entry.rating * 20)}, 70%, 50%)`}
+                                            />
+                                        ))}
+                                    </Bar>
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>
@@ -110,21 +137,19 @@ const SurveysPage: React.FC = () => {
 
                     <div className="survey-statistics__table-container">
                         <table className="survey-statistics__table">
-                            <thead className="survey-statistics__table-header">
+                            <thead>
                                 <tr>
-                                    <th className="survey-statistics__table-header-cell">Оценка</th>
-                                    <th className="survey-statistics__table-header-cell">Количество</th>
-                                    <th className="survey-statistics__table-header-cell">Процент</th>
+                                    <th>Оценка</th>
+                                    <th>Количество</th>
+                                    <th>Процент</th>
                                 </tr>
                             </thead>
-                            <tbody className="survey-statistics__table-body">
+                            <tbody>
                                 {statistics.map((stat) => (
-                                    <tr key={stat.rating} className="survey-statistics__table-row">
-                                        <td className="survey-statistics__table-cell">{stat.rating}</td>
-                                        <td className="survey-statistics__table-cell">{stat.count}</td>
-                                        <td className="survey-statistics__table-cell">
-                                            {stat.percentage.toFixed(1)}%
-                                        </td>
+                                    <tr key={stat.rating}>
+                                        <td>{stat.rating}</td>
+                                        <td>{stat.count}</td>
+                                        <td>{stat.percentage.toFixed(1)}%</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -132,10 +157,8 @@ const SurveysPage: React.FC = () => {
                     </div>
                 </>
             ) : (
-                <div className="survey-statistics__loading">
-                    <span className="survey-statistics__loading-text">
-                        Выберите опрос для просмотра статистики
-                    </span>
+                <div className="survey-statistics__empty">
+                    <span>Выберите опрос для просмотра статистики</span>
                 </div>
             )}
         </div>

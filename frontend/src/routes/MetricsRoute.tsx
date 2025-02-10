@@ -5,6 +5,7 @@ import MetricPage from "../components/Pages/BehaviorMetricPage/BehaviorMetricPag
 import EventAnalysisComponent from "../components/Pages/BehaviorMetricPage/MetricsMain/EventAnalysisComponents";
 import TechnicalMonitoringPage from "../components/Pages/BehaviorMetricPage/TechnicalMonitoringPage/TechnicalMonitoringPage";
 import GeographyPage from "../components/Pages/BehaviorMetricPage/GeographyPage/GeographyPage";
+import BehaviorAnalysisPage from "../components/Pages/BehaviorMetricPage/BehaviorAnalysisPage/BehaviorAnalysisPage";
 
 interface MetricsRouterProps {
     user: User | null;
@@ -22,7 +23,9 @@ const MetricsRouter: React.FC<MetricsRouterProps> = ({ user, loading }) => {
             }
         >
             <Route path="main" element={<EventAnalysisComponent user={user} loading={loading} />} />
-            {/* <Route path="category" element={<EventAnalysisComponent user={user} loading={loading} />} /> */}
+            <Route path="category" element={<BehaviorAnalysisPage
+            //  user={user} loading={loading} 
+            />} />
             <Route path="technique" element={<TechnicalMonitoringPage
             // user={user} loading={loading} 
             />} />

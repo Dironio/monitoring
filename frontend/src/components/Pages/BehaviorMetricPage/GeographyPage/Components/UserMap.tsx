@@ -1,14 +1,14 @@
 import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+// import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-import icon from 'leaflet/dist/images/marker-icon.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+// import icon from 'leaflet/dist/images/marker-icon.png';
+// import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
 let DefaultIcon = L.icon({
-    iconUrl: icon,
-    shadowUrl: iconShadow,
+    // iconUrl: icon,
+    // shadowUrl: iconShadow,
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
@@ -39,26 +39,27 @@ const UserMap: React.FC<UserMapProps> = ({ userLocations }) => {
     };
 
     return (
-        <MapContainer center={[55.7558, 37.6173]} zoom={3} style={{ height: '500px', width: '100%' }}>
-            <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            />
-            {userLocations.map((location, index) => {
-                const coordinates = cityCoordinates[location.city];
-                if (!coordinates) return null;
+        // <MapContainer center={[55.7558, 37.6173]} zoom={3} style={{ height: '500px', width: '100%' }}>
+        //     <TileLayer
+        //         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        //         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        //     />
+        //     {userLocations.map((location, index) => {
+        //         const coordinates = cityCoordinates[location.city];
+        //         if (!coordinates) return null;
 
-                return (
-                    <Marker key={index} position={[coordinates.lat, coordinates.lng]}>
-                        <Popup>
-                            <strong>{location.city}, {location.country}</strong>
-                            <br />
-                            Пользователей: {location.users}
-                        </Popup>
-                    </Marker>
-                );
-            })}
-        </MapContainer>
+        //         return (
+        //             <Marker key={index} position={[coordinates.lat, coordinates.lng]}>
+        //                 <Popup>
+        //                     <strong>{location.city}, {location.country}</strong>
+        //                     <br />
+        //                     Пользователей: {location.users}
+        //                 </Popup>
+        //             </Marker>
+        //         );
+        //     })}
+        // </MapContainer>
+        <div className=""></div>
     );
 };
 

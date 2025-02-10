@@ -10,8 +10,8 @@ interface SurveySelectorProps {
 }
 
 interface Survey {
-    id: number;
-    text: string;
+    survey_id: number;
+    survey_text: string;
 }
 
 const SurveySelector: React.FC<SurveySelectorProps> = ({ onChange, disabled }) => {
@@ -24,15 +24,9 @@ const SurveySelector: React.FC<SurveySelectorProps> = ({ onChange, disabled }) =
 
     const { selectedSite } = useSiteContext();
 
-    useEffect(() => {
-        if (selectedSite) {
-            fetchSurveys();
-        }
-    }, [selectedSite]);
-
     const fetchSurveys = async () => {
-
         if (!selectedSite) {
+            setLoading(false);
             return;
         }
 
@@ -42,12 +36,23 @@ const SurveySelector: React.FC<SurveySelectorProps> = ({ onChange, disabled }) =
             );
 
             const formattedSurveys: SelectOption[] = response.data.map(survey => ({
-                value: survey.id,
-                label: survey.text
+                value: survey.survey_id,
+                label: survey.survey_text
             }));
+
             setSurveys(formattedSurveys);
+
+            if (selectedSurvey && formattedSurveys.some(s => s.value === selectedSurvey)) {
+                onChange(selectedSurvey);
+            } else if (formattedSurveys.length > 0) {
+                const firstSurveyId = formattedSurveys[0].value as number;
+                setSelectedSurvey(firstSurveyId);
+                onChange(firstSurveyId);
+                localStorage.setItem('selectedSurvey', JSON.stringify({ value: firstSurveyId }));
+            }
         } catch (error) {
             console.error('Error fetching surveys:', error);
+            setSurveys([]);
         } finally {
             setLoading(false);
         }
@@ -55,19 +60,22 @@ const SurveySelector: React.FC<SurveySelectorProps> = ({ onChange, disabled }) =
 
     const handleChange = (value: string | number | (string | number)[]) => {
         const numericValue = Number(value);
-        setSelectedSurvey(numericValue);
-        onChange(numericValue);
+        if (!isNaN(numericValue)) {
+            setSelectedSurvey(numericValue);
+            onChange(numericValue);
+            localStorage.setItem('selectedSurvey', JSON.stringify({ value: numericValue }));
+        }
     };
 
     useEffect(() => {
         fetchSurveys();
-    }, []);
+    }, [selectedSite]);
 
     return (
         <div className="survey-selector">
             <img
                 src="/assets/burger.svg"
-                alt="Меню страниц"
+                alt="Меню опросов"
                 className="selector-icon"
             />
             <CustomSelect
@@ -78,6 +86,7 @@ const SurveySelector: React.FC<SurveySelectorProps> = ({ onChange, disabled }) =
                 // disabled={disabled}
                 className="survey-selector__select"
                 placeholder="Выберите опрос"
+                searchable
             />
         </div>
     );

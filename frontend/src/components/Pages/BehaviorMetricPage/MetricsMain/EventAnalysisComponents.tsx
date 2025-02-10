@@ -49,22 +49,22 @@ const EventAnalysisComponent: React.FC<EventAnalysisProps> = ({ user, loading })
   const [metrics, setMetrics] = useState([]);
   const [selectedMetric, setSelectedMetric] = useState('');
 
-  useEffect(() => {
-    fetchMetrics();
-  }, []);
+  // useEffect(() => {
+  //   fetchMetrics();
+  // }, []);
 
-  const fetchMetrics = async () => {
-    try {
-      const response = await axios.get('/events/metrics');
-      setMetrics(response.data);
-    } catch (error) {
-      console.error('Error fetching metrics:', error);
-    }
-  };
+  // const fetchMetrics = async () => {
+  //   try {
+  //     const response = await axios.get('/events/metrics');
+  //     setMetrics(response.data);
+  //   } catch (error) {
+  //     console.error('Error fetching metrics:', error);
+  //   }
+  // };
 
-  const handleMetricChange = (metric) => {
-    setSelectedMetric(metric);
-  };
+  // const handleMetricChange = (metric) => {
+  //   setSelectedMetric(metric);
+  // };
 
   return (
     <div className="main-metrics-page">

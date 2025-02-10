@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import UserMap from './components/UserMap';
-import UserLocationTable from './components/UserLocationTable';
+import UserMap from './Components/UserMap';
+import UserLocationTable from './Components/UserLocationTable';
 
 interface UserLocation {
     country: string;
@@ -29,7 +29,7 @@ const GeographyPage: React.FC = () => {
         <div className="geography-page">
             <h1>География пользователей</h1>
             <div className="geography-content">
-                <UserMap userLocations={userLocations} />
+                {/* <UserMap userLocations={userLocations} /> */}
                 <UserLocationTable userLocations={userLocations} />
             </div>
         </div>

@@ -4,6 +4,7 @@ import authCheck from '../middlewares/auth.check';
 import { checkRole } from "../middlewares/check.role";
 import clusteringRouter from './clustering.router';
 import experimentRouter from './experiment.router';
+import behaviorRouter from './behavior.router';
 
 const eventRouter: Router = Router();
 
@@ -37,6 +38,7 @@ eventRouter.use('/clustering', clusteringRouter);
 eventRouter.use('/sequence', clusteringRouter);
 eventRouter.use('/similarity', authCheck, clusteringRouter)
 eventRouter.use('/experiment', authCheck, experimentRouter)
+eventRouter.use('/behavior', authCheck, behaviorRouter)
 
 // eventRouter.get('/metrics/traffic', authCheck, eventController.getTrafficData);
 // eventRouter.get('/metrics/user-segments', authCheck, eventController.getUserSegments);
