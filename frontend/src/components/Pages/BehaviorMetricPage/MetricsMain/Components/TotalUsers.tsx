@@ -9,7 +9,7 @@ const TotalUsers: React.FC = () => {
 
     // const fetchTotalUsers = async () => {
     //     try {
-    //         const response = await axios.get('/events/total-users');
+    //         const response = await axios.get('/events/behavior/m/total-users');
     //         setTotalUsersData(response.data);
     //     } catch (error) {
     //         console.error('Error fetching total users:', error);

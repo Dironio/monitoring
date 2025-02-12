@@ -9,7 +9,7 @@ const ReturningUserRate: React.FC = () => {
 
     // const fetchReturningRate = async () => {
     //     try {
-    //         const response = await axios.get<ReturningRateData[]>('/events/returning-rate');
+    //         const response = await axios.get<ReturningRateData[]>('/events/behavior/m/returning');
     //         setReturningRateData(response.data);
     //     } catch (error) {
     //         console.error('Error fetching returning rate:', error);

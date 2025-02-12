@@ -37,7 +37,7 @@ eventRouter.get('/history/user-session', authCheck, eventController.getHistoryOn
 eventRouter.use('/clustering', clusteringRouter);
 eventRouter.use('/sequence', clusteringRouter);
 eventRouter.use('/similarity', authCheck, clusteringRouter)
-eventRouter.use('/experiment', authCheck, experimentRouter)
+eventRouter.use('/experiement', authCheck, experimentRouter)
 eventRouter.use('/behavior', authCheck, behaviorRouter)
 
 // eventRouter.get('/metrics/traffic', authCheck, eventController.getTrafficData);

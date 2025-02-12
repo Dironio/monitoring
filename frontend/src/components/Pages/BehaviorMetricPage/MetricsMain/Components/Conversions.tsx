@@ -7,7 +7,7 @@ const ConversionsMetric: React.FC = () => {
 
     // const fetchConversions = async () => {
     //     try {
-    //         const response = await axios.get<ConversionsData[]>('/events/conversions');
+    //         const response = await axios.get<ConversionsData[]>('/events/behavior/m/coversions');
     //         setConversionsData(response.data);
     //     } catch (error) {
     //         console.error('Error fetching conversions:', error);

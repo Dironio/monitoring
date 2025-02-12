@@ -10,7 +10,7 @@ const BounceRate: React.FC = () => {
 
     // const fetchBounceRate = async () => {
     //     try {
-    //         const response = await axios.get<BounceRateData[]>('/events/bounce-rate');
+    //         const response = await axios.get<BounceRateData[]>('/events/behavior/m/bounce');
     //         setBounceRateData(response.data);
     //     } catch (error) {
     //         console.error('Error fetching bounce rate:', error);

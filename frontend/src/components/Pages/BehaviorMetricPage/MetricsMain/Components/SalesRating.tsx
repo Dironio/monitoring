@@ -10,7 +10,7 @@ const SalesRating: React.FC = () => {
 
     // const fetchSales = async () => {
     //     try {
-    //         const response = await axios.get<SalesData[]>('/events/sales');
+    //         const response = await axios.get<SalesData[]>('/events/behavior/m/sales');
     //         setSalesData(response.data);
     //     } catch (error) {
     //         console.error('Error fetching sales:', error);

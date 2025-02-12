@@ -10,7 +10,7 @@ const PageLoadingSpeed: React.FC = () => {
 
     // const fetchLoadingSpeed = async () => {
     //     try {
-    //         const response = await axios.get('/events/loading-speed');
+    //         const response = await axios.get('/events/behavior/m/loading');
     //         setLoadingSpeedData(response.data);
     //     } catch (error) {
     //         console.error('Error fetching loading speed:', error);

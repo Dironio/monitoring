@@ -10,7 +10,7 @@ const TotalVisits: React.FC = () => {
 
     // const fetchTotalVisits = async () => {
     //     try {
-    //         const response = await axios.get('/events/total-visits');
+    //         const response = await axios.get('/events/behavior/m/total-sessions');
     //         setTotalVisitsData(response.data);
     //     } catch (error) {
     //         console.error('Error fetching total visits:', error);
