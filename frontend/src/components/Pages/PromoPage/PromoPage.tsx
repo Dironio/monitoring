@@ -2,8 +2,8 @@ import { User } from '../../../models/user.model';
 import './PromoPage.css'
 
 interface PromoPageProps {
-    user: User | null;
-    loading: boolean;
+    user?: User | null;
+    loading?: boolean;
 }
 
 const PromoPage: React.FC<PromoPageProps> = ({ user, loading }) => {
