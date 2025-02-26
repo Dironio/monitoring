@@ -5,6 +5,7 @@ import TimeOnSite from "./Components/TimeOnSite";
 
 
 const BehaviorAnalysisPage: React.FC = () => {
+    
     return (
         <div className="behavior-analysis-page">
             <h1>Поведенческий анализ</h1>
