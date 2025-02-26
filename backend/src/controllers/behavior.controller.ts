@@ -58,6 +58,155 @@ class BehaviorController {
         const result = await behaviorService.getActiveUsers(webId);
         return res.status(200).json(result);
     }
+
+
+
+
+    @ControllerErrorHandler()
+    async getAverageTimeOnSite(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await behaviorService.getAverageTimeOnSite(webId);
+        return res.status(200).json(result);
+    }
+    @ControllerErrorHandler()
+    async getAveragePageDepth(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await behaviorService.getAveragePageDepth(webId);
+        return res.status(200).json(result);
+    }
+
+    @ControllerErrorHandler()
+    async getClickAnalysis(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await behaviorService.getClickAnalysis(webId);
+        return res.status(200).json(result);
+    }
+
+    @ControllerErrorHandler()
+    async getEventAnalysis(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await behaviorService.getEventAnalysis(webId);
+        return res.status(200).json(result);
+    }
+
+    @ControllerErrorHandler()
+    async getAverageScrollPercentage(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await behaviorService.getAverageScrollPercentage(webId);
+        return res.status(200).json(result);
+    }
+
+    @ControllerErrorHandler()
+    async getFormAnalysis(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await behaviorService.getFormAnalysis(webId);
+        return res.status(200).json(result);
+    }
+
+
+
+
+
+
+
+
+    @ControllerErrorHandler()
+    async getPerformanceMetrics(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await behaviorService.getPerformanceMetrics(webId);
+        return res.status(200).json(result);
+    }
+
+    @ControllerErrorHandler()
+    async getErrorAnalysis(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await behaviorService.getErrorAnalysis(webId);
+        return res.status(200).json(result);
+    }
+
+    @ControllerErrorHandler()
+    async getUptimeStatus(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await behaviorService.getUptimeStatus(webId);
+        return res.status(200).json(result);
+    }
+
+    @ControllerErrorHandler()
+    async getResourceAnalysis(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await behaviorService.getResourceAnalysis(webId);
+        return res.status(200).json(result);
+    }
+
+    @ControllerErrorHandler()
+    async getSeoAnalysis(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await behaviorService.getSeoAnalysis(webId);
+        return res.status(200).json(result);
+    }
+
+    @ControllerErrorHandler()
+    async getActiveUsersNow(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await behaviorService.getActiveUsersNow(webId);
+        return res.status(200).json(result);
+    }
+
+    @ControllerErrorHandler()
+    async getActiveUsersComparison(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await behaviorService.getActiveUsersComparison(webId);
+        return res.status(200).json(result);
+    }
+
+
+
+
+
+
+
+
+    @ControllerErrorHandler()
+    async getUserGeolocation(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await behaviorService.getUserGeolocation(webId);
+        return res.status(200).json(result);
+    }
+
+    @ControllerErrorHandler()
+    async getTopCountries(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await behaviorService.getTopCountries(webId);
+        return res.status(200).json(result);
+    }
+
+    @ControllerErrorHandler()
+    async getTopCities(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await behaviorService.getTopCities(webId);
+        return res.status(200).json(result);
+    }
+
+    @ControllerErrorHandler()
+    async getUserRegions(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await behaviorService.getUserRegions(webId);
+        return res.status(200).json(result);
+    }
+
+    @ControllerErrorHandler()
+    async getGeolocationComparison(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const result = await behaviorService.getGeolocationComparison(webId);
+        return res.status(200).json(result);
+    }
+
+
+
+
+
+
+    
 }
 
 const behaviorController = new BehaviorController();
