@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Line } from "recharts";
+import { getAPI } from "../../../../utils/axiosGet";
 
 interface TimeOnSiteData {
     date: string;
@@ -8,14 +9,22 @@ interface TimeOnSiteData {
 
 const TimeOnSite: React.FC = () => {
     const [timeOnSiteData, setTimeOnSiteData] = useState<TimeOnSiteData[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         fetchTimeOnSiteData();
     }, []);
 
     const fetchTimeOnSiteData = async () => {
+        const selectedSite = JSON.parse(localStorage.getItem('selectedSite') || 'null');
+        if (!selectedSite) {
+            setError("Сайт не выбран");
+            setLoading(false);
+            return;
+        }
         try {
-            const response = await axios.get<TimeOnSiteData[]>('/events/time-on-site');
+            const response = await getAPI.get<TimeOnSiteData[]>(`/events/time-on-site?web_id=${selectedSite.value}`);
             setTimeOnSiteData(response.data);
         } catch (error) {
             console.error('Error fetching time on site data:', error);
