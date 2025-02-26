@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Bar } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
+import { CategoryScale, Chart, LinearScale } from 'chart.js';
+import { getAPI } from '../../../../utils/axiosGet';
 
+Chart.register(LinearScale, CategoryScale);
 interface ErrorData {
     type: string;
     count: number;
@@ -16,7 +20,7 @@ const ErrorAnalysis: React.FC = () => {
 
     const fetchErrorData = async () => {
         try {
-            const response = await axios.get<ErrorData[]>('/events/errors');
+            const response = await getAPI.get<ErrorData[]>(`/events/errors`);
             setErrorData(response.data);
         } catch (error) {
             console.error('Error fetching error data:', error);

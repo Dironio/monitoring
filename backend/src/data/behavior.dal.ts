@@ -9,23 +9,29 @@ class BehaviorDal {
                     session_id,
                     page_url,
                     MIN(timestamp) AS load_start,
-                    MAX(timestamp) AS load_end
+                    MAX(timestamp) AS load_end,
+                    DATE(timestamp) AS load_date
                 FROM
                     raw_events
                 WHERE
                     web_id = $1
-                    AND event_id = 1
+                    --AND event_id = 1
                 GROUP BY
-                    session_id, page_url
+                    session_id, page_url, DATE(timestamp)
             )
             SELECT
-                AVG(EXTRACT(EPOCH FROM (load_end - load_start))) AS average_load_time
+                load_date AS date,
+                AVG(EXTRACT(EPOCH FROM (load_end - load_start))) AS load_time_ms
             FROM
-                page_load_times;
+                page_load_times
+            GROUP BY
+                load_date
+            ORDER BY
+                load_date
             `,
             [webId]
         );
-        return result.rows[0];
+        return result.rows;
     }
 
     async getTotalUsers(webId: number): Promise<any> {

@@ -1,11 +1,32 @@
-import { useEffect, useState } from "react";
+
+import React, { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
-import { getAPI } from "../../../../utils/axiosGet";
-import { useSiteContext } from "../../../../utils/SiteContext";
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+} from 'chart.js';
+import { getAPI } from '../../../../utils/axiosGet';
+
+// Регистрируем компоненты Chart.js
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+);
 
 interface LoadingSpeedData {
-    date: string;
-    speed: number;
+    date: string; // Дата
+    load_time_ms: number; // Скорость загрузки в мс
 }
 
 const PageLoadingSpeed: React.FC = () => {
@@ -67,11 +88,38 @@ const PageLoadingSpeed: React.FC = () => {
             },
         ],
     };
+    // Форматирование даты для отображения
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ru-RU'); // Формат: ДД.ММ.ГГГГ
+    };
 
+    // Данные для графика
+    const data = {
+        labels: loadingSpeedData.map((item) => formatDate(item.date)), // Форматированные даты
+        datasets: [
+            {
+                label: 'Скорость загрузки (мс)',
+                data: loadingSpeedData.map((item) => item.load_time_ms), // Скорость загрузки
+                borderColor: 'rgba(75, 192, 192, 1)', // Цвет линии
+                backgroundColor: 'rgba(75, 192, 192, 0.2)', // Цвет заливки
+                fill: true,
+            },
+        ],
+    };
+
+    // Настройки графика
     const options = {
         responsive: true,
         plugins: {
-            legend: { display: false },
+
+            legend: {
+                position: 'top' as const,
+            },
+            title: {
+                display: true,
+                text: 'Скорость загрузки страницы',
+            },
         },
         scales: {
             y: {
@@ -79,6 +127,7 @@ const PageLoadingSpeed: React.FC = () => {
                 title: {
                     display: true,
                     text: 'Время загрузки (мс)',
+
                 },
             },
             x: {
@@ -89,6 +138,10 @@ const PageLoadingSpeed: React.FC = () => {
             },
         },
     };
+
+    // Расчет средней скорости загрузки
+    const averageSpeed =
+        loadingSpeedData.reduce((sum, item) => sum + item.load_time_ms, 0) / loadingSpeedData.length || 0;
 
     return (
         <div className="metric-card">
