@@ -15,7 +15,6 @@ class BehaviorDal {
                     raw_events
                 WHERE
                     web_id = $1
-                    --AND event_id = 1
                 GROUP BY
                     session_id, page_url, DATE(timestamp)
             )
@@ -37,111 +36,180 @@ class BehaviorDal {
     async getTotalUsers(webId: number): Promise<any> {
         const result = await pool.query(
             `
+        WITH daily_users AS (
             SELECT
-                COUNT(DISTINCT user_id) AS total_users
+                DATE(timestamp) AS date,
+                COUNT(DISTINCT user_id) AS daily_users
             FROM
                 raw_events
             WHERE
-                web_id = $1;
-            `,
+                web_id = $1
+            GROUP BY
+                DATE(timestamp)
+        )
+        SELECT
+            date,
+            (SELECT COUNT(DISTINCT user_id) FROM raw_events WHERE web_id = $1 AND DATE(timestamp) <= daily_users.date) AS total_users,
+            daily_users
+        FROM
+            daily_users
+        ORDER BY
+            date;
+        `,
             [webId]
         );
-        return result.rows[0];
+        return result.rows;
     }
 
     async getTotalVisits(webId: number): Promise<any> {
         const result = await pool.query(
             `
+        WITH daily_metrics AS (
             SELECT
-                COUNT(DISTINCT session_id) AS total_visits
+                DATE(timestamp) AS date,
+                COUNT(DISTINCT user_id) AS daily_users,
+                COUNT(DISTINCT session_id) AS daily_visits
             FROM
                 raw_events
             WHERE
-                web_id = $1;
-            `,
+                web_id = $1
+            GROUP BY
+                DATE(timestamp)
+        )
+        SELECT
+            date,
+            (SELECT COUNT(DISTINCT user_id) FROM raw_events WHERE web_id = $1 AND DATE(timestamp) <= daily_metrics.date) AS total_users,
+            (SELECT COUNT(DISTINCT session_id) FROM raw_events WHERE web_id = $1 AND DATE(timestamp) <= daily_metrics.date) AS total_visits,
+            daily_users,
+            daily_visits
+        FROM
+            daily_metrics
+        ORDER BY
+            date;
+        `,
             [webId]
         );
-        return result.rows[0];
+        return result.rows;
     }
 
     async getReturningUsers(webId: number): Promise<any> {
         const result = await pool.query(
             `
-            WITH user_visits AS (
-                SELECT
-                    user_id,
-                    COUNT(DISTINCT DATE(timestamp)) AS visit_count
-                FROM
-                    raw_events
-                WHERE
-                    web_id = $1
-                GROUP BY
-                    user_id
-            )
+        WITH daily_user_visits AS (
             SELECT
-                COUNT(*) FILTER (WHERE visit_count > 1) * 100.0 / COUNT(*) AS returning_user_rate
+                DATE(timestamp) AS date,
+                user_id,
+                COUNT(DISTINCT session_id) AS visit_count
             FROM
-                user_visits;
-            `,
+                raw_events
+            WHERE
+                web_id = $1
+            GROUP BY
+                DATE(timestamp),
+                user_id
+        ),
+        daily_returning_users AS (
+            SELECT
+                date,
+                COUNT(*) FILTER (WHERE visit_count > 1) AS returning_users,
+                COUNT(*) AS total_users
+            FROM
+                daily_user_visits
+            GROUP BY
+                date
+        )
+        SELECT
+            date,
+            ROUND((returning_users * 100.0) / total_users, 2) AS returning_rate
+        FROM
+            daily_returning_users
+        ORDER BY
+            date;
+        `,
             [webId]
         );
-        return result.rows[0];
+        return result.rows;
     }
 
     async getBounceRate(webId: number): Promise<any> {
         const result = await pool.query(
             `
-            WITH session_activity AS (
-                SELECT
-                    session_id,
-                    COUNT(DISTINCT page_url) AS page_count
-                FROM
-                    raw_events
-                WHERE
-                    web_id = $1
-                GROUP BY
-                    session_id
-            )
+        WITH daily_session_activity AS (
             SELECT
-                COUNT(*) FILTER (WHERE page_count = 1) * 100.0 / COUNT(*) AS bounce_rate
+                DATE(timestamp) AS date,
+                session_id,
+                COUNT(DISTINCT page_url) AS page_count
             FROM
-                session_activity;
-            `,
+                raw_events
+            WHERE
+                web_id = $1
+            GROUP BY
+                DATE(timestamp),
+                session_id
+        ),
+        daily_bounce_rates AS (
+            SELECT
+                date,
+                COUNT(*) FILTER (WHERE page_count = 1) AS bounces,
+                COUNT(*) AS total_sessions
+            FROM
+                daily_session_activity
+            GROUP BY
+                date
+        )
+        SELECT
+            date,
+            ROUND((bounces * 100.0) / total_sessions, 2) AS bounce_rate
+        FROM
+            daily_bounce_rates
+        ORDER BY
+            date;
+        `,
             [webId]
         );
-        return result.rows[0];
+        return result.rows;
     }
 
     async getTotalSales(webId: number): Promise<any> {
         const result = await pool.query(
             `
             SELECT
-                COUNT(*) AS total_sales
+                DATE(timestamp) AS date,
+                COUNT(*) AS sales_count
             FROM
                 raw_events
             WHERE
                 event_id = 14
-                AND web_id = $1;
+                AND web_id = $1
+            GROUP BY
+                DATE(timestamp)
+            ORDER BY
+                DATE(timestamp);
             `,
             [webId]
         );
-        return result.rows[0];
+        return result.rows;
     }
 
     async getTotalConversions(webId: number): Promise<any> {
         const result = await pool.query(
             `
             SELECT
-                COUNT(DISTINCT user_id) AS total_conversions
+                DATE(timestamp) AS date,
+                COUNT(DISTINCT user_id) AS conversions_count
             FROM
-                raw_events
+                raw_vents
             WHERE
                 event_id = 14
-                AND web_id = $1;
+                AND web_id = $1
+            GROUP BY
+                DATE(timestamp)
+            ORDER BY
+                DATE(timestamp);
             `,
             [webId]
         );
-        return result.rows[0];
+        return result.rows;
     }
 
     async getActiveUsers(webId: number): Promise<any> {

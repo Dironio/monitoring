@@ -10,7 +10,7 @@ class BehaviorService {
     }
 
     async getTotalVisits(webId: number): Promise<any> {
-        return await behaviorDal.getTotalUsers(webId);
+        return await behaviorDal.getTotalVisits(webId);
     }
 
     async getReturningUsers(webId: number): Promise<any> {
@@ -76,7 +76,7 @@ class BehaviorService {
         return await behaviorDal.getPerformanceMetrics(webId);
     }
 
-    
+
     async getErrorAnalysis(webId: number): Promise<any> {
         return await behaviorDal.getErrorAnalysis(webId);
     }

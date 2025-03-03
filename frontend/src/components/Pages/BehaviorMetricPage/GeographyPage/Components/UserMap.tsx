@@ -36,7 +36,8 @@ const UserMap: React.FC<UserMapProps> = ({ userLocations }) => {
     };
 
     return (
-        <MapContainer center={[55.7558, 37.6173]} zoom={3} style={{ height: '500px', width: '100%' }}>
+        <MapContainer //center={[55.7558, 37.6173]} zoom={3} style={{ height: '500px', width: '100%' }}
+        >
             <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
