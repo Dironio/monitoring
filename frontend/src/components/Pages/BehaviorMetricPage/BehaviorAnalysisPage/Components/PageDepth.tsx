@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Bar } from 'react-chartjs-2';
+import { useEffect, useState } from "react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { getAPI } from "../../../../utils/axiosGet";
 
 interface PageDepthData {
     date: string;
-    averageDepth: number;
+    average_page_depth: number;
 }
 
 interface TotalUsersData {
@@ -12,95 +12,122 @@ interface TotalUsersData {
 }
 
 const PageDepth: React.FC = () => {
-    //     const [pageDepthData, setPageDepthData] = useState<PageDepthData[]>([]);
-
-    //     useEffect(() => {
-    //         fetchPageDepthData();
-    //     }, []);
-
-    //     const fetchPageDepthData = async () => {
-    //         try {
-    //             const response = await axios.get<PageDepthData[]>('/events/page-depth');
-    //             setPageDepthData(response.data);
-    //         } catch (error) {
-    //             console.error('Error fetching page depth data:', error);
-    //         }
-    //     };
-
-    //     const data = {
-    //         labels: pageDepthData.map((item) => item.date),
-    //         datasets: [
-    //             {
-    //                 label: 'Средняя глубина просмотра',
-    //                 data: pageDepthData.map((item) => item.averageDepth),
-    //                 backgroundColor: 'rgba(153, 102, 255, 0.2)',
-    //                 borderColor: 'rgba(153, 102, 255, 1)',
-    //                 borderWidth: 1,
-    //             },
-    //         ],
-    //     };
-
-    //     const options = {
-    //         scales: {
-    //             y: {
-    //                 beginAtZero: true,
-    //             },
-    //         },
-    //     };
-
-    //     return (
-    //         <div className="metric-card">
-    //             <h2>Глубина просмотра</h2>
-    //             <p>
-    //                 Средняя глубина за последние 7 дней: {pageDepthData.length > 0 ? `${pageDepthData[pageDepthData.length - 1].averageDepth} страниц` : 'Загрузка данных...'}
-    //             </p>
-    //             <p>
-    //                 Тенденция: {pageDepthData.length > 1 ? (pageDepthData[pageDepthData.length - 1].averageDepth > pageDepthData[pageDepthData.length - 2].averageDepth ? 'Увеличивается' : 'Снижается') : 'Недостаточно данных'}
-    //             </p>
-    //             <Bar data={data} options={options} />
-    //         </div>
-    //     );
-    // };
-
     const [totalUsers, setTotalUsers] = useState<number | null>(null);
+    const [pageDepthData, setPageDepthData] = useState<PageDepthData[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [interval, setInterval] = useState<'month' | 'week'>('week');
 
-    // Загрузка данных
     useEffect(() => {
-        const fetchTotalUsers = async () => {
-            try {
-                const selectedSite = JSON.parse(localStorage.getItem('selectedSite') || 'null');
-                if (!selectedSite) {
-                    setError("Сайт не выбран");
-                    setLoading(false);
-                    return;
-                }
+        const fetchData = async () => {
+            const selectedSite = JSON.parse(localStorage.getItem('selectedSite') || 'null');
+            if (!selectedSite) {
+                setError("Сайт не выбран");
+                setLoading(false);
+                return;
+            }
 
-                const response = await axios.get<TotalUsersData>(`/events/total-users?web_id=${selectedSite.value}`);
-                setTotalUsers(response.data.total_users);
+            try {
+                const totalUsersResponse = await getAPI.get<TotalUsersData>(`/events/behavior/metrics/total-users?web_id=${selectedSite.value}`);
+                setTotalUsers(totalUsersResponse.data.total_users);
+
+                const pageDepthResponse = await getAPI.get<PageDepthData[]>(`/events/behavior/behavior/average-depth?web_id=${selectedSite.value}&interval=${interval}`);
+                setPageDepthData(pageDepthResponse.data);
             } catch (error) {
-                console.error('Error fetching total users data:', error);
+                console.error('Ошибка при загрузке данных:', error);
                 setError('Не удалось загрузить данные');
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchTotalUsers();
-    }, []);
+        fetchData();
+    }, [interval]);
+
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ru-RU');
+    };
+
+    const calculateTrend = (data: PageDepthData[]): string => {
+        if (data.length < 2) return 'Недостаточно данных';
+
+        const last = data[data.length - 1]?.average_page_depth;
+        const prev = data[data.length - 2]?.average_page_depth;
+
+        if (last === undefined || prev === undefined) {
+            return 'Недостаточно данных';
+        }
+
+        return last > prev ? 'Увеличивается' : 'Снижается';
+    };
 
     return (
         <div className="metric-card">
-            <h2>Общее количество пользователей</h2>
+            <h2 className="metric-card__title">Глубина просмотра страниц</h2>
             {loading ? (
-                <p>Загрузка данных...</p>
+                <p className="metric-card__loading">Загрузка данных...</p>
             ) : error ? (
-                <p style={{ color: 'red' }}>{error}</p>
+                <p className="metric-card__error">{error}</p>
             ) : (
-                <p>
-                    Общее количество пользователей: <strong>{totalUsers}</strong>
-                </p>
+                <>
+                    <div className="metric-card__stats">
+                        <div className="metric-card__stat metric-card__stat--current">
+                            <p className="metric-card__stat-label">Сегодня</p>
+                            <p className="metric-card__stat-value">
+                                {pageDepthData.length > 0 ? `${pageDepthData[pageDepthData.length - 1].average_page_depth.toFixed(2)} стр.` : 'Нет данных'}
+                            </p>
+                        </div>
+                        <div className="metric-card__stat metric-card__stat--trend">
+                            <p className="metric-card__stat-label">Тенденция</p>
+                            <p className="metric-card__stat-value">
+                                {calculateTrend(pageDepthData)}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="metric-card__interval-buttons">
+                        <button
+                            onClick={() => setInterval('week')}
+                            className={`metric-card__interval-button ${interval === 'week' ? 'metric-card__interval-button--active' : ''}`}
+                        >
+                            Неделя
+                        </button>
+                        <button
+                            onClick={() => setInterval('month')}
+                            className={`metric-card__interval-button ${interval === 'month' ? 'metric-card__interval-button--active' : ''}`}
+                        >
+                            Месяц
+                        </button>
+                    </div>
+
+                    <div className="metric-card__chart">
+                        <ResponsiveContainer width="100%" height={400}>
+                            <LineChart
+                                data={pageDepthData}
+                                margin={{
+                                    top: 20,
+                                    right: 30,
+                                    left: 20,
+                                    bottom: 5,
+                                }}
+                            >
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="date" tickFormatter={formatDate} angle={0} textAnchor="end" />
+                                <YAxis />
+                                <Tooltip />
+                                <Legend />
+                                <Line
+                                    type="monotone"
+                                    dataKey="average_page_depth"
+                                    stroke="#8884d8"
+                                    activeDot={{ r: 8 }}
+                                    name="Средняя глубина (стр.)"
+                                />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+                </>
             )}
         </div>
     );

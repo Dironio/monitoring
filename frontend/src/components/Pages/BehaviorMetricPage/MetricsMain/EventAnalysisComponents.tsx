@@ -15,6 +15,7 @@ import ReturningUserRate from './Components/ReturningUserRate';
 import BounceRate from './Components/BounceRate';
 import SalesRating from './Components/SalesRating';
 import ConversionsMetric from './Components/Conversions';
+import ActiveUsersNow from './Components/ActiveUsersNow';
 
 interface EventAnalysisProps {
   user: User | null;
@@ -68,8 +69,6 @@ const EventAnalysisComponent: React.FC<EventAnalysisProps> = ({ user, loading })
 
   return (
     <div className="main-metrics-page">
-      <h1>Основные показатели</h1>
-
       <div className="metrics-grid">
         <PageLoadingSpeed />
         <TotalUsers />
@@ -78,6 +77,7 @@ const EventAnalysisComponent: React.FC<EventAnalysisProps> = ({ user, loading })
         <BounceRate />
         <SalesRating />
         <ConversionsMetric />
+        <ActiveUsersNow />
       </div>
     </div>
   );

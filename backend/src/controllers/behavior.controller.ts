@@ -59,47 +59,97 @@ class BehaviorController {
         return res.status(200).json(result);
     }
 
+    @ControllerErrorHandler()
+    async getDailyActiveUsers(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const interval = req.query.interval as 'month' | 'week';
+
+        if (!['month', 'week'].includes(interval)) {
+            throw new Error('Неверный интервал. Допустимые значения: "month", "week".');
+        }
+
+        const result = await behaviorService.getDailyActiveUsers(webId, interval);
+        return res.status(200).json(result);
+    }
+
+
+
 
 
 
     @ControllerErrorHandler()
     async getAverageTimeOnSite(req: Request, res: Response, next: NextFunction): Promise<Response> {
         const webId = Number(req.query.web_id);
-        const result = await behaviorService.getAverageTimeOnSite(webId);
+        const interval = req.query.interval as 'month' | 'week';
+
+        if (!['month', 'week'].includes(interval)) {
+            throw new Error('Неверный интервал. Допустимые значения: "month", "week".');
+        }
+
+        const result = await behaviorService.getAverageTimeOnSite(webId, interval);
         return res.status(200).json(result);
     }
     @ControllerErrorHandler()
     async getAveragePageDepth(req: Request, res: Response, next: NextFunction): Promise<Response> {
         const webId = Number(req.query.web_id);
-        const result = await behaviorService.getAveragePageDepth(webId);
+        const interval = req.query.interval as 'month' | 'week';
+
+        if (!['month', 'week'].includes(interval)) {
+            throw new Error('Неверный интервал. Допустимые значения: "month", "week".');
+        }
+        const result = await behaviorService.getAveragePageDepth(webId, interval);
         return res.status(200).json(result);
     }
 
     @ControllerErrorHandler()
     async getClickAnalysis(req: Request, res: Response, next: NextFunction): Promise<Response> {
         const webId = Number(req.query.web_id);
-        const result = await behaviorService.getClickAnalysis(webId);
+        const interval = req.query.interval as 'month' | 'week';
+
+        if (!['month', 'week'].includes(interval)) {
+            throw new Error('Неверный интервал. Допустимые значения: "month", "week".');
+        }
+
+        const result = await behaviorService.getClickAnalysis(webId, interval);
         return res.status(200).json(result);
     }
 
     @ControllerErrorHandler()
     async getEventAnalysis(req: Request, res: Response, next: NextFunction): Promise<Response> {
         const webId = Number(req.query.web_id);
-        const result = await behaviorService.getEventAnalysis(webId);
+        const interval = req.query.interval as 'month' | 'week';
+
+        if (!['month', 'week'].includes(interval)) {
+            throw new Error('Неверный интервал. Допустимые значения: "month", "week".');
+        }
+
+        const result = await behaviorService.getEventAnalysis(webId, interval);
         return res.status(200).json(result);
     }
 
     @ControllerErrorHandler()
     async getAverageScrollPercentage(req: Request, res: Response, next: NextFunction): Promise<Response> {
         const webId = Number(req.query.web_id);
-        const result = await behaviorService.getAverageScrollPercentage(webId);
+        const interval = req.query.interval as 'month' | 'week';
+
+        if (!['month', 'week'].includes(interval)) {
+            throw new Error('Неверный интервал. Допустимые значения: "month", "week".');
+        }
+
+        const result = await behaviorService.getAverageScrollPercentage(webId, interval);
         return res.status(200).json(result);
     }
 
     @ControllerErrorHandler()
     async getFormAnalysis(req: Request, res: Response, next: NextFunction): Promise<Response> {
         const webId = Number(req.query.web_id);
-        const result = await behaviorService.getFormAnalysis(webId);
+        const interval = req.query.interval as 'month' | 'week';
+
+        if (!['month', 'week'].includes(interval)) {
+            throw new Error('Неверный интервал. Допустимые значения: "month", "week".');
+        }
+
+        const result = await behaviorService.getFormAnalysis(webId, interval);
         return res.status(200).json(result);
     }
 
@@ -206,7 +256,7 @@ class BehaviorController {
 
 
 
-    
+
 }
 
 const behaviorController = new BehaviorController();

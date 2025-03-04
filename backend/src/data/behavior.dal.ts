@@ -215,110 +215,158 @@ class BehaviorDal {
     async getActiveUsers(webId: number): Promise<any> {
         const result = await pool.query(
             `
-            SELECT
-                COUNT(DISTINCT session_id) AS active_users
-            FROM
-                raw_events
-            WHERE
-                timestamp >= NOW() - INTERVAL '5 minutes'
-                AND web_id = $1;
-            `,
-            [webId]
-        );
-        return result.rows[0];
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    async getAverageTimeOnSite(webId: number): Promise<any> {
-        const result = await pool.query(
-            `
-            WITH session_durations AS (
+            WITH current_users AS (
                 SELECT
-                    session_id,
-                    MIN(timestamp) AS session_start,
-                    MAX(timestamp) AS session_end
+                    COUNT(DISTINCT session_id) AS active_users
                 FROM
                     raw_events
                 WHERE
-                    web_id = $1
-                GROUP BY
-                    session_id
-            )
-            SELECT
-                AVG(EXTRACT(EPOCH FROM (session_end - session_start))) AS average_time_on_site
-            FROM
-                session_durations;
-            `,
-            [webId]
-        );
-        return result.rows[0];
-    }
-
-    async getAveragePageDepth(webId: number): Promise<any> {
-        const result = await pool.query(
-            `
-            WITH page_views_per_session AS (
+                    timestamp >= NOW() - INTERVAL '5 minutes'
+                    AND web_id = $1
+            ),
+            yesterday_users AS (
                 SELECT
-                    session_id,
-                    COUNT(DISTINCT page_url) AS page_count
+                    COUNT(DISTINCT session_id) AS active_users
                 FROM
                     raw_events
                 WHERE
-                    web_id = $1
-                    AND event_id = 1
-                GROUP BY
-                    session_id
+                    timestamp >= NOW() - INTERVAL '1 day 5 minutes'
+                    AND timestamp <= NOW() - INTERVAL '1 day'
+                    AND web_id = $1
             )
             SELECT
-                AVG(page_count) AS average_page_depth
-            FROM
-                page_views_per_session;
-            `,
-            [webId]
-        );
-        return result.rows[0];
-    }
-
-    async getClickAnalysis(webId: number): Promise<any> {
-        const result = await pool.query(
-            `
-            SELECT
-                event_data->>'element_tag' AS element_tag,
-                COUNT(*) AS click_count
-            FROM
-                raw_events
-            WHERE
-                web_id = $1
-                AND event_id = 2
-            GROUP BY
-                event_data->>'element_tag'
-            ORDER BY
-                click_count DESC;
+                (SELECT active_users FROM current_users) AS current_active_users,
+                (SELECT active_users FROM yesterday_users) AS yesterday_active_users;
             `,
             [webId]
         );
         return result.rows;
     }
 
-    async getEventAnalysis(webId: number): Promise<any> {
+    async getMonthlyWeeklyActiveUsers(webId: number, interval: 'month' | 'week'): Promise<any> {
+        const result = await pool.query(
+            `
+            SELECT
+                DATE(timestamp) AS date,
+                COUNT(DISTINCT session_id) AS daily_active_users
+            FROM
+                raw_events
+            WHERE
+                timestamp >= NOW() - INTERVAL '1 ${interval}'
+                AND web_id = $1
+            GROUP BY
+                DATE(timestamp)
+            ORDER BY
+                DATE(timestamp);
+            `,
+            [webId]
+        );
+        return result.rows;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    async getAverageTimeOnSite(webId: number, interval: 'month' | 'week'): Promise<any> {
+        const result = await pool.query(
+            `
+        WITH session_durations AS (
+            SELECT
+                session_id,
+                DATE(timestamp) AS date,
+                MIN(timestamp) AS session_start,
+                MAX(timestamp) AS session_end
+            FROM
+                raw_events
+            WHERE
+                web_id = $1
+                AND timestamp >= NOW() - INTERVAL '1 ${interval}'
+            GROUP BY
+                session_id, DATE(timestamp)
+        )
+        SELECT
+            date,
+            AVG(EXTRACT(EPOCH FROM (session_end - session_start))) AS average_time_on_site
+        FROM
+            session_durations
+        GROUP BY
+            date
+        ORDER BY
+            date ASC;
+        `,
+            [webId]
+        );
+        return result.rows;
+    }
+
+    async getAveragePageDepth(webId: number, interval: 'month' | 'week'): Promise<any> {
+        const result = await pool.query(
+            `
+        WITH page_views_per_session AS (
+            SELECT
+                session_id,
+                DATE(timestamp) AS date,
+                COUNT(DISTINCT page_url) AS page_count
+            FROM
+                raw_events
+            WHERE
+                web_id = $1
+                --AND event_id = 1
+                AND timestamp >= NOW() - INTERVAL '1 ${interval}'
+            GROUP BY
+                session_id, DATE(timestamp)
+        )
+        SELECT
+            date,
+            AVG(page_count) AS average_page_depth
+        FROM
+            page_views_per_session
+        GROUP BY
+            date
+        ORDER BY
+            date ASC;
+        `,
+            [webId]
+        );
+        return result.rows;
+    }
+
+    async getClickAnalysis(webId: number, interval: 'month' | 'week'): Promise<any> {
+        const result = await pool.query(
+            `
+        SELECT
+            event_data->>'element_tag' AS element_tag,
+            COUNT(*) AS click_count
+        FROM
+            raw_events
+        WHERE
+            web_id = $1
+            AND event_id = 2
+            AND timestamp >= NOW() - INTERVAL '1 ${interval}'
+        GROUP BY
+            event_data->>'element_tag'
+        ORDER BY
+            click_count DESC;
+        `,
+            [webId]
+        );
+        return result.rows;
+    }
+
+    async getEventAnalysis(webId: number, interval: 'month' | 'week'): Promise<any> {
         const result = await pool.query(
             `
             SELECT
@@ -328,6 +376,7 @@ class BehaviorDal {
                 raw_events
             WHERE
                 web_id = $1
+                AND timestamp >= NOW() - INTERVAL '1 ${interval}'
             GROUP BY
                 event_id
             ORDER BY
@@ -338,39 +387,46 @@ class BehaviorDal {
         return result.rows;
     }
 
-    async getAverageScrollPercentage(webId: number): Promise<any> {
+    async getAverageScrollPercentage(webId: number, interval: 'month' | 'week'): Promise<any> {
         const result = await pool.query(
             `
-            SELECT
-                AVG((event_data->>'scrollPercentage')::numeric) AS average_scroll_percentage
-            FROM
-                raw_events
-            WHERE
-                web_id = $1
-                AND event_id = 4
-                AND event_data->>'scrollPercentage' IS NOT NULL;
-            `,
+        SELECT
+            DATE(timestamp) AS date,
+            AVG((event_data->>'scrollPercentage')::numeric) AS average_scroll_percentage
+        FROM
+            raw_events
+        WHERE
+            web_id = $1
+            AND event_id = 4
+            AND event_data->>'scrollPercentage' IS NOT NULL
+            AND timestamp >= NOW() - INTERVAL '1 ${interval}'
+        GROUP BY
+            DATE(timestamp)
+        ORDER BY
+            DATE(timestamp) ASC;
+        `,
             [webId]
         );
         return result.rows[0];
     }
 
-    async getFormAnalysis(webId: number): Promise<any> {
+    async getFormAnalysis(webId: number, interval: 'month' | 'week'): Promise<any> {
         const result = await pool.query(
             `
-            SELECT
-                event_data->>'form_id' AS form_id,
-                COUNT(*) AS form_submit_count
-            FROM
-                raw_events
-            WHERE
-                web_id = $1
-                AND event_id = 3
-            GROUP BY
-                event_data->>'form_id'
-            ORDER BY
-                form_submit_count DESC;
-            `,
+        SELECT
+            event_data->>'form_id' AS form_id,
+            COUNT(*) AS form_submit_count
+        FROM
+            raw_events
+        WHERE
+            web_id = $1
+            AND event_id = 3
+            AND timestamp >= NOW() - INTERVAL '1 ${interval}'
+        GROUP BY
+            event_data->>'form_id'
+        ORDER BY
+            form_submit_count DESC;
+        `,
             [webId]
         );
         return result.rows;

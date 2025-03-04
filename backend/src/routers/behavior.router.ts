@@ -13,6 +13,7 @@ behaviorRouter.get('/metrics/bounce-rate', authCheck, behaviorController.getBoun
 behaviorRouter.get('/metrics/sales', authCheck, behaviorController.getTotalSales);
 behaviorRouter.get('/metrics/conversions', authCheck, behaviorController.getTotalConversions);
 behaviorRouter.get('/metrics/active-users', authCheck, behaviorController.getActiveUsers);
+behaviorRouter.get('/metrics/daily-active-users', authCheck, behaviorController.getDailyActiveUsers);
 
 // Поведенческий анализ
 behaviorRouter.get('/behavior/average-time', authCheck, behaviorController.getAverageTimeOnSite);

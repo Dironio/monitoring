@@ -2,19 +2,19 @@ import { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { getAPI } from "../../../../utils/axiosGet";
 
-interface ClickData {
-    element_tag: string;
-    click_count: number;
+interface FormData {
+    form_id: string;
+    form_submit_count: number;
 }
 
-const ClickAnalysis: React.FC = () => {
-    const [clickData, setClickData] = useState<ClickData[]>([]);
+const FormAnalysis: React.FC = () => {
+    const [formData, setFormData] = useState<FormData[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [interval, setInterval] = useState<'month' | 'week'>('week');
 
     useEffect(() => {
-        const fetchClickData = async () => {
+        const fetchFormData = async () => {
             const selectedSite = JSON.parse(localStorage.getItem('selectedSite') || 'null');
             if (!selectedSite) {
                 setError("Сайт не выбран");
@@ -23,9 +23,8 @@ const ClickAnalysis: React.FC = () => {
             }
 
             try {
-                const response = await getAPI.get<ClickData[]>(`/events/behavior/behavior/clicks?web_id=${selectedSite.value}&interval=${interval}`);
-                setClickData(response.data);
-                console.log(response.data);
+                const response = await getAPI.get<FormData[]>(`/events/behavior/behavior/form-analysis?web_id=${selectedSite.value}&interval=${interval}`);
+                setFormData(response.data);
             } catch (error) {
                 console.error('Ошибка при загрузке данных:', error);
                 setError('Не удалось загрузить данные');
@@ -34,17 +33,17 @@ const ClickAnalysis: React.FC = () => {
             }
         };
 
-        fetchClickData();
+        fetchFormData();
     }, [interval]);
 
-    const getTopElement = (data: ClickData[]): string => {
+    const getTopForm = (data: FormData[]): string => {
         if (data.length === 0) return 'Нет данных';
-        return `${data[0].element_tag} (${data[0].click_count} кликов)`;
+        return `Форма ${data[0].form_id} (${data[0].form_submit_count} отправок)`;
     };
 
     return (
         <div className="metric-card">
-            <h2 className="metric-card__title">Анализ кликов</h2>
+            <h2 className="metric-card__title">Анализ форм</h2>
             {loading ? (
                 <p className="metric-card__loading">Загрузка данных...</p>
             ) : error ? (
@@ -53,9 +52,9 @@ const ClickAnalysis: React.FC = () => {
                 <>
                     <div className="metric-card__stats">
                         <div className="metric-card__stat metric-card__stat--current">
-                            <p className="metric-card__stat-label">Самый популярный элемент</p>
+                            <p className="metric-card__stat-label">Самая популярная форма</p>
                             <p className="metric-card__stat-value">
-                                {getTopElement(clickData)}
+                                {getTopForm(formData)}
                             </p>
                         </div>
                     </div>
@@ -78,7 +77,7 @@ const ClickAnalysis: React.FC = () => {
                     <div className="metric-card__chart">
                         <ResponsiveContainer width="100%" height={400}>
                             <BarChart
-                                data={clickData}
+                                data={formData}
                                 margin={{
                                     top: 20,
                                     right: 30,
@@ -87,14 +86,14 @@ const ClickAnalysis: React.FC = () => {
                                 }}
                             >
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="element_tag" />
+                                <XAxis dataKey="form_id" />
                                 <YAxis />
                                 <Tooltip />
                                 <Legend />
                                 <Bar
-                                    dataKey="click_count"
+                                    dataKey="form_submit_count"
                                     fill="hsl(var(--chart-1))"
-                                    name="Количество кликов"
+                                    name="Количество отправок"
                                 />
                             </BarChart>
                         </ResponsiveContainer>
@@ -105,4 +104,4 @@ const ClickAnalysis: React.FC = () => {
     );
 };
 
-export default ClickAnalysis;
+export default FormAnalysis;

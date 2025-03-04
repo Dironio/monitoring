@@ -30,7 +30,11 @@ class BehaviorService {
     }
 
     async getActiveUsers(webId: number): Promise<any> {
-        return await behaviorDal.getTotalUsers(webId);
+        return await behaviorDal.getActiveUsers(webId);
+    }
+
+    async getDailyActiveUsers(webId: number, interval: 'month' | 'week'): Promise<any> {
+        return await behaviorDal.getMonthlyWeeklyActiveUsers(webId, interval);
     }
 
 
@@ -38,32 +42,32 @@ class BehaviorService {
 
 
 
-    async getAverageTimeOnSite(webId: number): Promise<any> {
-        return await behaviorDal.getAverageTimeOnSite(webId);
+    async getAverageTimeOnSite(webId: number, interval: 'month' | 'week'): Promise<any> {
+        return await behaviorDal.getAverageTimeOnSite(webId, interval);
     }
 
-    async getAveragePageDepth(webId: number): Promise<any> {
-        return await behaviorDal.getAveragePageDepth(webId);
-    }
-
-
-    async getClickAnalysis(webId: number): Promise<any> {
-        return await behaviorDal.getClickAnalysis(webId);
+    async getAveragePageDepth(webId: number, interval: 'month' | 'week'): Promise<any> {
+        return await behaviorDal.getAveragePageDepth(webId, interval);
     }
 
 
-    async getEventAnalysis(webId: number): Promise<any> {
-        return await behaviorDal.getEventAnalysis(webId);
+    async getClickAnalysis(webId: number, interval: 'month' | 'week'): Promise<any> {
+        return await behaviorDal.getClickAnalysis(webId, interval);
     }
 
 
-    async getAverageScrollPercentage(webId: number): Promise<any> {
-        return await behaviorDal.getAverageScrollPercentage(webId);
+    async getEventAnalysis(webId: number, interval: 'month' | 'week'): Promise<any> {
+        return await behaviorDal.getEventAnalysis(webId, interval);
     }
 
 
-    async getFormAnalysis(webId: number): Promise<any> {
-        return await behaviorDal.getFormAnalysis(webId);
+    async getAverageScrollPercentage(webId: number, interval: 'month' | 'week'): Promise<any> {
+        return await behaviorDal.getAverageScrollPercentage(webId, interval);
+    }
+
+
+    async getFormAnalysis(webId: number, interval: 'month' | 'week'): Promise<any> {
+        return await behaviorDal.getFormAnalysis(webId, interval);
     }
 
 

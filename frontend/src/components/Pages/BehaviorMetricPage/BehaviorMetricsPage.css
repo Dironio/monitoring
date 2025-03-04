@@ -1,0 +1,92 @@
+/* ДЕФОЛТ СТИЛИ */
+.metric-card {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.metric-card__title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #1a1a1a;
+}
+
+.metric-card__loading {
+    font-size: 16px;
+    color: #666;
+}
+
+.metric-card__error {
+    font-size: 16px;
+    color: #dc2626;
+}
+
+.metric-card__stats {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.metric-card__stat {
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    text-align: center;
+}
+
+.metric-card__stat--current {
+    background-color: #f0fdf4;
+}
+
+.metric-card__stat--current .metric-card__stat-value {
+    color: #16a34a;
+}
+
+.metric-card__stat--trend {
+    background-color: #f3f4f6;
+}
+
+.metric-card__stat-label {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 8px;
+}
+
+.metric-card__stat-value {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.metric-card__interval-buttons {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.metric-card__interval-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: #f3f4f6;
+    color: #4b5563;
+}
+
+.metric-card__interval-button--active {
+    background-color: #3b82f6;
+    color: #ffffff;
+}
+
+.metric-card__chart {
+    width: 100%;
+    height: 400px;
+    margin-top: 20px;
+}

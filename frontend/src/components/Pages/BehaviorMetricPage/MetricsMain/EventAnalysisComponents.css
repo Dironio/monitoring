@@ -152,3 +152,101 @@
     font-size: 18px;
     font-weight: 600;
 }
+
+
+
+
+
+/* АКТИВНЫЕ ПОЛЬЗОВАТЕЛИ СЕЙЧАС */
+.active-user-card {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 70px;
+}
+
+.active-user-card__title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #1a1a1a;
+}
+
+.active-user-card__loading {
+    font-size: 16px;
+    color: #666;
+}
+
+.active-user-card__error {
+    font-size: 16px;
+    color: #dc2626;
+}
+
+.active-user-card__stats {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.active-user-card__stat {
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex: 1;
+}
+
+.active-user-card__stat-label {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 8px;
+}
+
+.active-user-card__stat-value {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.active-user-card__stat--current {
+    background-color: #f0fdf4;
+}
+
+.active-user-card__stat--current .active-user-card__stat-value {
+    color: #16a34a;
+}
+
+.active-user-card__stat--yesterday {
+    background-color: #fff7ed;
+}
+
+.active-user-card__stat--yesterday .active-user-card__stat-value {
+    color: #ea580c;
+}
+
+.active-user-card__interval-buttons {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.active-user-card__interval-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: #f3f4f6;
+    color: #4b5563;
+}
+
+.active-user-card__interval-button--active {
+    background-color: #3b82f6;
+    color: #ffffff;
+}
+
+.active-user-card__chart {
+    width: 100%;
+    height: 400px;
+}
