@@ -115,8 +115,8 @@ class BehaviorService {
 
 
 
-    async getUserGeolocation(webId: number): Promise<any> {
-        return await behaviorDal.getUserGeolocation(webId);
+    async getUserGeolocation(webId: number, interval: 'month' | 'week'): Promise<any> {
+        return await behaviorDal.getUserGeolocation(webId, interval);
     }
 
 

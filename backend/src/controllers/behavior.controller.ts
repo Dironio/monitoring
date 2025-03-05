@@ -219,7 +219,13 @@ class BehaviorController {
     @ControllerErrorHandler()
     async getUserGeolocation(req: Request, res: Response, next: NextFunction): Promise<Response> {
         const webId = Number(req.query.web_id);
-        const result = await behaviorService.getUserGeolocation(webId);
+        const interval = req.query.interval as 'month' | 'week';
+
+        if (!['month', 'week'].includes(interval)) {
+            throw new Error('Неверный интервал. Допустимые значения: "month", "week".');
+        }
+
+        const result = await behaviorService.getUserGeolocation(webId, interval);
         return res.status(200).json(result);
     }
 
