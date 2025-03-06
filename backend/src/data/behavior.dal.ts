@@ -566,7 +566,7 @@ class BehaviorDal {
             `,
             [webId]
         );
-        return result.rows[0];
+        return result.rows;
     }
 
     async getActiveUsersComparison(webId: number): Promise<any> {
@@ -599,23 +599,22 @@ class BehaviorDal {
     async getUserGeolocation(webId: number, interval: 'month' | 'week'): Promise<any> {
         const result = await pool.query(
             `
-        SELECT
+            SELECT
             geolocation->>'country' AS country,
             geolocation->>'city' AS city,
-            COUNT(DISTINCT user_id) AS users
+            COUNT(DISTINCT session_id) AS users
         FROM
             raw_events
         WHERE
             web_id = $1
             AND geolocation IS NOT NULL
-            AND geolocation != '[NULL]'
             AND timestamp >= NOW() - INTERVAL '1 ${interval}'
         GROUP BY
             geolocation->>'country',
             geolocation->>'city'
         ORDER BY
             users DESC;
-        `,
+            `,
             [webId]
         );
         return result.rows;
@@ -624,20 +623,20 @@ class BehaviorDal {
     async getTopCountries(webId: number): Promise<any> {
         const result = await pool.query(
             `
-            SELECT
-                geolocation->>'country' AS country,
-                COUNT(DISTINCT user_id) AS users
-            FROM
-                raw_events
-            WHERE
-                web_id = $1
-                AND geolocation IS NOT NULL
-                AND geolocation != '[NULL]'
-            GROUP BY
-                geolocation->>'country'
-            ORDER BY
-                users DESC;
-            `,
+        SELECT
+            geolocation->'country' AS country,
+            COUNT(DISTINCT user_id) AS users
+        FROM
+            raw_events
+        WHERE
+            web_id = $1
+            AND geolocation IS NOT NULL
+            AND jsonb_typeof(geolocation) = 'object' -- Проверка, что geolocation — это JSON-объект
+        GROUP BY
+            geolocation->'country'
+        ORDER BY
+            users DESC;
+        `,
             [webId]
         );
         return result.rows;

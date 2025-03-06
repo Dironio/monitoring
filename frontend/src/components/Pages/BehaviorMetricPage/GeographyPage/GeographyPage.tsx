@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import UserMap from './Components/UserMap';
 import UserLocationTable from './Components/UserLocationTable';
 import { getAPI } from '../../../utils/axiosGet';
+import IntervalSelector from '../../../UI/IntervalSelector';
+import TopCountriesChart from './Components/TopCountriesChart';
 
 interface UserLocation {
     country: string;
@@ -39,6 +40,12 @@ const GeographyPage: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
+    const [locationsInterval, setLocationsInterval] = useState<'month' | 'week'>('week');
+    const [countriesInterval, setCountriesInterval] = useState<'month' | 'week'>('week');
+    const [citiesInterval, setCitiesInterval] = useState<'month' | 'week'>('week');
+    const [regionsInterval, setRegionsInterval] = useState<'month' | 'week'>('week');
+    const [comparisonInterval, setComparisonInterval] = useState<'month' | 'week'>('week');
+
     useEffect(() => {
         const fetchData = async () => {
             const selectedSite = JSON.parse(localStorage.getItem('selectedSite') || 'null');
@@ -50,13 +57,13 @@ const GeographyPage: React.FC = () => {
 
             try {
                 const [locations, countries, cities, regions, comparison] = await Promise.all([
-                    getAPI.get<UserLocation[]>(`/events/behavior/geography/user-locations?web_id=${selectedSite.value}`),
+                    getAPI.get<UserLocation[]>(`/events/behavior/geography/user-locations?web_id=${selectedSite.value}&interval=${locationsInterval}`),
                     getAPI.get<TopCountry[]>(`/events/behavior/geography/top-countries?web_id=${selectedSite.value}`),
-                    getAPI.get<TopCity[]>(`/events/behavior/geography/top-cities?web_id=${selectedSite.value}`),
-                    getAPI.get<RegionData[]>(`/events/behavior/geography/user-regions?web_id=${selectedSite.value}`),
-                    getAPI.get<ComparisonData[]>(`/events/behavior/geography/comparison?web_id=${selectedSite.value}`),
+                    getAPI.get<TopCity[]>(`/events/behavior/geography/top-cities?web_id=${selectedSite.value}&interval=${citiesInterval}`),
+                    getAPI.get<RegionData[]>(`/events/behavior/geography/user-regions?web_id=${selectedSite.value}&interval=${regionsInterval}`),
+                    getAPI.get<ComparisonData[]>(`/events/behavior/geography/comparison?web_id=${selectedSite.value}&interval=${comparisonInterval}`),
                 ]);
-                console.log(locations)
+
                 setUserLocations(locations.data);
                 setTopCountries(countries.data);
                 setTopCities(cities.data);
@@ -71,7 +78,7 @@ const GeographyPage: React.FC = () => {
         };
 
         fetchData();
-    }, []);
+    }, [locationsInterval, countriesInterval, citiesInterval, regionsInterval, comparisonInterval]);
 
     return (
         <div className="geography-page">
@@ -82,28 +89,38 @@ const GeographyPage: React.FC = () => {
                 <p className="geography-page__error">{error}</p>
             ) : (
                 <div className="geography-content">
+                    {/* Карта пользователей */}
                     <div className="geography-section">
                         <h2>Карта пользователей</h2>
+                        <IntervalSelector interval={locationsInterval} setInterval={setLocationsInterval} />
                         <UserMap userLocations={userLocations} />
                     </div>
 
+                    {/* Топ стран */}
                     <div className="geography-section">
                         <h2>Топ стран</h2>
-                        {/* <TopCountriesChart data={topCountries} /> */}
+
+                        <TopCountriesChart data={topCountries} />
                     </div>
 
+                    {/* Топ городов */}
                     <div className="geography-section">
                         <h2>Топ городов</h2>
+                        <IntervalSelector interval={citiesInterval} setInterval={setCitiesInterval} />
                         {/* <TopCitiesChart data={topCities} /> */}
                     </div>
 
+                    {/* Распределение по регионам */}
                     <div className="geography-section">
                         <h2>Распределение по регионам</h2>
+                        <IntervalSelector interval={regionsInterval} setInterval={setRegionsInterval} />
                         {/* <UserLocationTable data={userRegions} /> */}
                     </div>
 
+                    {/* Сравнение по периодам */}
                     <div className="geography-section">
                         <h2>Сравнение по периодам</h2>
+                        <IntervalSelector interval={comparisonInterval} setInterval={setComparisonInterval} />
                         {/* <UserLocationTable data={comparisonData} /> */}
                     </div>
                 </div>

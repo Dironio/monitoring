@@ -14,10 +14,10 @@ const EVENT_TYPES = {
     video_pause: 8,
     video_watch_complete: 9,
     hover: 10,
-    add_to_cart: 11,  //сделать обработку
-    product_view: 12, //анл
-    checkout_start: 13, //мб добавить
-    purchase_complete: 14, //мб добавить
+    add_to_cart: 11,
+    product_view: 12,
+    checkout_start: 13,
+    purchase_complete: 14,
     error: 15,
     login: 16,
     logout: 17,
@@ -26,8 +26,10 @@ const EVENT_TYPES = {
     download: 20,
     rate: 21,
     comment: 22,
-    like: 23, //мб добавить
+    like: 23,
     page_unload: 24,
+    send_feedback: 25,
+    buy_product: 26,
 };
 
 const generateSessionId = (): string => {
@@ -120,12 +122,13 @@ const sendAnalytics = async (
     eventId: number,
     eventData: Record<string, any>,
     user?: User | null,
-    useGeolocation: boolean = false
+    useGeolocation: boolean = false,
+    useUserAgent: boolean = false
 ) => {
     const session_id = getSessionId();
     const timestamp = new Date().toISOString();
     const totalDuration = getSessionDuration();
-    const user_agent = getUserAgent();
+    const user_agent = useUserAgent ? getUserAgent() : null;
 
     let geolocation = null;
     if (useGeolocation) {
@@ -270,23 +273,66 @@ export const useAnalytics = () => {
     };
 
     const handleHover = useCallback((event: MouseEvent) => {
-        const target = event.target as HTMLElement;
-        const elementId = target.id || target.className || target.tagName;
+        // const target = event.target as HTMLElement;
+        // const elementId = target.id || target.className || target.tagName;
 
-        if (elementId !== lastHoveredElement.current) {
-            lastHoveredElement.current = elementId;
-            sendAnalytics(EVENT_TYPES.hover, {
-                element_id: target.id || null,
-                element_tag: target.tagName,
-                element_class: target.className || null,
-            }, user);
-        }
+        // if (elementId !== lastHoveredElement.current) {
+        //     lastHoveredElement.current = elementId;
+        //     sendAnalytics(EVENT_TYPES.hover, {
+        //         element_id: target.id || null,
+        //         element_tag: target.tagName,
+        //         element_class: target.className || null,
+        //     }, user);
+        // }
+    }, [user]);
+
+    const handleAddToCart = useCallback((productId: string, quantity: number) => {
+        sendAnalytics(EVENT_TYPES.add_to_cart, {
+            product_id: productId,
+            quantity,
+        }, user);
+    }, [user]);
+
+    const handleProductView = useCallback((productId: string) => {
+        sendAnalytics(EVENT_TYPES.product_view, {
+            product_id: productId,
+        }, user);
+    }, [user]);
+
+    const handleCheckoutStart = useCallback(() => {
+        sendAnalytics(EVENT_TYPES.checkout_start, {}, user);
+    }, [user]);
+
+    const handlePurchaseComplete = useCallback((orderId: string, amount: number) => {
+        sendAnalytics(EVENT_TYPES.purchase_complete, {
+            order_id: orderId,
+            amount,
+        }, user);
+    }, [user]);
+
+    const handleLike = useCallback((contentId: string) => {
+        sendAnalytics(EVENT_TYPES.like, {
+            content_id: contentId,
+        }, user);
+    }, [user]);
+
+    const handleSendFeedback = useCallback((feedback: string) => {
+        sendAnalytics(EVENT_TYPES.send_feedback, {
+            feedback,
+        }, user);
+    }, [user]);
+
+    const handleBuyProduct = useCallback((productId: string, price: number) => {
+        sendAnalytics(EVENT_TYPES.buy_product, {
+            product_id: productId,
+            price,
+        }, user);
     }, [user]);
 
     useEffect(() => {
         const sessionId = getSessionId();
 
-        sendAnalytics(EVENT_TYPES.page_view, {}, user, true);
+        sendAnalytics(EVENT_TYPES.page_view, {}, user, true, true);
 
         const handleClick = (event: MouseEvent) => {
             const target = event.target as HTMLElement;
@@ -325,6 +371,9 @@ export const useAnalytics = () => {
             clearSession();
         };
 
+        window.addEventListener('error', handleError);
+        window.addEventListener('unhandledrejection', handleError);
+
         document.addEventListener('click', handleClick);
         document.addEventListener('scroll', handleScroll);
         document.addEventListener('mouseover', handleHover);
@@ -338,6 +387,9 @@ export const useAnalytics = () => {
         });
 
         return () => {
+            window.removeEventListener('error', handleError);
+            window.removeEventListener('unhandledrejection', handleError);
+
             document.removeEventListener('click', handleClick);
             document.removeEventListener('scroll', handleScroll);
             document.removeEventListener('mouseover', handleHover);
@@ -354,5 +406,16 @@ export const useAnalytics = () => {
                 clearTimeout(scrollThrottleRef.current);
             }
         };
-    }, [user, handleFormSubmit, handleVideoEvents, handleHover]);
+    }, [user, handleFormSubmit, handleVideoEvents, handleHover, handleError]);
+
+    return {
+        trackAuth,
+        handleAddToCart,
+        handleProductView,
+        handleCheckoutStart,
+        handlePurchaseComplete,
+        handleLike,
+        handleSendFeedback,
+        handleBuyProduct,
+    };
 };
