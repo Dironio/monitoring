@@ -599,23 +599,26 @@ class BehaviorDal {
     async getUserGeolocation(webId: number, interval: 'month' | 'week'): Promise<any> {
         const result = await pool.query(
             `
-            SELECT
-            geolocation->>'country' AS country,
-            geolocation->>'city' AS city,
+        SELECT
+            geolocation->'country' AS country,
+            geolocation->'city' AS city,
             COUNT(DISTINCT session_id) AS users
         FROM
             raw_events
         WHERE
             web_id = $1
             AND geolocation IS NOT NULL
-            AND timestamp >= NOW() - INTERVAL '1 ${interval}'
+            AND jsonb_typeof(geolocation) = 'object'
+            AND geolocation->'country' IS NOT NULL
+            AND geolocation->'city' IS NOT NULL
+            AND timestamp >= NOW() - INTERVAL '1 ' || '1 $2'
         GROUP BY
-            geolocation->>'country',
-            geolocation->>'city'
+            geolocation->'country',
+            geolocation->'city'
         ORDER BY
             users DESC;
-            `,
-            [webId]
+        `,
+            [webId, interval]
         );
         return result.rows;
     }

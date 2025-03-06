@@ -325,7 +325,7 @@ class EventDal {
                 web_id = $1
                 AND regexp_replace(regexp_replace(page_url, '^https?://[^/]+', ''), ':\d+', '') = regexp_replace(regexp_replace($2, '^https?://[^/]+', ''), ':\d+', '')
                 AND event_id = 2
-                AND timestamp >= NOW() - INTERVAL '30 days'
+                --AND timestamp >= NOW() - INTERVAL '30 days'
                 AND event_data::jsonb ? 'x'
                 AND event_data::jsonb ? 'y'
             GROUP BY event_data::jsonb->'x', event_data::jsonb->'y'
@@ -356,7 +356,7 @@ WITH scroll_events AS (
         AND regexp_replace(regexp_replace(page_url, '^https?://[^/]+', ''), ':\d+', '') = 
             regexp_replace(regexp_replace($2, '^https?://[^/]+', ''), ':\d+', '')
         AND event_id = 4
-        AND timestamp >= NOW() - INTERVAL '30 days'
+        --AND timestamp >= NOW() - INTERVAL '30 days'
         AND event_data::jsonb ? 'scrollTop'
         AND event_data::jsonb ? 'scrollPercentage'
         AND event_data::jsonb ? 'duration'
