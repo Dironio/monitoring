@@ -1,7 +1,7 @@
 import pool from "../pool";
 import bcrypt from "bcrypt";
-import { CreateUserDao, UpdateUserDao } from './@types/user.dao'
-import { User } from "../services/@types/user.dto";
+import { CreateUserDao, UpdateUserDao } from './types/user.dao'
+import { User } from "../services/types/user.dto";
 
 
 class UserDal {

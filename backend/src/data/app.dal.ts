@@ -1,6 +1,6 @@
 import pool from "../pool";
-import { Application } from "../services/@types/app.dto";
-import { CreateApplicationDao, UpdateApplicationDao } from './@types/app.dao';
+import { Application } from "../services/types/app.dto";
+import { CreateApplicationDao, UpdateApplicationDao } from './types/app.dao';
 
 
 class AppDal {

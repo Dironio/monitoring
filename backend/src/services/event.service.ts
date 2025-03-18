@@ -1,5 +1,5 @@
 import eventDal from '../data/event.dal';
-import { ClickHeatmapData, CreateEventDto, RawEvent, ScrollHeatmapData, ScrollHeatmapResponse, UpdateEventDto } from './@types/event.dto';
+import { ClickHeatmapData, CreateEventDto, RawEvent, ScrollHeatmapData, ScrollHeatmapResponse, UpdateEventDto } from './types/event.dto';
 
 class EventService {
     async create(dto: CreateEventDto): Promise<RawEvent> {

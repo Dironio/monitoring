@@ -1,5 +1,5 @@
 import userDal from '../data/user.dal';
-import { CreateUserDto, UpdateUserDto, User } from './@types/user.dto'
+import { CreateUserDto, UpdateUserDto, User } from './types/user.dto'
 
 
 class UserService {

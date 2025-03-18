@@ -3,8 +3,8 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { config } from "dotenv";
 import ApiError from "../middlewares/ApiError";
-import { JwtTokens, TokenDecoded, TokenPayload } from "./@types/tokenPayload";
-import { CreatedUser, CreateUserDto, LoginUserDto, UserRole } from "./@types/user.dto";
+import { JwtTokens, TokenDecoded, TokenPayload } from "./types/tokenPayload";
+import { CreatedUser, CreateUserDto, LoginUserDto, UserRole } from "./types/user.dto";
 
 config({ path: './.env' });
 

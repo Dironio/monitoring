@@ -1,6 +1,6 @@
 import pool from "../pool";
-import { CreateSiteDao, UpdateSiteDao } from "./@types/site.dao";
-import { WebSite } from "../services/@types/site.dto";
+import { CreateSiteDao, UpdateSiteDao } from "./types/site.dao";
+import { WebSite } from "../services/types/site.dto";
 
 class SiteDal {
   async create(dao: CreateSiteDao): Promise<WebSite> {

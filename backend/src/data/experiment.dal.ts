@@ -1,5 +1,5 @@
 import pool from "../pool";
-import { SurveySelector, SurveyVote } from "./@types/experiment.dao";
+import { SurveySelector, SurveyVote } from "./types/experiment.dao";
 import { parseUserAgent } from '../services/utils/userAgentExperiement.utils';
 
 

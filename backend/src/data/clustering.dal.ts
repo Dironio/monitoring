@@ -1,6 +1,6 @@
-import { TimeUnit } from "../services/@types/clustering.dto";
+import { TimeUnit } from "../services/types/clustering.dto";
 import pool from "../pool";
-import { DeviceMetrics, GeoMetrics, InteractionData, PageTransition, SequenceEvent, SessionMetrics, TemporalData, UserMetrics } from './@types/cluster.dao'
+import { DeviceMetrics, GeoMetrics, InteractionData, PageTransition, SequenceEvent, SessionMetrics, TemporalData, UserMetrics } from './types/cluster.dao'
 
 class ClusteringDal {
     getTimeFunction(timeUnit: keyof TimeUnit): string {

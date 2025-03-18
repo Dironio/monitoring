@@ -1,4 +1,4 @@
-import { CreateSiteDto, UpdateSiteDto, WebSite } from './@types/site.dto';
+import { CreateSiteDto, UpdateSiteDto, WebSite } from './types/site.dto';
 import siteDal from '../data/site.dal';
 
 class SiteService {

@@ -1,5 +1,5 @@
 import experimentDal from '../data/experiment.dal';
-import { SurveySelector, SurveyVote } from '../data/@types/experiment.dao';
+import { SurveySelector, SurveyVote } from '../data/types/experiment.dao';
 
 class ExperimentService {
     async getSurveysSelector(webId: number): Promise<SurveySelector[]> {

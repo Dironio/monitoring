@@ -417,7 +417,7 @@
 //     }
 // }
 
-import { TemporalResult, TimeUnit } from '../@types/clustering.dto'
+import { TemporalResult, TimeUnit } from '../types/clustering.dto'
 import moment from 'moment';
 
 class ClusteringUtility {

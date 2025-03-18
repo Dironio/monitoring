@@ -1,4 +1,4 @@
-import { Application, CreateApplicationDto, UpdateApplicationDto } from './@types/app.dto';
+import { Application, CreateApplicationDto, UpdateApplicationDto } from './types/app.dto';
 import appDal from '../data/app.dal';
 
 

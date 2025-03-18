@@ -1,6 +1,6 @@
 import pool from "../pool";
-import { RawEvent } from "../services/@types/event.dto";
-import { ClickHeatmapData, CreateEventDao, ScrollHeatmapData, UpdateEventDao } from './@types/event.dao'
+import { RawEvent } from "../services/types/event.dto";
+import { ClickHeatmapData, CreateEventDao, ScrollHeatmapData, UpdateEventDao } from './types/event.dao'
 
 
 class EventDal {

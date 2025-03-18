@@ -1,5 +1,5 @@
-import { TokenPayload } from '../services/@types/tokenPayload';
-import { UserRole } from '../services/@types/user.dto';
+import { TokenPayload } from '../services/types/tokenPayload';
+import { UserRole } from '../services/types/user.dto';
 import { NextFunction, Request, Response } from "express";
 import ApiError from "../middlewares/ApiError";
 
