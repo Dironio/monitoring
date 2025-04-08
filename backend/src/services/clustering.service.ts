@@ -2,7 +2,7 @@ import { ClusterResult, DeviceMetrics, GeoMetrics, PageTransition, SequenceAnaly
 import clusteringDal from '../data/clustering.dal';
 import clusteringUtility from './utils/clustering.utility'
 import * as clustering from 'density-clustering';
-import { SequenceEvent } from 'src/data/@types/cluster.dao';
+import { SequenceEvent } from '../data/types/cluster.dao';
 
 class ClusteringService {
     async getInteractionClusters(webId: number): Promise<ClusterResult> {
