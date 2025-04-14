@@ -140,7 +140,7 @@
 
 
 
-.heatmap {
+/* .heatmap {
     position: relative;
     width: 100%;
     height: 100vh;
@@ -256,10 +256,92 @@
 .heatmap__legend-label {
     font-size: 12px;
     color: #6B7280;
-}
+} */
 
 @keyframes spinner {
     to {
         transform: rotate(360deg);
     }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.heatmap {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #F9FAFB;
+}
+
+.heatmap__visualization {
+    position: absolute;
+    inset: 0;
+    pointer-events: none; /* Блокируем взаимодействие */
+    z-index: 2; /* Тепловая карта над iframe */
+}
+
+.heatmap__overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(128, 128, 128, 0.5); /* Серая накладка */
+    pointer-events: none; /* Блокируем взаимодействие */
+    z-index: 1; /* Накладка под тепловой картой, но над iframe */
+}
+
+.heatmap__iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    z-index: 0; /* iframe в самом низу */
+}
+
+.heatmap__controls {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 3; /* Кнопки управления над всем */
+    display: flex;
+    gap: 8px;
+}
+
+.generate-heatmap-btn,
+.toggle-heatmap-btn {
+    padding: 8px 12px;
+    background-color: #4F46E5;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.generate-heatmap-btn:disabled,
+.toggle-heatmap-btn:disabled {
+    background-color: #6B7280;
+    cursor: not-allowed;
 }

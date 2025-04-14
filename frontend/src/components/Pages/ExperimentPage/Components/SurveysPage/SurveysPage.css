@@ -1,8 +1,3 @@
-.surveys-page {
-    padding: 24px;
-    background-color: var(--background-color);
-}
-
 .surveys-page__title {
     font-size: 24px;
     font-weight: 600;
@@ -18,9 +13,9 @@
 }
 
 .surveys-page__card {
-    background: var(--card-background);
     border-radius: 8px;
     padding: 16px;
+    background-color: white;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -41,7 +36,7 @@
 
 /* Chart */
 .surveys-page__chart {
-    background: var(--card-background);
+    background-color: white;
     border-radius: 8px;
     padding: 16px;
     margin-bottom: 24px;
@@ -60,11 +55,12 @@
 }
 
 .surveys-page__table {
-    background: var(--card-background);
+    background-color: white;
     border-radius: 8px;
     padding: 16px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     overflow-x: auto;
+    margin-bottom: 20px;
 }
 
 .surveys-page__table-content {
@@ -95,7 +91,7 @@
     justify-content: center;
     align-items: center;
     min-height: 200px;
-    background: var(--card-background);
+    background-color: white;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
