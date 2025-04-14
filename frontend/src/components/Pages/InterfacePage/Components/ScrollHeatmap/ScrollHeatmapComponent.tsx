@@ -245,36 +245,51 @@
 
 
 
-import React, { useState, useRef, useEffect } from 'react';
-import { AlertCircle } from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useSiteContext } from '../../../../utils/SiteContext';
 import './ScrollHeatmap.css';
 
-interface ScrollDataPoint {
-    scroll_percentage: number;
+interface ScrollGroup {
+    percentageGroup: number;
+    unique_visits: number;
+    total_views: number;
     total_duration: number;
-    view_count: number;
     intensity: number;
 }
 
 interface HeatmapResponse {
-    points: ScrollDataPoint[];
+    groups: ScrollGroup[];
     maxDuration: number;
     totalDuration: number;
 }
 
 const ScrollHeatmap: React.FC = () => {
     const { selectedSite, selectedPage } = useSiteContext();
-    const [data, setData] = useState<HeatmapResponse | null>(null);
+    const [heatmapData, setHeatmapData] = useState<HeatmapResponse | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [debug, setDebug] = useState(false);
     const iframeRef = useRef<HTMLIFrameElement>(null);
-    const [iframeHeight, setIframeHeight] = useState(800);
+    const [overlayHeight, setOverlayHeight] = useState(600); // Default height
 
-    const fetchData = async () => {
+    // For testing purposes - remove in production
+    const [showTestData, setShowTestData] = useState(false);
+    const testData: HeatmapResponse = {
+        groups: [
+            { percentageGroup: 10, intensity: 0.1, total_duration: 5000, total_views: 5, unique_visits: 3 },
+            { percentageGroup: 20, intensity: 0.3, total_duration: 15000, total_views: 12, unique_visits: 8 },
+            { percentageGroup: 30, intensity: 0.5, total_duration: 25000, total_views: 18, unique_visits: 10 },
+            { percentageGroup: 40, intensity: 0.7, total_duration: 35000, total_views: 22, unique_visits: 14 },
+            { percentageGroup: 50, intensity: 0.9, total_duration: 45000, total_views: 28, unique_visits: 20 }
+        ],
+        maxDuration: 45000,
+        totalDuration: 125000
+    };
+
+    const fetchHeatmapData = async () => {
         if (!selectedSite || !selectedPage) {
-            setError('Select site and page');
+            setError('Пожалуйста, выберите сайт и страницу');
             return;
         }
 
@@ -282,136 +297,184 @@ const ScrollHeatmap: React.FC = () => {
             setLoading(true);
             setError(null);
 
-            const response = await axios.get<HeatmapResponse>(
-                `${process.env.REACT_APP_API_URL}/events/scroll-heatmap`,
-                {
-                    params: {
-                        web_id: selectedSite.value,
-                        page_url: selectedPage.value
-                    },
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-                    }
+            const url = `${process.env.REACT_APP_API_URL}/events/scroll-heatmap?web_id=${selectedSite.value}&page_url=${selectedPage.value}`;
+            const response = await axios.get<HeatmapResponse>(url, {
+                withCredentials: true,
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+                    'Content-Type': 'application/json'
                 }
-            );
+            });
 
-            setData(response.data);
+            if (response.data.groups && Array.isArray(response.data.groups)) {
+                console.log('API response data:', response.data);
+                setHeatmapData(response.data);
+            } else {
+                setError('Некорректный формат данных');
+            }
         } catch (err) {
-            setError('Failed to load data');
-            console.error(err);
+            console.error('Ошибка при получении данных:', err);
+            setError('Не удалось загрузить данные тепловой карты');
         } finally {
             setLoading(false);
         }
     };
 
-    useEffect(() => {
-        const handleLoad = () => {
-            if (iframeRef.current) {
+    const handleIframeLoad = useCallback(() => {
+        try {
+            const iframe = iframeRef.current;
+            if (!iframe) return;
+
+            // Safety timeout to ensure iframe is fully loaded
+            setTimeout(() => {
                 try {
-                    const doc = iframeRef.current.contentDocument;
-                    if (doc) {
-                        const height = Math.max(
-                            doc.body.scrollHeight,
-                            doc.documentElement.scrollHeight
-                        );
-                        setIframeHeight(height);
+                    if (iframe.contentDocument) {
+                        const height = iframe.contentDocument.body.scrollHeight || 600;
+                        console.log('Iframe content height:', height);
+                        setOverlayHeight(height);
+                    } else {
+                        // Fallback
+                        setOverlayHeight(600);
                     }
                 } catch (e) {
-                    console.warn("Can't access iframe document:", e);
-                    setIframeHeight(800);
+                    console.error('Cannot access iframe content:', e);
+                    setOverlayHeight(600);
                 }
-            }
-        };
-
-        const iframe = iframeRef.current;
-        if (iframe) {
-            iframe.addEventListener('load', handleLoad);
+            }, 500);
+        } catch (e) {
+            console.error('Error in iframe load handler:', e);
         }
-
-        return () => {
-            if (iframe) {
-                iframe.removeEventListener('load', handleLoad);
-            }
-        };
     }, []);
 
-    const renderHeatmap = () => {
-        if (!data || !data.points.length) return null;
-
-        return data.points.map((point, i) => {
-            const top = `${point.scroll_percentage}%`;
-            const height = '5%';
-            const opacity = Math.min(point.intensity * 2, 0.8);
-            const color = `rgba(255, 0, 0, ${opacity})`;
-
-            return (
-                <div
-                    key={i}
-                    className="heatmap-band"
-                    style={{
-                        position: 'absolute',
-                        top,
-                        height,
-                        left: 0,
-                        right: 0,
-                        backgroundColor: color,
-                        pointerEvents: 'none'
-                    }}
-                    title={`Scroll: ${point.scroll_percentage}-${point.scroll_percentage + 5}%
-Views: ${point.view_count}
-Duration: ${Math.round(point.total_duration / 1000)}s`}
-                />
-            );
-        });
+    const formatDuration = (ms: number): string => {
+        if (!ms || isNaN(ms)) return '0с';
+        const s = Math.floor(ms / 1000);
+        const m = Math.floor(s / 60);
+        return m > 0 ? `${m}м ${s % 60}с` : `${s}с`;
     };
 
+    const getColorByIntensity = (intensity: number) => {
+        // Make colors more vivid for better visibility
+        if (intensity < 0.33) {
+            return '#0000FF'; // Blue
+        } else if (intensity < 0.66) {
+            return '#00FF00'; // Green
+        } else {
+            return '#FF0000'; // Red
+        }
+    };
+
+    // For debugging - apply test data
+    const applyTestData = () => {
+        setHeatmapData(testData);
+        setShowTestData(true);
+    };
+
+    // Render data based on currentData
+    const dataToDisplay = showTestData ? testData : heatmapData;
+
     return (
-        <div className="scroll-heatmap-container">
+        <div className="heatmap-container">
             <div className="controls">
                 <button
-                    onClick={fetchData}
-                    disabled={loading}
-                    className="fetch-button"
+                    onClick={fetchHeatmapData}
+                    disabled={loading || !selectedSite || !selectedPage}
+                    className="build-button"
                 >
-                    {loading ? 'Loading...' : 'Generate Heatmap'}
+                    {loading ? 'Загрузка...' : 'Построить тепловую карту'}
+                </button>
+                <button
+                    onClick={applyTestData}
+                    className="build-button"
+                >
+                    Тестовые данные
+                </button>
+                <button
+                    onClick={() => setDebug(!debug)}
+                    className="debug-button"
+                >
+                    {debug ? 'Скрыть отладку' : 'Показать отладку'}
                 </button>
             </div>
 
-            {error && (
-                <div className="error">
-                    <AlertCircle size={16} />
-                    <span>{error}</span>
+            {error && <div className="error-message">{error}</div>}
+
+            {debug && (
+                <div className="debug-panel">
+                    <h4>Отладочная информация:</h4>
+                    <div>Высота оверлея: {overlayHeight}px</div>
+                    <div>Данные карты: {dataToDisplay ? `Загружены (${dataToDisplay.groups.length} групп)` : 'Не загружены'}</div>
+                    {dataToDisplay && (
+                        <pre>{JSON.stringify(dataToDisplay, null, 2)}</pre>
+                    )}
                 </div>
             )}
 
-            <div className="iframe-container">
-                <iframe
-                    ref={iframeRef}
-                    src={selectedPage?.value}
-                    style={{ height: `${iframeHeight}px` }}
-                    className="heatmap-iframe"
-                    sandbox="allow-same-origin"
-                />
-                <div className="heatmap-overlay">
-                    {renderHeatmap()}
-                </div>
-            </div>
+            <div className="heatmap-wrapper">
+                {selectedPage && (
+                    <iframe
+                        ref={iframeRef}
+                        src={selectedPage.value}
+                        className="page-frame"
+                        onLoad={handleIframeLoad}
+                        title="Page Preview"
+                    />
+                )}
 
-            {data && (
-                <div className="legend">
-                    <div className="legend-gradient">
-                        <div className="gradient-bar" />
-                        <div className="labels">
-                            <span>Low engagement</span>
-                            <span>High engagement</span>
+                {!selectedPage && (
+                    <div className="no-selection">
+                        Выберите сайт и страницу для построения тепловой карты
+                    </div>
+                )}
+
+                {dataToDisplay && dataToDisplay.groups && dataToDisplay.groups.length > 0 && (
+                    <div
+                        className="heatmap-overlay"
+                        style={{ height: `${overlayHeight}px` }}
+                    >
+                        {/* Explicitly styled bands for maximum visibility */}
+                        {dataToDisplay.groups
+                            .sort((a, b) => a.percentageGroup - b.percentageGroup)
+                            .map((group, i) => (
+                                <div
+                                    key={i}
+                                    className="heatmap-band"
+                                    style={{
+                                        top: `${group.percentageGroup}%`,
+                                        right: '0',
+                                        backgroundColor: getColorByIntensity(group.intensity),
+                                        height: '5%',
+                                        minHeight: '10px',
+                                        width: '100%',
+                                        position: 'absolute',
+                                        border: '1px solid rgba(0,0,0,0.2)',
+                                        opacity: 0.7, // Make slightly transparent to see overlay
+                                        zIndex: 11
+                                    }}
+                                    title={`Позиция: ${group.percentageGroup}–${group.percentageGroup + 5}%
+Время: ${formatDuration(group.total_duration)}
+Просмотры: ${group.total_views}
+Посетители: ${group.unique_visits}`}
+                                />
+                            ))}
+
+                        <div className="heatmap-legend">
+                            <div className="legend-gradient"></div>
+                            <div className="legend-labels">
+                                <span>Короткое</span>
+                                <span>Среднее</span>
+                                <span>Долгое</span>
+                            </div>
+                            {dataToDisplay.maxDuration && (
+                                <div className="legend-stats">
+                                    <span>Макс: {formatDuration(dataToDisplay.maxDuration)}</span>
+                                    <span>Всего: {formatDuration(dataToDisplay.totalDuration)}</span>
+                                </div>
+                            )}
                         </div>
                     </div>
-                    <div className="stats">
-                        <div>Max duration: {Math.round(data.maxDuration / 1000)}s</div>
-                        <div>Total duration: {Math.round(data.totalDuration / 1000)}s</div>
-                    </div>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
 };

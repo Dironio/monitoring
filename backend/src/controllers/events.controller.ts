@@ -148,11 +148,11 @@ class EventController {
         const pageUrl = String(req.query.page_url);
 
         if (!webId || !pageUrl) {
-            throw new Error('Missing required parameters');
+            return res.status(400).json({ error: 'Missing required parameters' });
         }
 
-        const heatmapData = await eventService.getScrollHeatmapData(webId, pageUrl);
-        return res.status(200).json(heatmapData);
+        const data = await eventService.getScrollHeatmap(webId, pageUrl);;
+        return res.status(200).json(data);
     }
 
     // @ControllerErrorHandler()

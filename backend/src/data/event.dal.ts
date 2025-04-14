@@ -1,6 +1,6 @@
 import pool from "../pool";
 import { RawEvent } from "../services/types/event.dto";
-import { ClickHeatmapData, CreateEventDao, ScrollHeatmapData, UpdateEventDao } from './types/event.dao'
+import { ClickHeatmapData, CreateEventDao, ScrollHeatmapData, ScrollHeatmapGroup, UpdateEventDao } from './types/event.dao'
 
 
 class EventDal {
@@ -391,11 +391,11 @@ class EventDal {
     //     total_duration,
     //     -- Композитная метрика интенсивности (50% времени, 50% охвата)
     //     (0.5 * (total_duration / NULLIF((SELECT SUM(total_duration) FROM position_stats), 0))) + 
-	// 	(0.5 * reach_ratio) AS intensity
+    // 	(0.5 * reach_ratio) AS intensity
     // FROM position_stats
     // ORDER BY percentage_group;
     //     `, [webId, pageUrl]);
-    
+
     //     return result.rows.map(row => ({
     //         percentageGroup: row.percentage_group,
     //         unique_visits: row.unique_visits,
@@ -407,45 +407,44 @@ class EventDal {
     // }
 
 
-    async getScrollHeatmapData(webId: number, pageUrl: string): Promise<any> {
+    async getScrollHeatmapData(webId: number, pageUrl: string): Promise<ScrollHeatmapGroup[]> {
         const result = await pool.query(`
-            WITH valid_scrolls AS (
+            WITH scroll_events AS (
                 SELECT
                     session_id,
-                    CAST(event_data->>'scrollPercentage' AS FLOAT) as scroll_percentage,
-                    CAST(REPLACE(event_data->>'duration', ' ', '') AS INTEGER) as duration
+                    FLOOR(CAST(event_data->>'scrollPercentage' AS FLOAT) / 5.0) * 5 AS percentage_group,
+                    CAST(REPLACE(event_data->>'duration', ' ', '') AS INTEGER) AS duration
                 FROM raw_events
                 WHERE
-                    web_id = $1 AND
-                    page_url = $2 AND
-                    event_id = 4 AND
-                    CAST(event_data->>'scrollPercentage' AS FLOAT) BETWEEN 0 AND 100 AND
-                    CAST(REPLACE(event_data->>'duration', ' ', '') AS INTEGER) >= 1000
+                    web_id = $1
+                    AND regexp_replace(page_url, '^https?://[^/]+', '') = regexp_replace($2, '^https?://[^/]+', '')
+                    AND event_id = 4
+                    AND event_data::jsonb ? 'scrollPercentage'
+                    AND event_data::jsonb ? 'duration'
+                    AND CAST(event_data->>'scrollPercentage' AS FLOAT) BETWEEN 0 AND 100
+                    AND CAST(REPLACE(event_data->>'duration', ' ', '') AS INTEGER) BETWEEN 100 AND 60000
             ),
-            grouped_data AS (
+            aggregated AS (
                 SELECT
-                    FLOOR(scroll_percentage / 5) * 5 as scroll_group,
-                    COUNT(*) as view_count,
-                    SUM(duration) as total_duration
-                FROM valid_scrolls
-                GROUP BY FLOOR(scroll_percentage / 5) * 5
+                    percentage_group,
+                    COUNT(DISTINCT session_id) AS unique_visits,
+                    COUNT(*) AS total_views,
+                    SUM(duration) AS total_duration
+                FROM scroll_events
+                GROUP BY percentage_group
             )
             SELECT
-                scroll_group as scroll_percentage,
+                percentage_group,
+                unique_visits,
+                total_views,
                 total_duration,
-                view_count,
-                total_duration / (SELECT MAX(total_duration) FROM grouped_data) as intensity
-            FROM grouped_data
-            ORDER BY scroll_group
+                total_duration * 1.0 / NULLIF((SELECT MAX(total_duration) FROM aggregated), 0) AS intensity
+            FROM aggregated
+            ORDER BY percentage_group;
         `, [webId, pageUrl]);
-    
-        return {
-            points: result.rows,
-            maxDuration: Math.max(...result.rows.map(r => r.total_duration), 0),
-            totalDuration: result.rows.reduce((sum, r) => sum + r.total_duration, 0)
-        };
-    }
 
+        return result.rows;
+    }
 
     async getPageHeatmap(webId: number, pageUrl: string): Promise<RawEvent[]> {
         const result = await pool.query(`

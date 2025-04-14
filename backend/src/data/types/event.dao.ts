@@ -77,3 +77,17 @@ export interface ScrollHeatmapData {
     duration: number;
     intensity: number;
 }
+
+export interface ScrollHeatmapGroup {
+    percentageGroup: number;
+    unique_visits: number;
+    total_views: number;
+    total_duration: number;
+    intensity: number;
+}
+
+export interface ScrollHeatmapResponse {
+    groups: ScrollHeatmapGroup[];
+    maxDuration: number;
+    totalDuration: number;
+}

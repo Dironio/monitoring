@@ -280,8 +280,8 @@ const HeatmapVisualization: React.FC<HeatmapVisualizationProps> = ({
             const maxY = Math.max(...data.map(p => p.eventData.y));
 
             const points = data.map(item => ({
-                x: Math.floor((item.eventData.x / maxX) * containerWidth),
-                y: Math.floor((item.eventData.y / maxY) * containerHeight),
+                x: Math.floor((item.eventData.x / 1920) * containerWidth),
+                y: Math.floor((item.eventData.y / 950) * containerHeight),
                 value: item.clickCount
             }));
 
@@ -306,13 +306,13 @@ const HeatmapVisualization: React.FC<HeatmapVisualizationProps> = ({
                 ref={containerRef}
                 className={`heatmap-canvas-container ${isVisible ? 'heatmap-canvas-container--visible' : ''}`}
             />
-            <div className={`heatmap-legend ${isVisible ? 'heatmap-legend--visible' : ''}`}>
+            {/* <div className={`heatmap-legend ${isVisible ? 'heatmap-legend--visible' : ''}`}>
                 <div className="legend-gradient" />
                 <div className="legend-labels">
                     <span>Меньше</span>
                     <span>Больше</span>
                 </div>
-            </div>
+            </div> */}
         </>
     );
 };
