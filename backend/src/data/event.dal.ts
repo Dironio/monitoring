@@ -341,59 +341,109 @@ class EventDal {
         }));
     }
 
-    async getScrollHeatmapData(webId: number, pageUrl: string): Promise<ScrollHeatmapData[]> {
-        const result = await pool.query(`
-WITH scroll_events AS (
-    SELECT
-        session_id,
-        FLOOR(CAST(event_data->>'scrollPercentage' AS FLOAT) / 5) * 5 as percentage_group,
-        -- Удаляем пробелы и преобразуем в число
-        CAST(REPLACE(event_data->>'duration', ' ', '') AS INTEGER) as event_duration,
-        timestamp
-    FROM raw_events
-    WHERE
-        web_id = $1
-        AND regexp_replace(regexp_replace(page_url, '^https?://[^/]+', ''), ':\d+', '') = 
-            regexp_replace(regexp_replace($2, '^https?://[^/]+', ''), ':\d+', '')
-        AND event_id = 4
-        --AND timestamp >= NOW() - INTERVAL '30 days'
-        AND event_data::jsonb ? 'scrollTop'
-        AND event_data::jsonb ? 'scrollPercentage'
-        AND event_data::jsonb ? 'duration'
-),
-grouped_scrolls AS (
-    SELECT
-        percentage_group,
-        COUNT(DISTINCT session_id) as unique_visits,
-        COUNT(*) as total_views,
-        SUM(event_duration) as viewing_duration
-    FROM scroll_events
-    WHERE 
-        percentage_group IS NOT NULL
-        AND event_duration > 0
-        AND event_duration < 300000 -- ограничение в 5 минут
-    GROUP BY percentage_group
-    ORDER BY percentage_group
-)
-SELECT
-    percentage_group,
-    unique_visits,
-    total_views,
-    viewing_duration as total_duration,
-    CASE 
-        WHEN (SELECT MAX(viewing_duration) FROM grouped_scrolls) > 0 
-        THEN viewing_duration::float / (SELECT MAX(viewing_duration) FROM grouped_scrolls)
-        ELSE 0 
-    END as intensity
-FROM grouped_scrolls
-ORDER BY percentage_group;
-        `, [webId, pageUrl]);
+    // async getScrollHeatmapData(webId: number, pageUrl: string): Promise<any[]> {
+    //     const result = await pool.query(`
+    // WITH scroll_events AS (
+    //     SELECT
+    //         session_id,
+    //         ROUND(CAST(event_data->>'scrollPercentage' AS FLOAT)) as percentage_group,
+    //         CAST(REPLACE(event_data->>'duration', ' ', '') AS INTEGER) as event_duration,
+    //         timestamp
+    //     FROM raw_events
+    //     WHERE
+    //         web_id = $1
+    //         AND regexp_replace(regexp_replace(page_url, '^https?://[^/]+', ''), ':\d+', '') = 
+    //             regexp_replace(regexp_replace($2, '^https?://[^/]+', ''), ':\d+', '')
+    //         AND event_id = 4
+    //         AND event_data::jsonb ? 'scrollPercentage'
+    //         AND event_data::jsonb ? 'duration'
+    //         AND CAST(event_data->>'scrollPercentage' AS FLOAT) BETWEEN 0 AND 100
+    //         AND CAST(REPLACE(event_data->>'duration', ' ', '') AS INTEGER) BETWEEN 100 AND 60000
+    // ),
+    // session_scrolls AS (
+    //     SELECT
+    //         session_id,
+    //         percentage_group, -- Среднее время на позицию для сессии
+    //         AVG(event_duration) as avg_duration, -- Максимальный процент скролла в сессии
+    //         MAX(percentage_group) OVER (PARTITION BY session_id) as max_scroll
+    //     FROM scroll_events
+    //     GROUP BY session_id, percentage_group
+    // ),
+    // position_stats AS (
+    //     SELECT
+    //         percentage_group,
+    //         COUNT(DISTINCT session_id) as unique_visits,
+    //         COUNT(*) as total_views,
+    //         SUM(avg_duration) as total_duration,
+    //         COUNT(DISTINCT session_id)::float / 
+    //         (SELECT COUNT(DISTINCT session_id) FROM scroll_events) as reach_ratio,
+    //         AVG(avg_duration) as avg_duration
+    //     FROM session_scrolls
+    //     WHERE 
+    //         percentage_group <= max_scroll
+    //     GROUP BY percentage_group
+    //     ORDER BY percentage_group
+    // )
+    // SELECT
+    //     percentage_group,
+    //     unique_visits,
+    //     total_views,
+    //     total_duration,
+    //     -- Композитная метрика интенсивности (50% времени, 50% охвата)
+    //     (0.5 * (total_duration / NULLIF((SELECT SUM(total_duration) FROM position_stats), 0))) + 
+	// 	(0.5 * reach_ratio) AS intensity
+    // FROM position_stats
+    // ORDER BY percentage_group;
+    //     `, [webId, pageUrl]);
+    
+    //     return result.rows.map(row => ({
+    //         percentageGroup: row.percentage_group,
+    //         unique_visits: row.unique_visits,
+    //         total_views: row.total_views,
+    //         total_duration: row.total_duration,
+    //         intensity: row.intensity
+    //         // duration: row.avg_duration // Add this missing property
+    //     }));
+    // }
 
-        return result.rows.map(row => ({
-            percentageGroup: row.percentage_group,
-            duration: row.total_duration,
-            intensity: row.intensity
-        }));
+
+    async getScrollHeatmapData(webId: number, pageUrl: string): Promise<any> {
+        const result = await pool.query(`
+            WITH valid_scrolls AS (
+                SELECT
+                    session_id,
+                    CAST(event_data->>'scrollPercentage' AS FLOAT) as scroll_percentage,
+                    CAST(REPLACE(event_data->>'duration', ' ', '') AS INTEGER) as duration
+                FROM raw_events
+                WHERE
+                    web_id = $1 AND
+                    page_url = $2 AND
+                    event_id = 4 AND
+                    CAST(event_data->>'scrollPercentage' AS FLOAT) BETWEEN 0 AND 100 AND
+                    CAST(REPLACE(event_data->>'duration', ' ', '') AS INTEGER) >= 1000
+            ),
+            grouped_data AS (
+                SELECT
+                    FLOOR(scroll_percentage / 5) * 5 as scroll_group,
+                    COUNT(*) as view_count,
+                    SUM(duration) as total_duration
+                FROM valid_scrolls
+                GROUP BY FLOOR(scroll_percentage / 5) * 5
+            )
+            SELECT
+                scroll_group as scroll_percentage,
+                total_duration,
+                view_count,
+                total_duration / (SELECT MAX(total_duration) FROM grouped_data) as intensity
+            FROM grouped_data
+            ORDER BY scroll_group
+        `, [webId, pageUrl]);
+    
+        return {
+            points: result.rows,
+            maxDuration: Math.max(...result.rows.map(r => r.total_duration), 0),
+            totalDuration: result.rows.reduce((sum, r) => sum + r.total_duration, 0)
+        };
     }
 
 

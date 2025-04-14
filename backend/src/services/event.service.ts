@@ -112,10 +112,24 @@ class EventService {
         return await eventDal.getClickHeatmapData(webId, pageUrl);
     }
 
+    // async getScrollHeatmapData(webId: number, pageUrl: string): Promise<ScrollHeatmapResponse> {
+    //     const groups = await eventDal.getScrollHeatmapData(webId, pageUrl);
+    //     const maxDuration = Math.max(...groups.map(g => g.duration));
+    //     const totalDuration = groups.reduce((sum, g) => sum + g.duration, 0);
+
+    //     return {
+    //         groups,
+    //         maxDuration,
+    //         totalDuration
+    //     };
+    // }
+
     async getScrollHeatmapData(webId: number, pageUrl: string): Promise<ScrollHeatmapResponse> {
         const groups = await eventDal.getScrollHeatmapData(webId, pageUrl);
-        const maxDuration = Math.max(...groups.map(g => g.duration));
-        const totalDuration = groups.reduce((sum, g) => sum + g.duration, 0);
+
+        // Explicitly type the callback parameters <sup data-citation="1" className="inline select-none [&>a]:rounded-2xl [&>a]:border [&>a]:px-1.5 [&>a]:py-0.5 [&>a]:transition-colors shadow [&>a]:bg-ds-bg-subtle [&>a]:text-xs [&>svg]:w-4 [&>svg]:h-4 relative -top-[2px] citation-shimmer"><a href="https://stackoverflow.com/questions/43064221/typescript-ts7006-parameter-xxx-implicitly-has-an-any-type" target="_blank" title="Typescript: TS7006: Parameter xxx implicitly has an any type ...">1</a></sup><sup data-citation="5" className="inline select-none [&>a]:rounded-2xl [&>a]:border [&>a]:px-1.5 [&>a]:py-0.5 [&>a]:transition-colors shadow [&>a]:bg-ds-bg-subtle [&>a]:text-xs [&>svg]:w-4 [&>svg]:h-4 relative -top-[2px] citation-shimmer"><a href="https://medium.com/@turingvang/error-ts7044-parameter-a-implicitly-has-an-any-type-612210e2c9ec" target="_blank" title="error TS7044: Parameter a implicitly has an any type | by ...">5</a></sup>
+        const maxDuration = Math.max(...groups.map((g: { duration: number }) => g.duration));
+        const totalDuration = groups.reduce((sum: number, g: { duration: number }) => sum + g.duration, 0);
 
         return {
             groups,
@@ -123,6 +137,8 @@ class EventService {
             totalDuration
         };
     }
+
+
 
     async getPageHeatmap(webId: number, pageUrl: string): Promise<RawEvent[]> {
         return await eventDal.getPageHeatmap(webId, pageUrl);

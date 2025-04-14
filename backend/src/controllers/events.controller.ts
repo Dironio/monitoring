@@ -155,6 +155,29 @@ class EventController {
         return res.status(200).json(heatmapData);
     }
 
+    // @ControllerErrorHandler()
+    // async const getScrollHeatmap = async (req: Request, res: Response) => {
+    //     const { web_id, page_url } = req.query;
+    //     if (!web_id || !page_url) {
+    //         return res.status(400).json({ error: 'Missing web_id or page_url' });
+    //     }
+
+    //     const data = await eventService.getScrollHeatmapData(
+    //         Number(web_id),
+    //         String(page_url)
+    //     );
+
+    //     return res.status(200).json({
+    //             points: data,
+    //             maxDuration: Math.max(...data.map(d => d.total_duration),
+    //                 totalDuration: data.reduce((sum, d) => sum + d.total_duration, 0)
+    //             });
+    // };
+
+
+
+
+
     @ControllerErrorHandler()
     async getPageHeatmap(req: Request, res: Response, next: NextFunction): Promise<Response> {
         const webId = Number(req.query.web_id);
