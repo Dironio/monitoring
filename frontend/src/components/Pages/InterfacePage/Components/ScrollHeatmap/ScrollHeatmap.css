@@ -238,3 +238,121 @@
 
 
 
+.page-container-wrapper {
+    position: relative;
+  }
+  
+  .page-container {
+    position: relative;
+  }
+  
+  .page-container__iframe {
+    width: 100%;
+    height: 100vh;
+    border: none;
+  }
+  
+  .page-container__iframe--disabled {
+    pointer-events: none;
+    opacity: 0.8;
+    filter: grayscale(0.5);
+  }
+  
+  .heatmap-canvas-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+  }
+  
+  .heatmap-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    z-index: 9;
+  }
+  
+  .heatmap-overlay--visible {
+    background: rgba(0, 0, 0, 0.05);
+  }
+  
+  .heatmap-legend {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: none;
+    z-index: 20;
+  }
+  
+  .heatmap-legend--visible {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .legend-gradient {
+    width: 120px;
+    height: 10px;
+    background: linear-gradient(to right, blue, cyan, lime, yellow, red);
+    border-radius: 4px;
+  }
+  
+  .legend-labels {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 12px;
+    color: #444;
+  }
+
+
+
+  
+
+
+
+
+
+
+
+
+  .scroll-heatmap-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.controls {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 8px;
+}
+
+.iframe-container {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.heatmap-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+}
+
+input[type="range"] {
+    width: 150px;
+}
+  

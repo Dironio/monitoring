@@ -407,41 +407,57 @@ class EventDal {
     // }
 
 
-    async getScrollHeatmapData(webId: number, pageUrl: string): Promise<ScrollHeatmapGroup[]> {
+    // async getScrollHeatmapData(webId: number, pageUrl: string): Promise<ScrollHeatmapGroup[]> {
+    //     const result = await pool.query(`
+    //         WITH scroll_events AS (
+    //             SELECT
+    //                 session_id,
+    //                 FLOOR(CAST(event_data->>'scrollPercentage' AS FLOAT) / 5.0) * 5 AS percentage_group,
+    //                 CAST(REPLACE(event_data->>'duration', ' ', '') AS INTEGER) AS duration
+    //             FROM raw_events
+    //             WHERE
+    //                 web_id = $1
+    //                 AND regexp_replace(page_url, '^https?://[^/]+', '') = regexp_replace($2, '^https?://[^/]+', '')
+    //                 AND event_id = 4
+    //                 AND event_data::jsonb ? 'scrollPercentage'
+    //                 AND event_data::jsonb ? 'duration'
+    //                 AND CAST(event_data->>'scrollPercentage' AS FLOAT) BETWEEN 0 AND 100
+    //                 AND CAST(REPLACE(event_data->>'duration', ' ', '') AS INTEGER) BETWEEN 100 AND 60000
+    //         ),
+    //         aggregated AS (
+    //             SELECT
+    //                 percentage_group,
+    //                 COUNT(DISTINCT session_id) AS unique_visits,
+    //                 COUNT(*) AS total_views,
+    //                 SUM(duration) AS total_duration
+    //             FROM scroll_events
+    //             GROUP BY percentage_group
+    //         )
+    //         SELECT
+    //             percentage_group,
+    //             unique_visits,
+    //             total_views,
+    //             total_duration,
+    //             total_duration * 1.0 / NULLIF((SELECT MAX(total_duration) FROM aggregated), 0) AS intensity
+    //         FROM aggregated
+    //         ORDER BY percentage_group;
+    //     `, [webId, pageUrl]);
+
+    //     return result.rows;
+    // }
+
+    async getScrollHeatmap(web_id: number, page_url: string): Promise<any[]> {
         const result = await pool.query(`
-            WITH scroll_events AS (
-                SELECT
-                    session_id,
-                    FLOOR(CAST(event_data->>'scrollPercentage' AS FLOAT) / 5.0) * 5 AS percentage_group,
-                    CAST(REPLACE(event_data->>'duration', ' ', '') AS INTEGER) AS duration
-                FROM raw_events
-                WHERE
-                    web_id = $1
-                    AND regexp_replace(page_url, '^https?://[^/]+', '') = regexp_replace($2, '^https?://[^/]+', '')
-                    AND event_id = 4
-                    AND event_data::jsonb ? 'scrollPercentage'
-                    AND event_data::jsonb ? 'duration'
-                    AND CAST(event_data->>'scrollPercentage' AS FLOAT) BETWEEN 0 AND 100
-                    AND CAST(REPLACE(event_data->>'duration', ' ', '') AS INTEGER) BETWEEN 100 AND 60000
-            ),
-            aggregated AS (
-                SELECT
-                    percentage_group,
-                    COUNT(DISTINCT session_id) AS unique_visits,
-                    COUNT(*) AS total_views,
-                    SUM(duration) AS total_duration
-                FROM scroll_events
-                GROUP BY percentage_group
-            )
-            SELECT
-                percentage_group,
-                unique_visits,
-                total_views,
-                total_duration,
-                total_duration * 1.0 / NULLIF((SELECT MAX(total_duration) FROM aggregated), 0) AS intensity
-            FROM aggregated
-            ORDER BY percentage_group;
-        `, [webId, pageUrl]);
+SELECT 
+    (event_data->>'scrollTop')::float AS scroll_top,
+    (event_data->>'scrollPercentage')::float AS scroll_percentage
+FROM raw_events
+WHERE 
+    event_id = 4
+	AND regexp_replace(page_url, '^https?://[^/]+', '') = regexp_replace($1, '^https?://[^/]+', '')
+    AND web_id = $2
+    AND (event_data->>'scrollTop') IS NOT null
+        `, [page_url, web_id]);
 
         return result.rows;
     }

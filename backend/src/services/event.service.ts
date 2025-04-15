@@ -125,19 +125,22 @@ class EventService {
     //     };
     // }
 
-    async getScrollHeatmap(webId: number, pageUrl: string): Promise<ScrollHeatmapResponse> {
-        const groups = await eventDal.getScrollHeatmapData(webId, pageUrl);
-    
-        const maxDuration = groups.length ? Math.max(...groups.map(g => g.total_duration)) : 0;
-        const totalDuration = groups.reduce((sum, g) => sum + g.total_duration, 0);
-    
-        return {
-            groups,
-            maxDuration,
-            totalDuration
-        };
-    }
+    // async getScrollHeatmap(webId: number, pageUrl: string): Promise<ScrollHeatmapResponse> {
+    //     const groups = await eventDal.getScrollHeatmapData(webId, pageUrl);
 
+    //     const maxDuration = groups.length ? Math.max(...groups.map(g => g.total_duration)) : 0;
+    //     const totalDuration = groups.reduce((sum, g) => sum + g.total_duration, 0);
+
+    //     return {
+    //         groups,
+    //         maxDuration,
+    //         totalDuration
+    //     };
+    // }
+
+    async getScrollHeatmap(web_id: number, page_url: string): Promise<any[]> {
+        return await eventDal.getScrollHeatmap(web_id, page_url);
+    }
 
 
     async getPageHeatmap(webId: number, pageUrl: string): Promise<RawEvent[]> {

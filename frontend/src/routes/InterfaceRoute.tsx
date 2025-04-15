@@ -3,7 +3,8 @@ import { User } from "../models/user.model";
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
 import InterfacePage from "../components/Pages/InterfacePage/InterfacePage";
 import HeatmapPage from "../components/Pages/InterfacePage/Components/ClickHeatmap/HeatmapPage";
-import ScrollHeatmap from "../components/Pages/InterfacePage/Components/ScrollHeatmap/ScrollHeatmapComponent";
+import ScrollHeatmap from "../components/Pages/InterfacePage/Components/ScrollHeatmap/ScrollHeatmapPage";
+// import ScrollHeatmap from "../components/Pages/InterfacePage/Components/ScrollHeatmap/ScrollHeatmapComponent";
 
 interface InterfaceRouterProps {
     user: User | null;

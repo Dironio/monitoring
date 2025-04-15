@@ -306,13 +306,13 @@ const HeatmapVisualization: React.FC<HeatmapVisualizationProps> = ({
                 ref={containerRef}
                 className={`heatmap-canvas-container ${isVisible ? 'heatmap-canvas-container--visible' : ''}`}
             />
-            {/* <div className={`heatmap-legend ${isVisible ? 'heatmap-legend--visible' : ''}`}>
+            <div className={`heatmap-legend ${isVisible ? 'heatmap-legend--visible' : ''}`}>
                 <div className="legend-gradient" />
                 <div className="legend-labels">
                     <span>Меньше</span>
                     <span>Больше</span>
                 </div>
-            </div> */}
+            </div>
         </>
     );
 };

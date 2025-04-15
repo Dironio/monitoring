@@ -142,6 +142,18 @@ class EventController {
         return res.status(200).json(formattedData);
     }
 
+
+    // async getScrollHeatmap(req: Request, res: Response, next: NextFunction): Promise<Response> {
+    //     const webId = Number(req.query.web_id);
+    //     const pageUrl = String(req.query.page_url);
+
+    //     if (!webId || !pageUrl) {
+    //         return res.status(400).json({ error: 'Missing required parameters' });
+    //     }
+
+    //     const data = await eventService.getScrollHeatmap(webId, pageUrl);;
+    //     return res.status(200).json(data);
+    // }
     @ControllerErrorHandler()
     async getScrollHeatmap(req: Request, res: Response, next: NextFunction): Promise<Response> {
         const webId = Number(req.query.web_id);
@@ -151,8 +163,8 @@ class EventController {
             return res.status(400).json({ error: 'Missing required parameters' });
         }
 
-        const data = await eventService.getScrollHeatmap(webId, pageUrl);;
-        return res.status(200).json(data);
+        const result = await eventService.getScrollHeatmap(webId, pageUrl);
+        return res.json(result);
     }
 
     // @ControllerErrorHandler()
