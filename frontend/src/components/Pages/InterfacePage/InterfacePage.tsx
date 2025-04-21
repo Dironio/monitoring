@@ -50,7 +50,7 @@ const InterfacePage: React.FC<InterfacePageProps> = ({ user, loading }) => {
             label: 'Карта скроллов'
         },
         {
-            path: 'hype-elements',
+            path: 'interaction-analytics',
             label: 'Популярные элементы'
         },
         // { path: 'nav-road', label: 'Навигационные пути' }

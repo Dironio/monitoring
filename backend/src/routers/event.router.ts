@@ -5,6 +5,7 @@ import { checkRole } from "../middlewares/check.role";
 import clusteringRouter from './clustering.router';
 import experimentRouter from './experiment.router';
 import behaviorRouter from './behavior.router';
+import interfaceRouter from "./interface.router";
 
 const eventRouter: Router = Router();
 
@@ -26,6 +27,12 @@ eventRouter.get('/pages', authCheck, eventController.getUniquePages);
 eventRouter.get('/click-heatmap', authCheck, eventController.getClickHeatmap);
 eventRouter.get('/scroll-heatmap', authCheck, eventController.getScrollHeatmap);
 eventRouter.get('/page-heatmap', authCheck, eventController.getPageHeatmap);
+
+
+eventRouter.use('/interface', interfaceRouter);
+
+
+
 
 
 eventRouter.get('/history/sessions', authCheck, eventController.getHistorySessions);

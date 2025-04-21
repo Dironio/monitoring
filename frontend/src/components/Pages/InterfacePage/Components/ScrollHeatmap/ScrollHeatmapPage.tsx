@@ -38,7 +38,6 @@ const ScrollHeatmap: React.FC = () => {
 
             const rawData = response.data;
 
-            // Grouping into 100px buckets
             const bucketSize = 10; // Было 100
             const bucketMap = new Map<number, number>();
             rawData.forEach(({ scroll_top }) => {
