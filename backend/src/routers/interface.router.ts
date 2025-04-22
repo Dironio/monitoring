@@ -4,8 +4,13 @@ import InterfaceController from '../controllers/interface.controller';
 
 const interfaceRouter = Router();
 
+// interfaceRouter.get('/interactions', authCheck, InterfaceController.getInteractions);
+// interfaceRouter.get('/scroll', authCheck, InterfaceController.getScrollData);
+// interfaceRouter.get('/element-stats', authCheck, InterfaceController.getElementStats);
+
+
 interfaceRouter.get('/interactions', authCheck, InterfaceController.getInteractions);
-interfaceRouter.get('/scroll', authCheck, InterfaceController.getScrollData);
 interfaceRouter.get('/element-stats', authCheck, InterfaceController.getElementStats);
+interfaceRouter.get('/heatmap', authCheck, InterfaceController.getHeatmapData);
 
 export default interfaceRouter;

@@ -1,0 +1,25 @@
+.analytics-container {
+    padding: 20px;
+    background: #f0f2f5;
+    min-height: 100vh;
+  }
+  
+  .ant-card {
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  }
+  
+  .ant-card-head-title {
+    font-weight: 500;
+  }
+  
+  .ant-table {
+    background: #fff;
+    border-radius: 8px;
+  }
+  
+  .ant-tag {
+    margin-right: 4px;
+    margin-bottom: 4px;
+  }
