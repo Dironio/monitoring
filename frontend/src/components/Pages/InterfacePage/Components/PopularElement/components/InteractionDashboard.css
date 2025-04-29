@@ -1,0 +1,31 @@
+.dashboard-container {
+    padding: 20px;
+  }
+  
+  .tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .heatmap-container {
+    position: relative;
+    height: 500px;
+    border: 1px solid #f0f0f0;
+    margin-bottom: 24px;
+  }
+  
+  .heatmap-tooltip {
+    background: #fff;
+    padding: 8px;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .ant-progress-text {
+    font-size: 12px;
+  }
+  
+  .ant-tabs-tabpane {
+    padding: 0 16px;
+  }

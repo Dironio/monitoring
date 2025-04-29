@@ -4,7 +4,8 @@ import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
 import InterfacePage from "../components/Pages/InterfacePage/InterfacePage";
 import HeatmapPage from "../components/Pages/InterfacePage/Components/ClickHeatmap/HeatmapPage";
 import ScrollHeatmap from "../components/Pages/InterfacePage/Components/ScrollHeatmap/ScrollHeatmapPage";
-import InteractionAnalytics from "../components/Pages/InterfacePage/Components/PopularElement/PopularElement";
+import InteractionDashboard from "../components/Pages/InterfacePage/Components/PopularElement/components/InteractionDashboard";
+// import InteractionAnalytics from "../components/Pages/InterfacePage/Components/PopularElement/PopularElement";
 // import ScrollHeatmap from "../components/Pages/InterfacePage/Components/ScrollHeatmap/ScrollHeatmapComponent";
 
 interface InterfaceRouterProps {
@@ -28,9 +29,10 @@ const InterfaceRouter: React.FC<InterfaceRouterProps> = ({ user, loading }) => {
             <Route path="heatmap-scroll" element={<ScrollHeatmap
             //  user={user} loading={loading} 
             />} />
-            <Route path="interaction-analytics" element={<InteractionAnalytics
-            //  user={user} loading={loading} 
-            />} />
+            <Route path="interaction-analytics" element={<InteractionDashboard />
+                //     <InteractionAnalytics
+                // />} />
+            } />
         </Route>
     )
 }

@@ -4,6 +4,7 @@
     "private": true,
     "dependencies": {
         "-": "^0.0.1",
+        "@ant-design/plots": "^2.3.3",
         "@hookform/resolvers": "^3.9.1",
         "@hotjar/browser": "^1.0.9",
         "@nivo/core": "^0.88.0",

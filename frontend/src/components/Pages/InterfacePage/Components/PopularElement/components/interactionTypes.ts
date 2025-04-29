@@ -1,28 +1,5 @@
 export type TimeRange = '24h' | '7d' | '30d';
 
-export interface InteractionData {
-    x: number;
-    y: number;
-    duration: number;
-    element_type: string;
-    element_text: string;
-    timestamp: string;
-    session_id: string;
-}
-
-export interface ScrollData {
-    scroll_percentage: number;
-    timestamp: string;
-    session_id: string;
-}
-
-export interface ElementStats {
-    type: string;
-    count: number;
-    avg_duration: number;
-    engagement: number;
-}
-
 export interface InteractionEvent {
     x: number;
     y: number;
@@ -31,46 +8,6 @@ export interface InteractionEvent {
     element_text: string;
     timestamp: string;
     session_id: string;
-}
-
-export interface ElementStat {
-    type: string;
-    count: number;
-    avg_duration: number;
-    engagement: number;
-}
-
-export interface HeatmapCell {
-    x: number;
-    y: number;
-    count: number;
-    elements: string[];
-    avg_duration: number;
-}
-
-
-
-
-
-
-
-
-
-
-export interface DetailedInteraction {
-    x: number;
-    y: number;
-    duration: number;
-    element_type: string;
-    element_text: string;
-    element_classes: string[];
-    timestamp: string;
-    session_id: string;
-    os: string;
-    browser: string;
-    platform: string;
-    country: string;
-    city: string;
 }
 
 export interface ElementStat {
@@ -116,19 +53,15 @@ export interface ClickDetails {
     time_distribution: TimePoint[];
 }
 
-
-
-
-
-
-
-
+export interface TimePoint {
+    time: string;
+    count: number;
+}
 
 export interface ElementGroup {
     type: string;
     count: number;
     classes: string[];
-    percentage: number;
 }
 
 export interface DeviceGroup {
@@ -142,17 +75,3 @@ export interface LocationGroup {
     count: number;
     percentage: number;
 }
-
-export interface TimePoint {
-    time: string;
-    count: number;
-    normalized: number; // 0-100 для удобства отображения
-}
-
-
-
-
-
-
-
-
