@@ -151,7 +151,13 @@ export interface TimePoint {
 
 
 
-
+export interface SessionInfo {
+    os: string;
+    browser: string;
+    platform: string;
+    country: string;
+    city: string;
+}
 
 
 

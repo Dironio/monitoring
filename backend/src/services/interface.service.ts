@@ -1,5 +1,5 @@
 import interfaceDal from '../data/interface.dal';
-import { ClickDetails, DetailedInteraction, DeviceGroup, ElementDetails, ElementGroup, ElementStat, HeatmapCell, LocationGroup, TimePoint, TimeRange } from './types/interface.dto';
+import { ClickDetails, DetailedInteraction, DeviceGroup, ElementDetails, ElementGroup, ElementStat, HeatmapCell, LocationGroup, SessionInfo, TimePoint, TimeRange } from './types/interface.dto';
 
 // class InterfaceService {
 //     async getInteractions(
@@ -55,7 +55,8 @@ class InterfaceService {
     pageUrl: string,
     range: TimeRange
   ): Promise<DetailedInteraction[]> {
-    return interfaceDal.getInteractions(webId, pageUrl, range);
+    const interactions = await interfaceDal.getInteractions(webId, pageUrl, range);
+    return this.enrichWithSessionInfo(interactions);
   }
 
   async getElementStats(
@@ -80,9 +81,9 @@ class InterfaceService {
       acc[type].count += 1;
       acc[type].totalDuration += event.duration;
 
-      if (event.element_classes) {
-        event.element_classes.forEach(cls => acc[type].classes.add(cls));
-      }
+      // Безопасное получение классов
+      const classes = this.safeGetClasses(event.element_classes);
+      classes.forEach(cls => acc[type].classes.add(cls));
 
       if (event.browser && event.os) {
         acc[type].devices.add(`${event.browser} (${event.os})`);
@@ -129,21 +130,72 @@ class InterfaceService {
     range: TimeRange,
     elementType: string
   ): Promise<ElementDetails> {
+    // Проверка параметров
+    if (!elementType || typeof elementType !== 'string') {
+      throw new Error('Element type must be a valid string');
+    }
+
+    // Логирование для отладки
+    console.log(`Fetching details for element: ${elementType}, page: ${pageUrl}, range: ${range}`);
+
     const interactions = await this.getInteractions(webId, pageUrl, range);
-    const filtered = interactions.filter(i => i.element_type === elementType);
+    const filtered = interactions.filter(i =>
+      i.element_type?.toLowerCase() === elementType.toLowerCase()
+    );
+
+    // Создаем пустой результат с правильной структурой
+    const emptyResult: ElementDetails = {
+      type: elementType,
+      total_interactions: 0,
+      avg_duration: 0,
+      classes: [],
+      devices: [],
+      locations: [],
+      time_distribution: Array(24).fill(0).map((_, i) => ({
+        time: `${i}:00`,
+        count: 0,
+        normalized: 0
+      }))
+    };
 
     if (filtered.length === 0) {
-      throw new Error('Element type not found');
+      return emptyResult;
     }
+
+    // Логирование результатов фильтрации
+    console.log(`Found ${filtered.length} interactions for element ${elementType}`);
+
+    // Формируем распределение по времени
+    const timeDistribution = Array(24).fill(0).map((_, hour) => {
+      const hourInteractions = filtered.filter(i => {
+        try {
+          const date = new Date(i.timestamp);
+          return date.getHours() === hour;
+        } catch (e) {
+          console.error('Error parsing timestamp:', i.timestamp, e);
+          return false;
+        }
+      });
+
+      return {
+        time: `${hour}:00`,
+        count: hourInteractions.length,
+        normalized: filtered.length > 0
+          ? (hourInteractions.length / filtered.length) * 100
+          : 0
+      };
+    });
 
     return {
       type: elementType,
       total_interactions: filtered.length,
-      avg_duration: Math.round(filtered.reduce((sum, i) => sum + i.duration, 0) / filtered.length),
+      avg_duration: filtered.length > 0
+        ? Math.round(filtered.reduce((sum, i) => sum + (i.duration || 0), 0) / filtered.length)
+        : 0,
       classes: this.extractClasses(filtered),
       devices: this.countDevices(filtered),
       locations: this.countLocations(filtered),
-      time_distribution: this.groupByTime(filtered)
+      time_distribution: timeDistribution
     };
   }
 
@@ -151,9 +203,28 @@ class InterfaceService {
     const classMap: Record<string, number> = {};
 
     interactions.forEach(i => {
-      i.element_classes?.forEach(cls => {
-        if (cls) classMap[cls] = (classMap[cls] || 0) + 1;
-      });
+      try {
+        // Безопасное преобразование element_classes
+        let classes: string[] = [];
+
+        if (i.element_classes) {
+          if (Array.isArray(i.element_classes)) {
+            classes = i.element_classes.filter(cls => typeof cls === 'string');
+          } else if (typeof i.element_classes === 'object' && i.element_classes !== null) {
+            classes = Object.values(i.element_classes)
+              .filter(cls => typeof cls === 'string');
+          }
+        }
+
+        // Подсчет классов
+        classes.forEach(cls => {
+          if (cls) {
+            classMap[cls] = (classMap[cls] || 0) + 1;
+          }
+        });
+      } catch (e) {
+        console.error('Error processing element classes:', e);
+      }
     });
 
     return Object.entries(classMap)
@@ -198,27 +269,96 @@ class InterfaceService {
 
 
 
+  private safeGetClasses(elementClasses: any): string[] {
+    try {
+      if (!elementClasses) return [];
 
+      if (Array.isArray(elementClasses)) {
+        return elementClasses.filter((cls: any) => typeof cls === 'string');
+      }
+
+      if (typeof elementClasses === 'object' && elementClasses !== null) {
+        return Object.values(elementClasses)
+          .filter((cls: any) => typeof cls === 'string');
+      }
+
+      return [];
+    } catch (e) {
+      console.error('Error parsing element classes:', e);
+      return [];
+    }
+  }
+
+
+  async getDetailedInteractions(
+    webId: number,
+    pageUrl: string,
+    range: TimeRange,
+    elementType?: string,
+    coordinates?: { x: number, y: number }
+): Promise<DetailedInteraction[]> {
+    const interactions = await interfaceDal.getDetailedInteractions(
+        webId, pageUrl, range, elementType, coordinates
+    );
+    return this.enrichWithSessionInfo(interactions);
+}
 
   async getClickDetails(
     webId: number,
     pageUrl: string,
     range: TimeRange,
-    x: number,
-    y: number
+    x?: number,
+    y?: number
   ): Promise<ClickDetails> {
+    // Проверка координат
+    if (x === undefined || y === undefined || isNaN(x) || isNaN(y)) {
+      throw new Error('Coordinates x and y are required and must be numbers');
+    }
+
+    const roundedX = Math.round(Number(x));
+    const roundedY = Math.round(Number(y));
+
+    // Логирование для отладки
+    console.log(`Fetching click details for coordinates: ${roundedX}, ${roundedY}`);
+
     const interactions = await interfaceDal.getDetailedInteractions(
-      webId, pageUrl, range, undefined, { x, y }
+      webId, pageUrl, range, undefined, { x: roundedX, y: roundedY }
     );
 
+    // Логирование результатов
+    console.log(`Found ${interactions.length} interactions at ${roundedX}, ${roundedY}`);
+
+    // Формируем распределение по времени
+    const timeDistribution = Array(24).fill(0).map((_, hour) => {
+      const hourInteractions = interactions.filter(i => {
+        try {
+          const date = new Date(i.timestamp);
+          return date.getHours() === hour;
+        } catch (e) {
+          console.error('Error parsing timestamp:', i.timestamp, e);
+          return false;
+        }
+      });
+
+      return {
+        time: `${hour}:00`,
+        count: hourInteractions.length,
+        normalized: interactions.length > 0
+          ? (hourInteractions.length / interactions.length) * 100
+          : 0
+      };
+    });
+
     return {
-      coordinates: { x, y },
+      coordinates: { x: roundedX, y: roundedY },
       total_clicks: interactions.length,
-      avg_duration: Math.round(interactions.reduce((sum, i) => sum + i.duration, 0) / interactions.length),
+      avg_duration: interactions.length > 0
+        ? Math.round(interactions.reduce((sum, i) => sum + (i.duration || 0), 0) / interactions.length)
+        : 0,
       elements: this.groupByElement(interactions),
       devices: this.groupByDevice(interactions),
       locations: this.groupByLocation(interactions),
-      time_distribution: this.groupByTime(interactions)
+      time_distribution: timeDistribution
     };
   }
 
@@ -269,11 +409,11 @@ class InterfaceService {
 
       elementMap[type].count += 1;
 
-      if (interaction.element_classes) {
-        interaction.element_classes.forEach(cls => {
-          if (cls) elementMap[type].classes.add(cls);
-        });
-      }
+      // Используем наш безопасный метод
+      const classes = this.safeGetClasses(interaction.element_classes);
+      classes.forEach(cls => {
+        if (cls) elementMap[type].classes.add(cls);
+      });
     });
 
     return Object.entries(elementMap).map(([type, data]) => ({
@@ -348,6 +488,40 @@ class InterfaceService {
       time: `${hourData.hour}:00`,
       count: hourData.count,
       normalized: maxCount > 0 ? (hourData.count / maxCount) * 100 : 0
+    }));
+  }
+
+
+
+
+
+
+
+  async enrichWithSessionInfo(
+    interactions: any[]
+  ): Promise<any[]> {
+    const sessions = new Map<string, Promise<SessionInfo>>();
+
+    return Promise.all(interactions.map(async (interaction) => {
+      if (!interaction.session_id) return interaction;
+
+      if (!sessions.has(interaction.session_id)) {
+        sessions.set(
+          interaction.session_id,
+          interfaceDal.getSessionInfo(interaction.session_id, interaction.web_id)
+        );
+      }
+
+      const sessionInfo = await sessions.get(interaction.session_id);
+
+      return {
+        ...interaction,
+        os: interaction.os || sessionInfo.os,
+        browser: interaction.browser || sessionInfo.browser,
+        platform: interaction.platform || sessionInfo.platform,
+        country: interaction.country || sessionInfo.country,
+        city: interaction.city || sessionInfo.city
+      };
     }));
   }
 }

@@ -69,21 +69,35 @@ class InterfaceController {
 
   @ControllerErrorHandler()
   async getElementDetails(req: Request, res: Response, next: NextFunction): Promise<Response> {
+    const elementType = req.query.element_type as string;
+    if (!elementType) {
+      return res.status(400).json({ error: "element_type parameter is required" });
+    }
+
+    // Для click-details
+
+
     const webId = Number(req.query.web_id);
     const pageUrl = String(req.query.page_url);
     const range = String(req.query.range || '7d') as TimeRange;
-    const elementType = String(req.query.element_type);
+    // const elementType = String(req.query.element_type);
     const data = await interfaceService.getElementDetails(webId, pageUrl, range, elementType);
     return res.json(data);
   }
 
   @ControllerErrorHandler()
   async getClickDetails(req: Request, res: Response, next: NextFunction): Promise<Response> {
+    const x = Number(req.query.x);
+    const y = Number(req.query.y);
+    if (isNaN(x) || isNaN(y)) {
+      return res.status(400).json({ error: 'x and y coordinates must be numbers' });
+    }
+
     const webId = Number(req.query.web_id);
     const pageUrl = String(req.query.page_url);
     const range = String(req.query.range || '7d') as TimeRange;
-    const x = Number(req.query.x);
-    const y = Number(req.query.y);
+    // const x = Number(req.query.x);
+    // const y = Number(req.query.y);
     const data = await interfaceService.getClickDetails(webId, pageUrl, range, x, y);
     return res.json(data);
   }

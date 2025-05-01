@@ -1,4 +1,4 @@
-import { DetailedInteraction, ElementStat, HeatmapCell, InteractionEvent } from "../services/types/interface.dto";
+import { DetailedInteraction, ElementStat, HeatmapCell, InteractionEvent, SessionInfo } from "../services/types/interface.dto";
 import pool from "../pool";
 import { TimeRange } from './types/interface.dao';
 
@@ -175,51 +175,33 @@ class InterfaceDal {
   ): Promise<DetailedInteraction[]> {
     const rangeCondition = getRangeCondition(range);
     const query = `
-      SELECT 
-        (event_data->>'x')::int AS x,
-        (event_data->>'y')::int AS y,
-        (event_data->>'duration')::int AS duration,
-        (event_data->>'tag') AS element_type,
-        (event_data->>'text') AS element_text,
-        COALESCE(event_data->'classes', '[]'::jsonb) AS element_classes,
-        re.timestamp,
-        re.session_id,
-        COALESCE(di->>'os', 'unknown') AS os,
-        COALESCE(di->>'browser', 'unknown') AS browser,
-        COALESCE(di->>'platform', 'unknown') AS platform,
-        COALESCE(gi->>'country', 'unknown') AS country,
-        COALESCE(gi->>'city', 'unknown') AS city
-      FROM raw_events re
-      LEFT JOIN (
-        SELECT session_id, device_info AS di
+        SELECT 
+            (event_data->>'x')::int AS x,
+            (event_data->>'y')::int AS y,
+            (event_data->>'duration')::int AS duration,
+            COALESCE(event_data->>'tag', event_data->>'element_tag') AS element_type,
+            event_data->>'text' AS element_text,
+            CASE 
+                WHEN event_data->'classes' IS NOT NULL THEN event_data->'classes'
+                WHEN event_data->>'element_class' IS NOT NULL THEN 
+                    jsonb_build_array(event_data->>'element_class')
+                ELSE '[]'::jsonb
+            END AS element_classes,
+            timestamp,
+            session_id,
+            web_id
         FROM raw_events
-        WHERE device_info IS NOT NULL
-        AND web_id = $1
-        GROUP BY session_id, device_info
-      ) devices ON re.session_id = devices.session_id
-      LEFT JOIN (
-        SELECT session_id, geo_info AS gi
-        FROM raw_events
-        WHERE geo_info IS NOT NULL
-        AND web_id = $1
-        GROUP BY session_id, geo_info
-      ) locations ON re.session_id = locations.session_id
-      WHERE 
-        re.event_id IN (2, 4)
-        AND re.web_id = $1
-        AND regexp_replace(re.page_url, '^https?://[^/]+', '') = regexp_replace($2, '^https?://[^/]+', '')
-        AND re.timestamp >= NOW() - ${rangeCondition}
-      ORDER BY re.timestamp DESC
-      LIMIT 10000
+        WHERE 
+            event_id IN (2, 4)
+            AND web_id = $1
+            AND regexp_replace(page_url, '^https?://[^/]+', '') = regexp_replace($2, '^https?://[^/]+', '')
+            AND timestamp >= NOW() - ${rangeCondition}
+        ORDER BY timestamp DESC
+        LIMIT 10000
     `;
-  
-    try {
-      const result = await pool.query<DetailedInteraction>(query, [webId, pageUrl]);
-      return result.rows;
-    } catch (error) {
-      console.error('Database error:', error);
-      throw error;
-    }
+
+    const result = await pool.query<DetailedInteraction>(query, [webId, pageUrl]);
+    return result.rows;
   }
 
   async getElementStats(
@@ -229,32 +211,18 @@ class InterfaceDal {
     withDetails: boolean = false
   ): Promise<ElementStat[]> {
     const rangeCondition = getRangeCondition(range);
-    
+
     let query = `
       WITH events AS (
         SELECT 
           (event_data->>'tag') AS type,
           (event_data->>'duration')::int AS duration,
           re.session_id,
-          COALESCE(di->>'os', 'unknown') AS os,
-          COALESCE(di->>'browser', 'unknown') AS browser,
-          COALESCE(gi->>'country', 'unknown') AS country,
-          COALESCE(gi->>'city', 'unknown') AS city
+          COALESCE((event_data->'device_info'->>'os'), 'unknown') AS os,
+          COALESCE((event_data->'device_info'->>'browser'), 'unknown') AS browser,
+          COALESCE((event_data->'geo_info'->>'country'), 'unknown') AS country,
+          COALESCE((event_data->'geo_info'->>'city'), 'unknown') AS city
         FROM raw_events re
-        LEFT JOIN (
-          SELECT session_id, device_info AS di
-          FROM raw_events
-          WHERE device_info IS NOT NULL
-          AND web_id = $1
-          GROUP BY session_id, device_info
-        ) devices ON re.session_id = devices.session_id
-        LEFT JOIN (
-          SELECT session_id, geo_info AS gi
-          FROM raw_events
-          WHERE geo_info IS NOT NULL
-          AND web_id = $1
-          GROUP BY session_id, geo_info
-        ) locations ON re.session_id = locations.session_id
         WHERE 
           re.event_id IN (2, 4)
           AND (event_data->>'tag') IS NOT NULL
@@ -268,28 +236,30 @@ class InterfaceDal {
         AVG(duration) AS avg_duration,
         (COUNT(*) * 100.0 / (SELECT COUNT(*) FROM events)) AS engagement
     `;
-  
+
     if (withDetails) {
       query += `,
         ARRAY(
           SELECT DISTINCT e2.os || ' ' || e2.browser
           FROM events e2
           WHERE e2.type = events.type
+          LIMIT 5
         ) AS devices,
         ARRAY(
           SELECT DISTINCT e3.country || COALESCE(', ' || e3.city, '')
           FROM events e3
           WHERE e3.type = events.type
+          LIMIT 5
         ) AS locations
       `;
     }
-  
+
     query += `
       FROM events
       GROUP BY type
       ORDER BY count DESC
     `;
-  
+
     const result = await pool.query<ElementStat>(query, [webId, pageUrl]);
     return result.rows;
   }
@@ -303,45 +273,50 @@ class InterfaceDal {
   ): Promise<DetailedInteraction[]> {
     const rangeCondition = getRangeCondition(range);
     let whereClause = `
-          event_id IN (2, 4)
-          AND web_id = $1
-          AND regexp_replace(page_url, '^https?://[^/]+', '') = regexp_replace($2, '^https?://[^/]+', '')
-          AND timestamp >= NOW() - ${rangeCondition}
-      `;
+        event_id IN (2, 4)
+        AND web_id = $1
+        AND regexp_replace(page_url, '^https?://[^/]+', '') = regexp_replace($2, '^https?://[^/]+', '')
+        AND timestamp >= NOW() - ${rangeCondition}
+    `;
 
-    const params: any[] = [webId, pageUrl];
+    const params: (string | number)[] = [webId, pageUrl];
 
     if (elementType) {
-      whereClause += ` AND (event_data->>'tag') = $3`;
+      whereClause += ` AND (event_data->>'tag' = $${params.length + 1} OR event_data->>'element_tag' = $${params.length + 1})`;
       params.push(elementType);
     }
 
     if (coordinates) {
       whereClause += ` AND (event_data->>'x')::int = $${params.length + 1} 
-                         AND (event_data->>'y')::int = $${params.length + 2}`;
+                       AND (event_data->>'y')::int = $${params.length + 2}`;
       params.push(coordinates.x, coordinates.y);
     }
 
     const query = `
-          SELECT 
-              (event_data->>'x')::int AS x,
-              (event_data->>'y')::int AS y,
-              (event_data->>'duration')::int AS duration,
-              (event_data->>'tag') AS element_type,
-              (event_data->>'text') AS element_text,
-              (event_data->'classes') AS element_classes,
-              timestamp,
-              session_id,
-              COALESCE(event_data->'device_info'->>'os', 'unknown') AS os,
-      COALESCE(event_data->'device_info'->>'browser', 'unknown') AS browser,
-      COALESCE(event_data->'device_info'->>'platform', 'unknown') AS platform,
-      COALESCE(event_data->'geo_info'->>'country', 'unknown') AS country,
-      COALESCE(event_data->'geo_info'->>'city', 'unknown') AS city
-          FROM raw_events
-          WHERE ${whereClause}
-          ORDER BY timestamp DESC
-          LIMIT 1000
-      `;
+        SELECT 
+            (event_data->>'x')::int AS x,
+            (event_data->>'y')::int AS y,
+            (event_data->>'duration')::int AS duration,
+            COALESCE(event_data->>'tag', event_data->>'element_tag') AS element_type,
+            event_data->>'text' AS element_text,
+            CASE 
+              WHEN event_data->'classes' IS NOT NULL THEN event_data->'classes'
+              WHEN event_data->>'element_class' IS NOT NULL THEN 
+                jsonb_build_array(event_data->>'element_class')
+              ELSE '[]'::jsonb
+            END AS element_classes,
+            timestamp,
+            session_id,
+            COALESCE(device_info->>'os', 'unknown') AS os,
+            COALESCE(device_info->>'browser', 'unknown') AS browser,
+            COALESCE(device_info->>'platform', 'unknown') AS platform,
+            COALESCE(geo_info->>'country', 'unknown') AS country,
+            COALESCE(geo_info->>'city', 'unknown') AS city
+        FROM raw_events
+        WHERE ${whereClause}
+        ORDER BY timestamp DESC
+        LIMIT 1000
+    `;
 
     const result = await pool.query<DetailedInteraction>(query, params);
     return result.rows;
@@ -365,7 +340,11 @@ class InterfaceDal {
                   jsonb_build_object(
                       'type', (event_data->>'tag'),
                       'text', (event_data->>'text'),
-                      'class', COALESCE((event_data->'classes'->>0), '')
+                      'class', COALESCE((event_data->'classes'->>0), ''),
+                      'os', COALESCE((event_data->'device_info'->>'os'), 'unknown'),
+                      'browser', COALESCE((event_data->'device_info'->>'browser'), 'unknown'),
+                      'country', COALESCE((event_data->'geo_info'->>'country'), 'unknown'),
+                      'city', COALESCE((event_data->'geo_info'->>'city'), 'unknown')
                   ) AS element_details
                   ` : 'NULL AS element_details'}
               FROM raw_events
@@ -390,6 +369,43 @@ class InterfaceDal {
       `;
     const result = await pool.query<HeatmapCell>(query, [webId, pageUrl]);
     return result.rows;
+  }
+
+
+
+
+  async getSessionInfo(sessionId: string, webId: number): Promise<SessionInfo> {
+    const query = `
+        SELECT
+            COALESCE(MAX(user_agent->>'os'), 'unknown') AS os,
+            CASE 
+                WHEN MAX(user_agent->>'userAgent') LIKE '%YaBrowser%' THEN 'YaBrowser'
+                WHEN MAX(user_agent->>'userAgent') LIKE '%Firefox%' THEN 'Firefox'
+                WHEN MAX(user_agent->>'userAgent') LIKE '%Edge%' THEN 'Edge'
+                WHEN MAX(user_agent->>'userAgent') LIKE '%Opera%' THEN 'Opera'
+                WHEN MAX(user_agent->>'userAgent') LIKE '%Safari%' 
+                     AND MAX(user_agent->>'userAgent') NOT LIKE '%Chrome%' THEN 'Safari'
+                ELSE COALESCE(MAX(user_agent->>'browser'), 'unknown') 
+            END AS browser,
+            COALESCE(MAX(user_agent->>'platform'), 'unknown') AS platform,
+            COALESCE(MAX(geolocation->>'country'), 'unknown') AS country,
+            COALESCE(MAX(geolocation->>'city'), 'unknown') AS city
+        FROM raw_events
+        WHERE
+            session_id = $1
+            AND web_id = $2
+        GROUP BY session_id
+        LIMIT 1
+    `;
+
+    const result = await pool.query<SessionInfo>(query, [sessionId, webId]);
+    return result.rows[0] || {
+      os: 'unknown',
+      browser: 'unknown',
+      platform: 'unknown',
+      country: 'unknown',
+      city: 'unknown'
+    };
   }
 }
 
