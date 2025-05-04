@@ -1,4 +1,4 @@
-import { ClusterResult, DeviceMetrics, GeoMetrics, PageTransition, SequenceAnalysis, SequenceTransition, SessionMetrics, TemporalResult, TimeUnit, UserMetrics } from './types/clustering.dto'
+import { ClusterResult, DeviceMetrics, GeoMetrics, GetUmapParams, PageTransition, SequenceAnalysis, SequenceTransition, SessionMetrics, TemporalResult, TimeUnit, UmapFilterParams, UmapPoint, UserEvent, UserMetrics } from './types/clustering.dto'
 import clusteringDal from '../data/clustering.dal';
 import clusteringUtility from './utils/clustering.utility'
 import * as clustering from 'density-clustering';
@@ -234,6 +234,17 @@ class ClusteringService {
 
     async getDeviceMetrics(webId: number): Promise<DeviceMetrics[]> {
         return await clusteringDal.getDeviceMetrics(webId);
+    }
+
+
+
+
+    async getUmapData(dto: UmapFilterParams): Promise<UmapPoint[]> {
+        return clusteringDal.getUmapPoints(dto);
+    }
+
+    async getUmapById(webId: number, id: string): Promise<UmapPoint | null> {
+        return clusteringDal.getUmapPointById(webId, id);
     }
 }
 

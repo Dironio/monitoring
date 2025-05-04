@@ -21,4 +21,13 @@ clusteringRouter.get('/geolocation', authCheck, clusteringController.getGeoMetri
 clusteringRouter.get('/pages', authCheck, clusteringController.getPageSimilarity)
 clusteringRouter.get('/devices', authCheck, clusteringController.getDeviceMetrics)
 
+
+
+clusteringRouter.get('/umap', authCheck, clusteringController.getUmap);
+clusteringRouter.get('/umap/:session_id', authCheck, clusteringController.getUmapById);
+
+// clusteringRouter.get('/raw-events', authCheck, clusteringController.getRawEvents);
+// clusteringRouter.get('/session-events/:sessionId', authCheck, clusteringController.getSessionEvents);
+// clusteringRouter.post('/analyze', authCheck, clusteringController.runAnalysis);
+
 export default clusteringRouter;

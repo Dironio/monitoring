@@ -1,6 +1,6 @@
 import React from 'react';
 import { Heatmap } from '@ant-design/plots';
-import { Card, Typography } from 'antd';
+import { Alert, Card, Typography } from 'antd';
 import { HeatmapCell } from './interactionTypes';
 
 const { Text } = Typography;
@@ -16,6 +16,9 @@ const HeatmapTableVisualization: React.FC<HeatmapTableVisualizationProps> = ({
     onCellClick,
     pageUrl
 }) => {
+    console.log('HeatmapTableVisualization получил данные:', data);
+    console.log('Количество точек для тепловой карты:', data?.length);
+
     if (!data || data.length === 0) {
         return (
             <Card title="Визуализация кликов">
@@ -24,14 +27,40 @@ const HeatmapTableVisualization: React.FC<HeatmapTableVisualizationProps> = ({
         );
     }
 
+    // Проверка структуры каждого элемента данных
+    const isValidData = data.every(item =>
+        item &&
+        typeof item.x !== 'undefined' &&
+        typeof item.y !== 'undefined' &&
+        typeof item.count !== 'undefined'
+    );
+
+    if (!isValidData) {
+        console.error('Данные для тепловой карты имеют неправильную структуру:', data);
+        return (
+            <Card title="Визуализация кликов">
+                <Alert
+                    message="Ошибка в структуре данных"
+                    description="Данные для тепловой карты имеют неправильную структуру. Проверьте консоль для деталей."
+                    type="error"
+                />
+            </Card>
+        );
+    }
+
+    // Проверяем наличие поля elements - если отсутствует, создаем пустой массив
+    const processedData = data.map(item => ({
+        x: item.x,
+        y: item.y,
+        value: item.count,
+        elements: Array.isArray(item.elements) ? item.elements.join(', ') : 'Не указано',
+        duration: typeof item.avg_duration === 'number' ? Math.round(item.avg_duration) : 0
+    }));
+
+    console.log('Обработанные данные для тепловой карты:', processedData);
+
     const config = {
-        data: data.map(item => ({
-            x: item.x,
-            y: item.y,
-            value: item.count,
-            elements: item.elements.join(', '),
-            duration: Math.round(item.avg_duration)
-        })),
+        data: processedData,
         xField: 'x',
         yField: 'y',
         colorField: 'value',
@@ -65,6 +94,9 @@ const HeatmapTableVisualization: React.FC<HeatmapTableVisualizationProps> = ({
             }
         }
     };
+
+    // Дебаг: выводим пример данных для графика
+    console.log('Пример одной точки для графика:', config.data[0]);
 
     return (
         <Card

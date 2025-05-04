@@ -141,6 +141,42 @@ class ClusteringController {
         const result = await clusteringService.getDeviceMetrics(Number(webId));
         return res.status(200).json(result);
     }
+
+
+    @ControllerErrorHandler()
+    async getUmap(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const { start_date, end_date, event_type } = req.query;
+
+        const result = await clusteringService.getUmapData({
+            webId,
+            startDate: start_date as string | undefined,
+            endDate: end_date as string | undefined,
+            eventType: event_type as 'click' | 'scroll' | undefined
+        });
+
+        return res.status(200).json(result);
+    }
+
+    @ControllerErrorHandler()
+    async getUmapById(req: Request, res: Response, next: NextFunction): Promise<Response> {
+        const webId = Number(req.query.web_id);
+        const id = String(req.params.session_id);
+
+        // if (isNaN(id)) {
+        //   throw new BadRequestError('Invalid event ID');
+        // }
+
+        const result = await clusteringService.getUmapById(webId, id);
+
+        if (!result) {
+            return res.status(404).json({ error: 'Event not found' });
+        }
+
+        return res.status(200).json(result);
+    }
+
+
 }
 
 const clusteringController = new ClusteringController();

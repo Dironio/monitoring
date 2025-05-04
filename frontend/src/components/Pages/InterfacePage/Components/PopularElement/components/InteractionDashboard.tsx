@@ -1,31 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Card, Select, Typography, Row, Col, Tag, Spin, Modal } from 'antd';
-import { Heatmap } from '@ant-design/plots';
+import { Card, Select, Typography, Spin, Alert } from 'antd';
+import ElementStatsTable from './ElementStatsTable';
 import ElementDetailsModal from './ElementDetailsModal';
 import ClickDetailsModal from './ClickDetailsModal';
-import {
-    TimeRange,
-    ElementStat,
-    HeatmapCell,
-    ElementDetails,
-    ClickDetails
-} from './interactionTypes';
+import { TimeRange, ElementStat, HeatmapCell } from './interactionTypes';
 import './InteractionDashboard.css';
 import { useSiteContext } from '../../../../../utils/SiteContext';
 import { getAPI } from '../../../../../utils/axiosGet';
 import HeatmapTableVisualization from './HeatmapTableVisualization';
-import ElementStatsTable from './ElementStatsTable';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const InteractionDashboard: React.FC = () => {
     const { selectedSite, selectedPage } = useSiteContext();
     const [elementStats, setElementStats] = useState<ElementStat[]>([]);
     const [heatmapData, setHeatmapData] = useState<HeatmapCell[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState(false);
     const [timeRange, setTimeRange] = useState<TimeRange>('7d');
-    const [selectedElement, setSelectedElement] = useState<ElementDetails | null>(null);
-    const [selectedCell, setSelectedCell] = useState<ClickDetails | null>(null);
+    const [selectedElement, setSelectedElement] = useState<string | null>(null);
+    const [selectedCell, setSelectedCell] = useState<HeatmapCell | null>(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -33,15 +26,61 @@ const InteractionDashboard: React.FC = () => {
 
             setLoading(true);
             try {
-                const [stats, heatmap] = await Promise.all([
-                    getAPI.get<{ data: ElementStat[] }>(`/interface/element-stats?web_id=${selectedSite.value}&page_url=${encodeURIComponent(selectedPage?.value || '')}&range=${timeRange}&details=true`),
-                    getAPI.get<{ data: HeatmapCell[] }>(`/interface/heatmap?web_id=${selectedSite.value}&page_url=${encodeURIComponent(selectedPage?.value || '')}&range=${timeRange}&details=true`)
+                // Получаем данные
+                const [statsResponse, heatmapResponse] = await Promise.all([
+                    getAPI.get<ElementStat[]>(
+                        `/events/interface/element-stats?web_id=${selectedSite.value}&page_url=${encodeURIComponent(selectedPage?.value || '')}&range=${timeRange}&details=true`
+                    ),
+                    getAPI.get<HeatmapCell[]>(
+                        `/events/interface/heatmap?web_id=${selectedSite.value}&page_url=${encodeURIComponent(selectedPage?.value || '')}&range=${timeRange}&details=true`
+                    )
                 ]);
 
-                setElementStats(stats.data.data);
-                setHeatmapData(heatmap.data.data);
+                console.log('Ответ stats API:', statsResponse);
+                console.log('Ответ heatmap API:', heatmapResponse);
+
+                // Получаем данные из ответа API
+                const statsData = statsResponse.data;
+                const heatmapData = heatmapResponse.data;
+
+                console.log('Данные stats:', statsData);
+                console.log('Данные heatmap:', heatmapData);
+
+                // Преобразуем строковые значения в числовые
+                const processedHeatmapData: HeatmapCell[] = Array.isArray(heatmapData)
+                    ? heatmapData.map(item => ({
+                        x: item.x,
+                        y: item.y,
+                        count: typeof item.count === 'string' ? parseInt(item.count, 10) : item.count,
+                        elements: Array.isArray(item.elements) ? item.elements : [],
+                        avg_duration: typeof item.avg_duration === 'string' ? parseFloat(item.avg_duration) : item.avg_duration,
+                        element_details: item.element_details || null
+                    }))
+                    : [];
+
+                console.log('Обработанные данные heatmap:', processedHeatmapData);
+
+                // Преобразуем строковые значения в числовые для stats
+                const processedStatsData: ElementStat[] = Array.isArray(statsData)
+                    ? statsData.map(item => ({
+                        type: item.type,
+                        count: typeof item.count === 'string' ? parseInt(item.count, 10) : item.count,
+                        avg_duration: typeof item.avg_duration === 'string' ? parseFloat(item.avg_duration) : item.avg_duration,
+                        engagement: typeof item.engagement === 'string' ? parseFloat(item.engagement) : item.engagement,
+                        devices: item.devices || [],
+                        locations: item.locations || []
+                    }))
+                    : [];
+
+                console.log('Обработанные данные stats:', processedStatsData);
+
+                // Устанавливаем данные в состояние
+                setElementStats(processedStatsData);
+                setHeatmapData(processedHeatmapData);
             } catch (error) {
                 console.error('Error fetching data:', error);
+                setElementStats([]);
+                setHeatmapData([]);
             } finally {
                 setLoading(false);
             }
@@ -50,14 +89,12 @@ const InteractionDashboard: React.FC = () => {
         fetchData();
     }, [selectedSite, selectedPage, timeRange]);
 
-    const handleElementClick = async (elementType: string) => {
-        const { data } = await getAPI.get<{ data: ElementDetails }>(`/interface/element-details?web_id=${selectedSite?.value}&page_url=${encodeURIComponent(selectedPage?.value || '')}&range=${timeRange}&element_type=${elementType}`);
-        setSelectedElement(data.data);
+    const handleElementClick = (elementType: string) => {
+        setSelectedElement(elementType);
     };
 
-    const handleCellClick = async (cell: HeatmapCell) => {
-        const { data } = await getAPI.get<{ data: ClickDetails }>(`/interface/click-details?web_id=${selectedSite?.value}&page_url=${encodeURIComponent(selectedPage?.value || '')}&range=${timeRange}&x=${cell.x}&y=${cell.y}`);
-        setSelectedCell(data.data);
+    const handleCellClick = (cell: HeatmapCell) => {
+        setSelectedCell(cell);
     };
 
     return (
@@ -67,7 +104,7 @@ const InteractionDashboard: React.FC = () => {
                 extra={
                     <Select<TimeRange>
                         value={timeRange}
-                        onChange={(value) => setTimeRange(value)}
+                        onChange={setTimeRange}
                         style={{ width: 150 }}
                         disabled={loading}
                     >
@@ -78,28 +115,53 @@ const InteractionDashboard: React.FC = () => {
                 }
             >
                 <Spin spinning={loading}>
-                    <HeatmapTableVisualization
-                        data={heatmapData}
-                        onCellClick={handleCellClick}
-                        pageUrl={selectedPage?.value}
-                    />
+                    {/* Добавим проверку наличия данных с выводом информации */}
+                    {heatmapData.length === 0 ? (
+                        <Alert
+                            message="Нет данных для тепловой карты"
+                            description="Проверьте выбранный сайт, страницу и временной диапазон"
+                            type="info"
+                        />
+                    ) : (
+                        <HeatmapTableVisualization
+                            data={heatmapData}
+                            onCellClick={handleCellClick}
+                            pageUrl={selectedPage?.value}
+                        />
+                    )}
 
-                    <ElementStatsTable
-                        data={elementStats}
-                        onRowClick={handleElementClick}
-                    />
+                    {elementStats.length === 0 ? (
+                        <Alert
+                            message="Нет данных о статистике элементов"
+                            description="Проверьте выбранный сайт, страницу и временной диапазон"
+                            type="info"
+                            style={{ marginTop: 16 }}
+                        />
+                    ) : (
+                        <ElementStatsTable
+                            data={elementStats}
+                            onRowClick={handleElementClick}
+                        />
+                    )}
                 </Spin>
             </Card>
 
-            <ElementDetailsModal
-                element={selectedElement}
-                onClose={() => setSelectedElement(null)}
-            />
+            {selectedElement && (
+                <ElementDetailsModal
+                    elementType={selectedElement}
+                    webId={selectedSite?.value || 0}
+                    pageUrl={selectedPage?.value || ''}
+                    range={timeRange}
+                    onClose={() => setSelectedElement(null)}
+                />
+            )}
 
-            <ClickDetailsModal
-                cell={selectedCell}
-                onClose={() => setSelectedCell(null)}
-            />
+            {selectedCell && (
+                <ClickDetailsModal
+                    cell={selectedCell}
+                    onClose={() => setSelectedCell(null)}
+                />
+            )}
         </div>
     );
 };

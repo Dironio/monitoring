@@ -124,50 +124,52 @@ const SequenceAnalysisPage: React.FC = () => {
                 {data && <TransitionsVisualization data={data} />}
             </div>
 
-            {data.commonPaths && data.commonPaths.length > 0 && (
-                <section className="common-paths">
-                    <h3>Популярные последовательности страниц</h3>
-                    <div className="paths-list">
-                        {data.commonPaths.map((path, index) => (
-                            <div key={index} className="path-item">
-                                <div className="path-sequence">
-                                    {Array.isArray(path.path) ? path.path.join(' → ') : ''}
+            <div className="">
+                {data.commonPaths && data.commonPaths.length > 0 && (
+                    <section className="common-paths">
+                        <h3>Популярные последовательности страниц</h3>
+                        <div className="paths-list">
+                            {data.commonPaths.map((path, index) => (
+                                <div key={index} className="path-item">
+                                    <div className="path-sequence">
+                                        {Array.isArray(path.path) ? path.path.join(' → ') : ''}
+                                    </div>
+                                    <div className="path-stats">
+                                        <span>Частота: {path.frequency || 0}</span>
+                                        <span>Ср. длительность: {Math.round(path.avgDuration || 0)}с</span>
+                                    </div>
                                 </div>
-                                <div className="path-stats">
-                                    <span>Частота: {path.frequency || 0}</span>
-                                    <span>Ср. длительность: {Math.round(path.avgDuration || 0)}с</span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </section>
-            )}
-            <div className="sequence-analysis__description">
-                {data.pathDetails && data.pathDetails.length > 0 && (
-                    <section className="path-details">
-                        <h3>Детали переходов</h3>
-                        <table className="transitions-table">
-                            <thead>
-                                <tr>
-                                    <th>Откуда</th>
-                                    <th>Куда</th>
-                                    <th>Количество</th>
-                                    <th>Ср. длительность</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {data.pathDetails.map((detail, index) => (
-                                    <tr key={index}>
-                                        <td>{detail.from}</td>
-                                        <td>{detail.to}</td>
-                                        <td>{detail.count}</td>
-                                        <td>{Math.round(detail.avgDuration)}с</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                            ))}
+                        </div>
                     </section>
                 )}
+                <div className="sequence-analysis__description">
+                    {data.pathDetails && data.pathDetails.length > 0 && (
+                        <section className="path-details">
+                            <h3>Детали переходов</h3>
+                            <table className="transitions-table">
+                                <thead>
+                                    <tr>
+                                        <th>Откуда</th>
+                                        <th>Куда</th>
+                                        <th>Количество</th>
+                                        <th>Ср. длительность</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {data.pathDetails.map((detail, index) => (
+                                        <tr key={index}>
+                                            <td>{detail.from}</td>
+                                            <td>{detail.to}</td>
+                                            <td>{detail.count}</td>
+                                            <td>{Math.round(detail.avgDuration)}с</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </section>
+                    )}
+                </div>
             </div>
         </div>
     );

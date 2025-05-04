@@ -2,11 +2,42 @@
     margin-top: 20px;
 }
 
+
 .sequence-analysis {
-    background: #f5f7fa;
+    display: grid;
+    grid-template-rows: auto auto auto;
+    gap: 24px;
+}
+
+.sequence-analysis__graph {
+    grid-row: 1;
+}
+
+.graph-description {
+    grid-row: 2;
+}
+
+.path-details {
+    grid-row: 3;
+}
+
+
+
+.sequence-analysis {
+    background: #fff;
     display: flex;
     flex-direction: column;
     gap: 24px;
+    position: relative;
+}
+
+.sequence-analysis__graph {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    min-height: 1030px;
+    position: relative;
 }
 
 .common-paths {
@@ -93,16 +124,20 @@
 
 .graph-description {
     width: 100%;
-    background: white;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin: 0;
+    /* background: white; */
+    border-radius: 10px;
+    /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); */
+    margin-top: 24px;
+    position: relative;
+    z-index: 1;
 }
+
+
 
 .graph-description h3 {
     color: #2c3e50;
     margin-bottom: 20px;
+    font-size: 1.25rem;
 }
 
 .description-content {
@@ -111,54 +146,6 @@
     gap: 24px;
     margin-top: 20px;
 }
-
-.summary {
-    background: white;
-    padding: 16px;
-    border-radius: 6px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-}
-
-.summary p {
-    margin: 8px 0;
-}
-
-.top-paths,
-.level-analysis,
-.most-visited {
-    background: white;
-    padding: 16px;
-    border-radius: 6px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-}
-
-.top-paths h4,
-.level-analysis h4,
-.most-visited h4 {
-    color: #2c3e50;
-    margin-bottom: 12px;
-}
-
-.top-paths ul,
-.level-analysis ul,
-.most-visited ul {
-    list-style: none;
-    padding: 0;
-}
-
-.top-paths li,
-.level-analysis li,
-.most-visited li {
-    padding: 8px 0;
-    border-bottom: 1px solid #eee;
-}
-
-.top-paths li:last-child,
-.level-analysis li:last-child,
-.most-visited li:last-child {
-    border-bottom: none;
-}
-
 
 .summary,
 .top-paths,
@@ -171,17 +158,16 @@
     height: fit-content;
 }
 
-.common-paths h3,
-.graph-description h3 {
-    color: #2c3e50;
-    margin-bottom: 20px;
-    font-size: 1.25rem;
+.summary p {
+    margin: 8px 0;
 }
 
-.paths-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
+.top-paths h4,
+.level-analysis h4,
+.most-visited h4 {
+    color: #2c3e50;
+    margin-bottom: 12px;
+    font-size: 1rem;
 }
 
 .top-paths ul,
@@ -196,7 +182,8 @@
 .level-analysis li,
 .most-visited li {
     padding: 8px 0;
-    border-bottom: 2px solid #ebebeb;
+    border-bottom: 1px solid #ebebeb;
+    font-size: 0.9rem;
 }
 
 .top-paths li:last-child,
@@ -204,6 +191,40 @@
 .most-visited li:last-child {
     border-bottom: none;
     padding-bottom: 0;
+}
+
+/* Для таблицы с деталями переходов */
+.path-details {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+}
+
+.transitions-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    min-width: 600px;
+}
+
+.transitions-table th,
+.transitions-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.transitions-table th {
+    background: #f8f9fa;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.transitions-table tr:hover {
+    background: #f8f9fa;
 }
 
 @media (max-width: 768px) {
@@ -216,7 +237,13 @@
         grid-template-columns: 1fr;
     }
 
-    .paths-list {
-        grid-template-columns: 1fr;
+    .sequence-analysis__graph {
+        min-height: 400px;
+        padding: 15px;
+    }
+
+    .graph-description,
+    .path-details {
+        padding: 15px;
     }
 }

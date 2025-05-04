@@ -1,4 +1,4 @@
-import { TimeUnit } from "../services/types/clustering.dto";
+import { TimeUnit, UmapFilterParams, UmapPoint } from "../services/types/clustering.dto";
 import pool from "../pool";
 import { DeviceMetrics, GeoMetrics, InteractionData, PageTransition, SequenceEvent, SessionMetrics, TemporalData, UserMetrics } from './types/cluster.dao'
 
@@ -467,6 +467,73 @@ LIMIT 1000;
         `, [webId]);
 
         return result.rows;
+    }
+
+
+
+
+
+
+
+
+
+
+
+    async getUmapPoints(params: UmapFilterParams): Promise<UmapPoint[]> {
+        const { webId, startDate, endDate, eventType } = params;
+
+        let query = `
+          SELECT 
+            id,
+            user_id,
+            event_data,
+            page_url,
+            timestamp,
+            web_id,
+            session_id,
+            event_id
+          FROM raw_events
+          WHERE web_id = $1
+        `;
+
+        const queryParams: any[] = [webId];
+        let paramIndex = 2;
+
+        if (startDate && endDate) {
+            query += ` AND timestamp BETWEEN $${paramIndex++} AND $${paramIndex++}`;
+            queryParams.push(new Date(startDate), new Date(endDate));
+        }
+
+        if (eventType) {
+            const eventId = eventType === 'scroll' ? 4 : 2;
+            query += ` AND event_id = $${paramIndex++}`;
+            queryParams.push(eventId);
+        }
+
+        query += ' ORDER BY timestamp ASC';
+
+        const result = await pool.query(query, queryParams);
+        return result.rows;
+    }
+
+    async getUmapPointById(webId: number, id: string): Promise<UmapPoint | null> {
+        const query = `
+          SELECT 
+            id,
+            user_id,
+            event_data,
+            page_url,
+            timestamp,
+            web_id,
+            session_id,
+            event_id
+          FROM raw_events
+          WHERE session_id = $1 AND web_id = $2
+          LIMIT 1
+        `;
+
+        const result = await pool.query(query, [id, webId]);
+        return result.rows[0] || null;
     }
 }
 

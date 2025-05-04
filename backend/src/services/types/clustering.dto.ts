@@ -129,3 +129,69 @@ export interface SessionMetrics {
     end_time: string;
     page_count: number;
 }
+
+
+
+
+
+//umap
+
+
+
+export interface GetUmapParams {
+    startDate?: string;
+    endDate?: string;
+    eventType?: string;
+    webId: number;
+}
+
+export interface UserEvent {
+    id: number;
+    user_id: number;
+    event_data: {
+        duration?: number;
+        scrollTop?: number;
+        scrollPercentage?: number;
+        x?: number;
+        y?: number;
+        id?: null;
+        tag?: string;
+        text?: string;
+        classes?: string;
+    };
+    page_url: string;
+    timestamp: string;
+    web_id: number;
+    session_id: string;
+    event_id: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface UmapPoint {
+    id: number;
+    user_id: number;
+    event_data: {
+        duration?: number;
+        scrollTop?: number;
+        scrollPercentage?: number;
+        x?: number;
+        y?: number;
+        id?: null;
+        tag?: string;
+        text?: string;
+        classes?: string;
+    };
+    page_url: string;
+    timestamp: string;
+    web_id: number;
+    session_id: string;
+    event_id: number;
+}
+
+export interface UmapFilterParams {
+    webId: number;
+    startDate?: string;
+    endDate?: string;
+    eventType?: 'click' | 'scroll';
+}

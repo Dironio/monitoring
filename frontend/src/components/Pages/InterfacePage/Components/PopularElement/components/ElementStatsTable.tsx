@@ -44,7 +44,7 @@ const ElementStatsTable: React.FC<ElementStatsTableProps> = ({ data, onRowClick 
                         height: 20,
                         borderRadius: 4
                     }} />
-                    <Text>{engagement}/100</Text>
+                    <Text>{Math.round(engagement)}/100</Text>
                 </div>
             )
         },
