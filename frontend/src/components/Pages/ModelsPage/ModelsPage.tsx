@@ -37,11 +37,11 @@ const ModelsPage: React.FC<ModelsPageProps> = ({ user, loading }) => {
             label: 'Метрики сходства',
             description: 'Косинусное сходство и расстояние Левенштейна'
         },
-        {
-            path: 'time-series',
-            label: 'Временные ряды',
-            description: 'Декомпозиция рядов и ARIMA модели'
-        },
+        // {
+        //     path: 'time-series',
+        //     label: 'Временные ряды',
+        //     description: 'Декомпозиция рядов и ARIMA модели'
+        // },
     ];
 
     const handleNavigate = (path: string) => {
