@@ -1,0 +1,100 @@
+/* dashboard.css */
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #f5f5f5;
+}
+
+.dashboard__header {
+    background-color: white;
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.dashboard__title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.dashboard__section-controls {
+    padding: 16px;
+}
+
+.control-group {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.control-button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    background-color: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.control-button:hover {
+    background-color: #f0f0f0;
+}
+
+.control-button--active {
+    background-color: #1890ff;
+    color: white;
+    border-color: #1890ff;
+}
+
+.dashboard__content {
+    flex: 1;
+    padding: 16px;
+    overflow: auto;
+}
+
+.dashboard__empty-state {
+    text-align: center;
+    padding: 32px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.dashboard__empty-message {
+    font-size: 18px;
+    color: #666;
+    margin: 0;
+}
+
+.dashboard__section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.dashboard__metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+.dashboard__metrics-grid--wide {
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+}
+
+.dashboard__footer {
+    background-color: white;
+    padding: 16px;
+    box-shadow: 0 -1px 3px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dashboard__timestamp {
+    font-size: 14px;
+    color: #888;
+}

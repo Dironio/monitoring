@@ -34,7 +34,7 @@ export const HeaderRole: React.FC<HeaderRoleProps> = ({ user }) => {
             );
         case 4:
             return (
-                <Link to="/admin-dashboard">
+                <Link to="/dashboard">
                     <button className="header__btn">Составить отчет</button>
                 </Link>
             );

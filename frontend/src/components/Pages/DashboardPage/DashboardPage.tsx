@@ -238,3 +238,324 @@ const DashboardPage: React.FC = () => {
 };
 
 export default DashboardPage;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useState, useEffect, useRef } from 'react';
+// import { getAPI } from '../api/api';
+// import { FilterPanel } from './components/FilterPanel';
+// import { SiteOption } from '../models/site.model';
+// import { PageOption } from '../models/page.model';
+// import { ReportSection } from './components/ReportSection';
+// import MetricCard from './components/MetricCard';
+// import PDFExportButton from './components/PDFExportButton';
+// import { VisitMetrics } from './components/metrics/VisitMetrics';
+// import { HeatmapVisualization } from './components/visualizations/HeatmapVisualization';
+// import { ClusteringVisualization } from './components/visualizations/ClusteringVisualization';
+// import { UMAPVisualization } from './components/visualizations/UMAPVisualization';
+// import { UserPathsVisualization } from './components/visualizations/UserPathsVisualization';
+// import { MarkovChainModel } from './components/analytics/MarkovChainModel';
+// import { EngagementScoreAnalysis } from './components/analytics/EngagementScoreAnalysis';
+// import { RetentionAnalysis } from './components/analytics/RetentionAnalysis';
+// import { FunnelAnalysis } from './components/analytics/FunnelAnalysis';
+// import { SentimentAnalysis } from './components/analytics/SentimentAnalysis';
+
+// interface DateRange {
+//   start: Date | null;
+//   end: Date | null;
+// }
+
+// interface DashboardState {
+//   selectedSite: SiteOption | null;
+//   selectedPage: PageOption | null;
+//   dateRange: DateRange;
+//   activeSection: 'monitoring' | 'analysis';
+//   isLoading: boolean;
+// }
+
+// const DashboardPage: React.FC = () => {
+//   const [state, setState] = useState<DashboardState>({
+//     selectedSite: null,
+//     selectedPage: null,
+//     dateRange: {
+//       start: null,
+//       end: null
+//     },
+//     activeSection: 'monitoring',
+//     isLoading: false
+//   });
+  
+//   const reportContainerRef = useRef<HTMLDivElement>(null);
+
+//   // Обработчик изменения сайта
+//   const handleSiteChange = (site: SiteOption | null) => {
+//     setState(prev => ({
+//       ...prev,
+//       selectedSite: site,
+//       selectedPage: null // Сбрасываем выбранную страницу при изменении сайта
+//     }));
+//   };
+
+//   // Обработчик изменения страницы
+//   const handlePageChange = (page: PageOption | null) => {
+//     setState(prev => ({
+//       ...prev,
+//       selectedPage: page
+//     }));
+//   };
+
+//   // Обработчик изменения диапазона дат
+//   const handleDateRangeChange = (range: DateRange) => {
+//     setState(prev => ({
+//       ...prev,
+//       dateRange: range
+//     }));
+//   };
+
+//   // Переключение между секциями мониторинга и анализа
+//   const toggleSection = (section: 'monitoring' | 'analysis') => {
+//     setState(prev => ({
+//       ...prev,
+//       activeSection: section
+//     }));
+//   };
+
+//   // Функция для формирования параметров запроса на основе выбранных фильтров
+//   const getQueryParams = (): URLSearchParams | null => {
+//     const params = new URLSearchParams();
+    
+//     // Сайт обязателен для запросов
+//     if (state.selectedSite) {
+//       params.append('web_id', state.selectedSite.value.toString());
+//     } else {
+//       return null;
+//     }
+    
+//     // Опциональные параметры
+//     if (state.selectedPage) {
+//       params.append('page_url', state.selectedPage.value);
+//     }
+    
+//     if (state.dateRange.start) {
+//       params.append('start_date', state.dateRange.start.toISOString());
+//     }
+    
+//     if (state.dateRange.end) {
+//       params.append('end_date', state.dateRange.end.toISOString());
+//     }
+    
+//     return params;
+//   };
+
+//   // Проверка возможности запроса данных
+//   const canFetchData = !!state.selectedSite;
+
+//   return (
+//     <div className="flex flex-col min-h-screen bg-gray-50">
+//       <header className="bg-white shadow-sm p-4 border-b border-gray-200">
+//         <h1 className="text-2xl font-bold text-gray-800">Система анализа поведения пользователей</h1>
+//       </header>
+
+//       <FilterPanel 
+//         selectedSite={state.selectedSite}
+//         selectedPage={state.selectedPage}
+//         dateRange={state.dateRange}
+//         onSiteChange={handleSiteChange}
+//         onPageChange={handlePageChange}
+//         onDateRangeChange={handleDateRangeChange}
+//       />
+
+//       <div className="flex gap-4 p-4">
+//         <button
+//           className={`px-6 py-2 rounded-md font-medium transition-colors ${
+//             state.activeSection === 'monitoring' 
+//               ? 'bg-blue-600 text-white' 
+//               : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+//           }`}
+//           onClick={() => toggleSection('monitoring')}
+//         >
+//           Мониторинг
+//         </button>
+//         <button
+//           className={`px-6 py-2 rounded-md font-medium transition-colors ${
+//             state.activeSection === 'analysis' 
+//               ? 'bg-blue-600 text-white' 
+//               : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+//           }`}
+//           onClick={() => toggleSection('analysis')}
+//         >
+//           Анализ
+//         </button>
+//       </div>
+
+//       <main className="flex-grow p-4 overflow-auto" ref={reportContainerRef}>
+//         {!canFetchData ? (
+//           <div className="text-center p-8 bg-white rounded-lg shadow">
+//             <p className="text-lg text-gray-600">Пожалуйста, выберите сайт для просмотра аналитики</p>
+//           </div>
+//         ) : (
+//           <>
+//             {state.activeSection === 'monitoring' && (
+//               <div className="space-y-6">
+//                 <ReportSection title="Обзор посещений">
+//                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+//                     <MetricCard title="Всего посещений">
+//                       <VisitMetrics queryParams={getQueryParams()} metricType="total" />
+//                     </MetricCard>
+//                     <MetricCard title="Уникальные посетители">
+//                       <VisitMetrics queryParams={getQueryParams()} metricType="unique" />
+//                     </MetricCard>
+//                     <MetricCard title="Среднее время на сайте">
+//                       <VisitMetrics queryParams={getQueryParams()} metricType="duration" />
+//                     </MetricCard>
+//                   </div>
+//                 </ReportSection>
+
+//                 <ReportSection title="История посещений" collapsible resizable>
+//                   <VisitMetrics queryParams={getQueryParams()} metricType="history" />
+//                 </ReportSection>
+
+//                 <ReportSection title="Пути пользователей" collapsible resizable>
+//                   <UserPathsVisualization queryParams={getQueryParams()} />
+//                 </ReportSection>
+//               </div>
+//             )}
+
+//             {state.activeSection === 'analysis' && (
+//               <div className="space-y-6">
+//                 <ReportSection title="Визуализация поведения" collapsible resizable>
+//                   <div className="flex flex-col space-y-6">
+//                     <div className="bg-white p-4 rounded-lg shadow">
+//                       <h3 className="text-lg font-medium mb-4">Тепловая карта кликов</h3>
+//                       <HeatmapVisualization queryParams={getQueryParams()} />
+//                     </div>
+                    
+//                     <div className="bg-white p-4 rounded-lg shadow">
+//                       <h3 className="text-lg font-medium mb-4">Кластеризация пользователей (K-means)</h3>
+//                       <ClusteringVisualization queryParams={getQueryParams()} />
+//                     </div>
+                    
+//                     <div className="bg-white p-4 rounded-lg shadow">
+//                       <h3 className="text-lg font-medium mb-4">UMAP проекция поведения</h3>
+//                       <UMAPVisualization queryParams={getQueryParams()} />
+//                     </div>
+//                   </div>
+//                 </ReportSection>
+
+//                 <ReportSection title="Продвинутая аналитика" collapsible resizable>
+//                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+//                     <MetricCard title="Модель Марковских цепей">
+//                       <MarkovChainModel queryParams={getQueryParams()} />
+//                     </MetricCard>
+//                     <MetricCard title="Анализ вовлеченности пользователей">
+//                       <EngagementScoreAnalysis queryParams={getQueryParams()} />
+//                     </MetricCard>
+//                     <MetricCard title="Анализ удержания">
+//                       <RetentionAnalysis queryParams={getQueryParams()} />
+//                     </MetricCard>
+//                     <MetricCard title="Воронка конверсии">
+//                       <FunnelAnalysis queryParams={getQueryParams()} />
+//                     </MetricCard>
+//                     <MetricCard title="Анализ удовлетворенности">
+//                       <SentimentAnalysis queryParams={getQueryParams()} />
+//                     </MetricCard>
+//                   </div>
+//                 </ReportSection>
+//               </div>
+//             )}
+//           </>
+//         )}
+//       </main>
+
+//       <footer className="bg-white p-4 shadow-inner flex justify-between items-center">
+//         <span className="text-sm text-gray-500">Последнее обновление: {new Date().toLocaleString('ru-RU')}</span>
+//         <PDFExportButton 
+//           reportContainerRef={reportContainerRef}
+//           dashboardState={{
+//             selectedSite: state.selectedSite,
+//             selectedPage: state.selectedPage,
+//             dateRange: state.dateRange,
+//             activeSection: state.activeSection
+//           }} 
+//         />
+//       </footer>
+//     </div>
+//   );
+// };
+
+// export default DashboardPage;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
