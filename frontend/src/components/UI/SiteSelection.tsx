@@ -61,11 +61,25 @@ const SiteSelection: React.FC<SiteSelectionProps> = ({ user, loading, onSiteChan
         try {
             const response = await getAPI.get<WebSite[]>(`/sites/web`);
 
-            const siteOptions = response.data.map(site => ({
+            const siteOptions = [
+                ...response.data,
+                {
+                    id: 2, // Фиксированный ID для тестового сайта
+                    site: "Тестовый сайт (локальный)",
+                    domain: "localhost:4000"
+                }
+            ].map(site => ({
                 value: site.id,
                 label: site.site
             }));
+
             setSites(siteOptions);
+
+            // const siteOptions = response.data.map(site => ({
+            //     value: site.id,
+            //     label: site.site
+            // }));
+            // setSites(siteOptions);
 
             if ((user.role_id === 1 || !selectedValue) && response.data.length > 0) {
                 const demoSite = response.data.find(site => site.id === 1);

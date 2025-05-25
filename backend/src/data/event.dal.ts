@@ -307,7 +307,7 @@ class EventDal {
             SELECT DISTINCT page_url
             FROM raw_events
             WHERE web_id = $1
-            AND timestamp >= NOW() - INTERVAL '30 days'
+            --AND timestamp >= NOW() - INTERVAL '30 days'
             ORDER BY page_url
         `, [webId]);
 
@@ -476,6 +476,19 @@ WHERE
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+    
     //////////////////////////////////////////////////////////////
 
 

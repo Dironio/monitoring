@@ -131,27 +131,67 @@ const PageSelector: React.FC<PageSelectorProps> = ({
     const fetchPages = async () => {
         if (!selectedSite) return;
 
+        // if (selectedSite.value === 2) {
+        //     setPages([
+        //         {
+        //             value: "http://localhost:4000",
+        //             label: "Главная",
+        //             fullUrl: "http://localhost:4000",
+        //             path: "http://localhost:4000/"
+        //         },
+        //         {
+        //             value: "http://localhost:4000/about",
+        //             label: "О компании",
+        //             fullUrl: "http://localhost:4000/about",
+        //             path: "http://localhost:4000/product/203463456"
+        //         }
+        //     ]);
+        //     return;
+        // }
+
         try {
             const response = await getAPI.get<string[]>(
                 `${process.env.REACT_APP_API_URL}/events/pages?web_id=${selectedSite.value}`);
 
-            const groupedPages = response.data.reduce((acc: { [key: string]: string[] }, page) => {
-                const path = getPathFromUrl(page);
-                if (!acc[path]) {
-                    acc[path] = [];
-                }
-                acc[path].push(page);
-                return acc;
-            }, {});
+            // const groupedPages = response.data.reduce((acc: { [key: string]: string[] }, page) => {
+            //     const path = getPathFromUrl(page);
+            //     if (!acc[path]) {
+            //         acc[path] = [];
+            //     }
+            //     acc[path].push(page);
+            //     return acc;
+            // }, {});
 
-            const pageOptions = Object.entries(groupedPages).map(([path, urls]) => ({
-                value: path,
-                label: path,
-                fullUrl: urls[0],
-                path: path
-            }));
+            // const pageOptions = Object.entries(groupedPages).map(([path, urls]) => ({
+            //     value: path,
+            //     label: path,
+            //     fullUrl: urls[0],
+            //     path: path
+            // }));
 
-            setPages(pageOptions);
+            // setPages(pageOptions);
+
+
+
+            const pages = response.data.map(page => {
+                const path = getPathFromUrl(page); // Получаем путь (/about, /contact)
+
+                // Для сайта с ID=2 подменяем домен на localhost:4000
+                const finalUrl = selectedSite.value === 2
+                    ? `http://localhost:4000${path}`
+                    : page;
+
+                return {
+                    value: finalUrl, // Для iframe
+                    label: path,
+                    fullUrl: page,  // Оригинальный URL из БД
+                    path: path
+                };
+            });
+
+            setPages(pages);
+
+
         } catch (error) {
             console.error("Ошибка загрузки страниц", error);
             setPages([]);

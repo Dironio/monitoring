@@ -8,6 +8,8 @@ const siteRouter: Router = Router();
 siteRouter.post('/', authCheck, siteController.create);
 siteRouter.get('/', authCheck, siteController.getAll);
 
-siteRouter.get('/web', authCheck, checkRole([1, 2, 3, 4]), siteController.getFilteredSites);
+siteRouter.get('/web', authCheck,
+    //  checkRole([1, 2, 3, 4]), 
+     siteController.getFilteredSites);
 
 export default siteRouter;

@@ -89,7 +89,7 @@ const OverviewComponent: React.FC<OverviewProps> = ({ user, loading }) => {
                                 <XAxis
                                     dataKey="day"
                                     tickFormatter={formatDate}
-                                    angle={-45}
+                                    angle={0}
                                     textAnchor="end"
                                 />
                                 <YAxis
@@ -138,7 +138,7 @@ const OverviewComponent: React.FC<OverviewProps> = ({ user, loading }) => {
                                 <XAxis
                                     dataKey="day"
                                     tickFormatter={formatDate}
-                                    angle={-45}
+                                    angle={0}
                                     textAnchor="end"
                                 />
                                 <YAxis

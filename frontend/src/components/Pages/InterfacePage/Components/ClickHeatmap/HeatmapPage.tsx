@@ -397,7 +397,12 @@ const HeatmapPage: React.FC = () => {
         }
         setIsLoading(true);
         try {
-            const url = `${process.env.REACT_APP_API_URL}/events/click-heatmap?web_id=${selectedSite.value}&page_url=${selectedPage.value}`;
+
+            const pageUrl = selectedPage.fullUrl || selectedPage.value;
+            const url = `${process.env.REACT_APP_API_URL}/events/click-heatmap?web_id=${selectedSite.value}&page_url=${encodeURIComponent(pageUrl)}`;
+
+
+            // const url = `${process.env.REACT_APP_API_URL}/events/click-heatmap?web_id=${selectedSite.value}&page_url=${selectedPage.value}`;
             const response = await axios.get<HeatmapResponse>(url, {
                 withCredentials: true,
                 headers: {
@@ -414,7 +419,7 @@ const HeatmapPage: React.FC = () => {
             }));
             setHeatmapData(formattedData);
             setIsHeatmapVisible(true);
-            
+
             // Скролл к контейнеру с тепловой картой
             setTimeout(() => {
                 containerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -471,7 +476,12 @@ const HeatmapPage: React.FC = () => {
                 <div className="page-container" ref={containerRef}>
                     <iframe
                         ref={iframeRef}
-                        src={selectedPage?.value}
+                        // src={selectedPage?.value}
+                        src={
+                            selectedPage?.value && selectedSite?.value === 2
+                                ? selectedPage.value.replace('3000', '4000') // Подменяем порт
+                                : selectedPage?.value
+                        }
                         className="page-container__iframe"
                         title="Heatmap target page"
                     />

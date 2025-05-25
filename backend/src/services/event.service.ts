@@ -38,7 +38,8 @@ class EventService {
         return await eventDal.getTopPages(web_id);
     }
 
-    async getAvgTime(webId: number): Promise<RawEvent[]> {
+    async getAvgTime(webId: number//, startDate?: Date, endDate?: Date
+    ): Promise<RawEvent[]> {
         return await eventDal.getAvgTime(webId);
     }
 

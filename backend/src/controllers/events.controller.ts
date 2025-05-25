@@ -59,6 +59,22 @@ class EventController {
     }
 
     @ControllerErrorHandler()
+    // async getAvgTime(req: Request, res: Response) {
+    //     const webId = Number(req.query.web_id);
+    //     const startDate = req.query.start_date ? new Date(req.query.start_date as string) : undefined;
+    //     const endDate = req.query.end_date ? new Date(req.query.end_date as string) : undefined;
+
+    //     // Валидация дат
+    //     if (startDate && isNaN(startDate.getTime()) || endDate && isNaN(endDate.getTime())) {
+    //         return res.status(400).json({ error: "Invalid date format" });
+    //     }
+
+    //     const result = await eventService.getAvgTime(webId, startDate, endDate);
+    //     return res.status(200).json(result);
+    // }
+
+
+
     async getAvgTime(req: Request, res: Response, next: NextFunction): Promise<Response> {
         const webId = Number(req.query.web_id);
         const result = await eventService.getAvgTime(webId);

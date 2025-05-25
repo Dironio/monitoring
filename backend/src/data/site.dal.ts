@@ -66,7 +66,7 @@ class SiteDal {
     const result = await pool.query(`
         SELECT * 
         FROM web_sites
-        WHERE id = 1 OR ($1 = TRUE OR id = ANY($2::int[]))
+        WHERE id = $2 --OR ($1 = TRUE OR id = ANY($2::int[]))
     `, [isAdmin, webIds]);
 
 

@@ -325,7 +325,7 @@
     position: absolute;
     top: 16px;
     left: 16px;
-    z-index: 3; /* Кнопки управления над всем */
+    /* z-index: 3; Кнопки управления над всем */
     display: flex;
     gap: 8px;
 }

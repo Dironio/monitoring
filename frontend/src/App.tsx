@@ -20,7 +20,7 @@ import LoadingPage from './components/Pages/LoadingPage/LoadingPage';
 import ExperiementRouter from './routes/ExperiementRoute';
 import ConsentModal from './components/Modals/ConsentModal';
 import RatingModal from './components/Modals/RatingModal';
-import DashboardPage from './components/Pages/DashboardPage/DashboardPage';
+// import DashboardPage from './components/Pages/DashboardPage/DashboardPage';
 
 const App: React.FC = () => {
     const { user, loading } = useFetchUser();
@@ -105,14 +105,14 @@ const App: React.FC = () => {
                             />
 
 
-                            <Route
+                            {/* <Route
                                 path="/dashboard"
                                 element={
                                     <ProtectedRoute user={user} loading={loading}>
                                         <DashboardPage />
                                     </ProtectedRoute>
                                 }
-                            />
+                            /> */}
 
                             {/* <Route
                                 path="/experiments"

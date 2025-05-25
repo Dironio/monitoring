@@ -270,6 +270,7 @@
 .site-selection {
     width: 310px;
     position: relative;
+    z-index: 1000;
 }
 
 .site-selection__container {
